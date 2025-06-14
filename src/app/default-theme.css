@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* dracula https://github.com/dracula/dracula-theme */
+@theme {
+  --color-primary: #ededed;
+  --color-link: #ff79c6;
+  --color-line: #6272a4;
+  --color-background: #282a36;
+  --color-blockquote: #2c3547;
+  --color-datatable-row-odd: #333a47;
+  --color-title: #bd93f9;
+}
