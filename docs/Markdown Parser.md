@@ -1,4 +1,4 @@
--
+- 
 - The lexer is responsible for converting a string of markdown `content` into a list of tokens (`Token[]`).
 - The parser is responsible for converting a list of tokens (`Token[]`) into a hierarchical Block.
 - ## Explain parser.ts
@@ -75,7 +75,7 @@
 		- ```plaintext
 		[root, item1, item1-1]
 		```
-		- ここで問題なのが、パーサーは次の行に何が来るかわからないため、例の深さ1,2,3のすべてに対応できるようにしておく必要がある。
+		- ここで「パーサーは一行ずつ行を読み込むため、item1を読み込み終えた段階で次にどの深さのアイテムが来るかわからない。そのため、すべてに対応できる必要がある」という部分が問題になる。
 		- そこでParserでは以下のような挙動をすると考えてみる。
 			- 深さ1の場合
 				- step1: [root, item1]まで畳む（つまり、item1-1をitem1の子に入れる）
@@ -87,11 +87,11 @@
 				- step1: item1-1の子としてitem1-1-1を追加する [root, item1, item1-1, item1-1-1]
 	- ### Algorithm
 		- 上記の挙動でいけそうなので以下のようでアルゴリズムの形にまとめてみる。
-		- 1. 初期値: スタックにルートノードのみを追加しておく。[Block("", [])]
+		- 1. 初期値: スタックにルートノードのみを追加しておく。`[Block("", [])]`
 		- 2. 各行を読み込んだときに以下の処理を行う
 			- 1. 追加する前にスタックを見て、末尾を新しく追加したいアイテムの深さ `depth` までたたむ
 			- 2. スタックに新しいアイテムを追加する
 		- 3. 最後の行まで行ったときに深さ0まで畳む
-			- 「たたむ」というのが `collapseTailUntil(stack: Block[], depth: number)` がやっていること。
+			- 「畳む」というのが `collapseTailUntil(stack: Block[], depth: number)` がやっていること。
 - ## その他
-	- ここだけ切り出して高速化することを想定していたが、TypeScript版でも十分早かったのでやらなかった。
+	- パーサーだけ切り出して高速化することを想定していたが、TypeScript版でも十分早かったのでやらなかった。
