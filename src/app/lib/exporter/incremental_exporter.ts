@@ -1,7 +1,7 @@
-import { getPageBlockById } from "../sqlite";
+import { getPageBlockById, putFile } from "../sqlite";
 import { getPageByTitle } from "../sqlite/pages";
 import { Block } from "../markdown/block";
-import { updateFile } from "../file";
+import { updateFile, fillPathToFile } from "../file";
 
 export async function exportOnePageToMarkdown(
   pageTitle: string,
@@ -10,6 +10,12 @@ export async function exportOnePageToMarkdown(
   if (!file) {
     throw new Error(`Page with title "${pageTitle}" not found.`);
   }
+
+  if (!file.path) {
+    await fillPathToFile(file);
+    await putFile(file);
+  }
+
   const page = await getPageBlockById(file.pageId || "");
   const contentMarkdown = page.children
     .map((block) => convertToMarkdownRecursive(block))

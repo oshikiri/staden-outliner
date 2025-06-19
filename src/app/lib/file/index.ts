@@ -76,3 +76,13 @@ export function updateFile(file: File, content: string): Promise<void> {
     });
   });
 }
+
+export async function fillPathToFile(file: File): Promise<void> {
+  if (!file.pageId) {
+    throw new Error("File pageId is not defined");
+  }
+  file.path = path.join(process.env.STADEN_ROOT || "", file.title + ".md");
+  if (!fs.existsSync(file.path)) {
+    fs.writeFileSync(file.path, "");
+  }
+}

@@ -51,6 +51,7 @@ export async function createNewFileWithEmptyBlock(
   const child = new Block([], 1, []).withId(randomUUID());
   const page = new Block([], 0, [child]).withId(pageId);
   child.pageId = pageId;
+  child.parentId = page.id;
   page.pageId = pageId;
 
   await putFile(file);
