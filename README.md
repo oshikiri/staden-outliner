@@ -1,19 +1,21 @@
-# staden: An Opinionated and Maintainable Outliner for Me
+# Staden: An Opinionated and Maintainable Outliner for Me
 
 <img src="./docs/icon.png" alt="staden icon" width="200" height="200" />
 
 - Built with a popular stack (TypeScript/React/Next.js/SQLite)
 - Limited features
 - Compatible with Logseq markdown
-- Query table using SQLite
+- Query tables using SQLite
 
 ## Roadmap
-- Export to markdown files
-- Refine markdown editor
+- Automatic export to markdown files
+- Improve markdown editor
+  - See also https://github.com/oshikiri/react-plaintext-outliner
   - Paste images from clipboard
   - Caret movement
   - Implement undo
   - etc.
+- Android app (viewer)
 
 ## Getting Started
 
@@ -28,6 +30,8 @@ STADEN_ROOT=./docs
 ```bash
 npm run dev
 ```
+
+GET `/api/initialize`
 
 See <http://localhost:3000/pages/index>
 

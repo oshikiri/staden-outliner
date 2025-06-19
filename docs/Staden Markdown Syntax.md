@@ -1,6 +1,9 @@
 - ## Available Syntaxes
-	- inline code: `content`
-	- code block
+	- Link
+		- Raw URL: https://example.com/
+		- Link with title: [Example Domain](https://example.com/)
+	- Inline code: `content`
+	- Code block
 		- ```javascript
 		array.map(x => f(x))
 		```
@@ -8,3 +11,11 @@
 		- >quote content
 	- Heading
 		- ## Heading title
+	- Pageref
+		- [[index]]
+	- Task
+		- TODO aaaa
+		- DOING bbbb
+		- DONE cccc
+	- Properties
+		- key:: value
