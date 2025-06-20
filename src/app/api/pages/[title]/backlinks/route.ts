@@ -3,14 +3,14 @@ import { Block } from "@/app/lib/markdown/block";
 
 type Props = {
   params: Promise<{
-    idOrTitle: string;
+    title: string;
   }>;
 };
 
 export async function GET(_req: Request, props: Props) {
-  const { idOrTitle } = await props.params;
+  const { title } = await props.params;
 
-  const sourceIds = await getSourceEdges(idOrTitle || "");
+  const sourceIds = await getSourceEdges(title || "");
   const sourceBlocks: Block[] = (await Promise.all(
     sourceIds.map(async (sourceId) => {
       return resolveBacklink(sourceId);

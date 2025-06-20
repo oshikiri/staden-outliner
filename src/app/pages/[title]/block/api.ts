@@ -6,9 +6,11 @@ export async function postPage(
   if (!page) {
     return null;
   }
+  const pageTitle = page.getProperty("title") as string;
   page = sanitizePageBeforePost(page);
   console.log("postPage", page);
-  const response = await fetch(`/api/pages/${page?.id}`, {
+  const encodedTitle = encodeURIComponent(pageTitle);
+  const response = await fetch(`/api/pages/${encodedTitle}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

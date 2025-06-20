@@ -12,8 +12,18 @@ export async function initializeEdges() {
   `);
 }
 
-export async function getSourceEdges(targetId: string): Promise<string[]> {
-  const edges = await query(`SELECT * FROM edges WHERE to_id = ?;`, [targetId]);
+export async function getSourceEdges(
+  targetPageTitle: string,
+): Promise<string[]> {
+  const edges = await query(
+    `
+    SELECT edges.*
+    FROM edges
+    JOIN blocks_p AS to_blocks ON edges.to_id = to_blocks.id
+    WHERE to_blocks.page_title = ?;
+  `,
+    [targetPageTitle],
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return edges.map((edge: any) => edge.from_id);
 }

@@ -9,23 +9,23 @@ import { Token } from "../token";
 import Block from "../block";
 
 export function BacklinksContainer({
-  pageId,
+  pageTitle,
 }: {
-  pageId: string | undefined;
+  pageTitle: string | undefined;
 }): JSX.Element {
   const [backlinks, setBacklinks] = useState<BlockEntity[]>([]);
   useEffect(() => {
-    if (!pageId) {
+    if (!pageTitle) {
       return;
     }
-    getPageBacklinks(pageId).then((backlinks) => {
+    getPageBacklinks(pageTitle).then((backlinks) => {
       if (!backlinks) {
         return;
       }
       console.log("getPageBacklinks", backlinks);
       setBacklinks(backlinks);
     });
-  }, [pageId]);
+  }, [pageTitle]);
 
   return (
     <div className="mt-20 break-all">
@@ -47,8 +47,11 @@ export function BacklinksContainer({
   );
 }
 
-async function getPageBacklinks(pageId: string): Promise<BlockEntity[] | null> {
-  const response = await fetch(`/api/pages/${pageId}/backlinks`, {
+async function getPageBacklinks(
+  pageTitle: string,
+): Promise<BlockEntity[] | null> {
+  const encodedTitle = encodeURIComponent(pageTitle);
+  const response = await fetch(`/api/pages/${encodedTitle}/backlinks`, {
     cache: "force-cache",
     next: { revalidate: 30 },
   });

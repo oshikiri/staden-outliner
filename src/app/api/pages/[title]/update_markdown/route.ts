@@ -2,14 +2,14 @@ import { exportOnePageToMarkdown } from "@/app/lib/exporter/incremental_exporter
 
 type Props = {
   params: Promise<{
-    idOrTitle: string;
+    title: string;
   }>;
 };
 
 export async function GET(_req: Request, props: Props) {
-  const { idOrTitle } = await props.params;
+  const { title } = await props.params;
 
-  await exportOnePageToMarkdown(idOrTitle);
+  await exportOnePageToMarkdown(title);
 
   return new Response("{}", {
     headers: {

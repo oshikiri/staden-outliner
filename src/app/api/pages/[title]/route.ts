@@ -3,30 +3,26 @@ import {
   resolveAllCommandTokens,
   fillContentMarkdown,
 } from "./resolve-components";
-import { Block, create as createBlock } from "./../../../lib/markdown/block";
-import { isValidUuid } from "@/app/lib/uuid";
+import { Block, create as createBlock } from "@/app/lib/markdown/block";
 import { getPageByTitle } from "@/app/lib/sqlite";
-import {
-  getPageBlockById,
-  getPageBlockByTitle,
-} from "./../../../lib/sqlite/blocks";
+import { getPageBlockByTitle } from "@/app/lib/sqlite/blocks";
 import * as IncrementalImporter from "@/app/lib/importer/incremental_importer";
 
 import { ResponseError, ResponseUpdated, ResponseSuccess } from "./responses";
 
 type Props = {
   params: Promise<{
-    idOrTitle: string;
+    title: string;
   }>;
 };
 
 export async function GET(_req: Request, props: Props) {
-  const { idOrTitle } = await props.params;
-  if (!idOrTitle) {
+  const { title } = await props.params;
+  if (!title) {
     return new ResponseError("Missing title").toResponse();
   }
 
-  let page = await resolvePage(idOrTitle);
+  let page = await resolvePage(title);
 
   await resolveBlockRef(page);
   await resolveAllCommandTokens(page);
@@ -49,11 +45,11 @@ export async function GET(_req: Request, props: Props) {
  * so this implementation might not be ideal.
  */
 export async function POST(req: Request, props: Props) {
-  const { idOrTitle } = await props.params;
-  if (!idOrTitle) {
+  const { title } = await props.params;
+  if (!title) {
     return new ResponseError("Missing title").toResponse();
   }
-  const pagePrev = await resolvePage(idOrTitle);
+  const pagePrev = await resolvePage(title);
   if (!pagePrev) {
     return new ResponseError("Page not found").toResponse();
   }
@@ -71,46 +67,28 @@ export async function POST(req: Request, props: Props) {
   return new ResponseUpdated(pageUpdated).toResponse();
 }
 
-async function resolvePage(idOrTitle: string) {
-  const page = await getPageByIdOrTitle(idOrTitle);
+async function resolvePage(title: string) {
+  const decodedTitle = decodeURIComponent(title);
+  const page = await getPageBlockByTitle(decodedTitle);
+
   if (page) {
     return page;
   }
 
-  const title = decodeURIComponent(idOrTitle);
-  const file = await getPageByTitle(title || "");
+  const file = await getPageByTitle(decodedTitle);
   if (!file) {
-    console.info(`No file found with title ${title}`);
+    console.info(`No file found with title ${decodedTitle}`);
     const { block } = await IncrementalImporter.createNewFileWithEmptyBlock(
-      title,
+      decodedTitle,
       undefined,
     );
     return block;
   }
 
-  return getPageBlockById(file.pageId || "");
-}
-
-async function getPageByIdOrTitle(
-  idOrTitle: string,
-): Promise<Block | undefined> {
-  console.log({ idOrTitle });
-  if (isValidUuid(idOrTitle)) {
-    return await getPageBlockById(idOrTitle);
-  }
-
-  const title = decodeURIComponent(idOrTitle);
-  const block = await getPageBlockByTitle(title);
-
-  if (block) {
-    return block;
-  }
-
-  const file = await getPageByTitle(title);
-  if (!file) {
-    return undefined;
-  }
   const { block: blockUpdated } =
-    await IncrementalImporter.createNewFileWithEmptyBlock(title, file.pageId);
+    await IncrementalImporter.createNewFileWithEmptyBlock(
+      decodedTitle,
+      file.pageId,
+    );
   return blockUpdated;
 }

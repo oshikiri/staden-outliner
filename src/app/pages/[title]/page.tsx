@@ -62,7 +62,7 @@ export default function Page() {
         {titleFromProperty}
       </h1>
       <PageContent blocks={block?.children} />
-      <BacklinksContainer pageId={block.id} />
+      <BacklinksContainer pageTitle={title} />
       <SideBar pageTitle={title} />
     </>
   );
