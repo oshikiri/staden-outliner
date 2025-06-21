@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Check code formatting
-        run: npm run format
+        run: npm run format:check
 
       - name: Run linter with reports
         run: npm run lint -- --format=json --output-file=eslint-report.json
