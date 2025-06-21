@@ -64,8 +64,8 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    # needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: test
 
     steps:
       - name: Checkout repository
