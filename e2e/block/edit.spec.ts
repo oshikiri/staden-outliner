@@ -1,7 +1,7 @@
 import { test, expect, Locator } from "@playwright/test";
 
 test("Pressing key adds characters to the content", async ({ page }) => {
-  await page.goto("./pages/edit-block");
+  await page.goto("./pages/edit");
 
   const target = page.getByText("add content");
 
@@ -24,7 +24,7 @@ test("Pressing key adds characters to the content", async ({ page }) => {
 test("Pressing Backspace deletes one character from the content", async ({
   page,
 }) => {
-  await page.goto("./pages/edit-block");
+  await page.goto("./pages/edit");
 
   const target = page.getByText("delete content");
 
@@ -49,7 +49,7 @@ test("Pressing Backspace deletes one character from the content", async ({
 test("Pressing Tab/Shift+Tab varies the level of the block", async ({
   page,
 }) => {
-  await page.goto("./pages/edit-block");
+  await page.goto("./pages/edit");
 
   const parent = page.getByText("increase level").first();
   const target = page.getByText("increase target").first();
