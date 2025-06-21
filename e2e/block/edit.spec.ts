@@ -1,20 +1,17 @@
-import { test, expect, Locator } from "@playwright/test";
+import { test, expect, Locator, Page } from "@playwright/test";
 
 test("Pressing key adds characters to the content", async ({ page }) => {
   await page.goto("./pages/edit");
 
   const target = page.getByText("add content");
 
-  async function clickRightmost(element: Locator) {
-    const box = await element.boundingBox();
-    if (box) {
-      await page.mouse.click(box.x + box.width, box.y + box.height / 2);
-      await page.waitForTimeout(100);
-    }
-  }
+  // Click on the block to enter edit mode
+  await clickRightmost(page, target);
 
-  await clickRightmost(target);
+  // Type "new" at the end of the content
   await page.keyboard.type("new");
+
+  // Click outside to exit edit mode
   await page.click("h1");
   await page.waitForTimeout(100);
 
@@ -28,23 +25,28 @@ test("Pressing Backspace deletes one character from the content", async ({
 
   const target = page.getByText("delete content");
 
-  async function clickRightmost(element: Locator) {
-    const box = await element.boundingBox();
-    if (box) {
-      await page.mouse.click(box.x + box.width, box.y + box.height / 2);
-      await page.waitForTimeout(100);
-    }
-  }
+  // Click on the block to enter edit mode
+  await clickRightmost(page, target);
 
-  await clickRightmost(target);
+  // Press Backspace three times to delete "xxx"
   await page.keyboard.press("Backspace");
   await page.keyboard.press("Backspace");
   await page.keyboard.press("Backspace");
+
+  // Click outside to exit edit mode
   await page.click("h1");
   await page.waitForTimeout(100);
 
   expect(await target.textContent()).toBe("delete content:");
 });
+
+async function clickRightmost(page: Page, element: Locator) {
+  const box = await element.boundingBox();
+  if (box) {
+    await page.mouse.click(box.x + box.width, box.y + box.height / 2);
+    await page.waitForTimeout(100);
+  }
+}
 
 test("Pressing Tab/Shift+Tab varies the level of the block", async ({
   page,
