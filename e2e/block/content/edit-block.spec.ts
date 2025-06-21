@@ -1,8 +1,6 @@
 import { test, expect, Locator } from "@playwright/test";
 
-test("In edit mode, pressing key adds characters to the content", async ({
-  page,
-}) => {
+test("Pressing key adds characters to the content", async ({ page }) => {
   await page.goto("./pages/edit-block");
 
   const target = page.getByText("add content");
@@ -23,7 +21,7 @@ test("In edit mode, pressing key adds characters to the content", async ({
   expect(await target.textContent()).toBe("add content:new");
 });
 
-test("In edit mode, pressing Backspace deletes one character from the content", async ({
+test("Pressing Backspace deletes one character from the content", async ({
   page,
 }) => {
   await page.goto("./pages/edit-block");
@@ -47,3 +45,57 @@ test("In edit mode, pressing Backspace deletes one character from the content", 
 
   expect(await target.textContent()).toBe("delete content:");
 });
+
+test("Pressing Tab/Shift+Tab varies the level of the block", async ({ page }) => {
+  await page.goto("./pages/edit-block");
+
+  const parent = page.getByText("increase level").first();
+  const target = page.getByText("increase target").first();
+
+  // ====================================
+  // Tab to increase level
+  // ====================================
+
+  // Click on the block to enter edit mode
+  await target.click();
+  await page.waitForTimeout(100);
+
+  // Press Tab to increase level
+  await page.keyboard.press("Tab");
+  await page.waitForTimeout(100);
+
+  // Click outside to exit edit mode
+  await page.click("h1");
+  await page.waitForTimeout(100);
+
+  // Verify the block level has increased
+  expect(await getXDiff(parent, target)).toBeGreaterThan(10);
+
+  // ====================================
+  // Shift + Tab to decrease level
+  // ====================================
+
+  // Click on the block to enter edit mode
+  await target.click();
+  await page.waitForTimeout(100);
+
+  // Press Shift + Tab to decrease level
+  await page.keyboard.press("Shift+Tab");
+  await page.waitForTimeout(100);
+
+  // Click outside to exit edit mode
+  await page.click("h1");
+  await page.waitForTimeout(100);
+
+  // Verify the block level has decreased
+  expect(await getXDiff(parent, target)).toBe(0);
+});
+
+async function getXDiff(parent: Locator, target: Locator): Promise<number> {
+  const parentBox = await parent.boundingBox();
+  const targetBox = await target.boundingBox();
+  const parentX = parentBox?.x || 0;
+  const targetX = targetBox?.x || 0;
+
+  return targetX - parentX;
+}

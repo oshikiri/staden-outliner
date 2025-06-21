@@ -1,2 +1,4 @@
 - add content:
 - delete content:xxx
+- increase level
+- increase target
