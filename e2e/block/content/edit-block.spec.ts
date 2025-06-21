@@ -46,7 +46,9 @@ test("Pressing Backspace deletes one character from the content", async ({
   expect(await target.textContent()).toBe("delete content:");
 });
 
-test("Pressing Tab/Shift+Tab varies the level of the block", async ({ page }) => {
+test("Pressing Tab/Shift+Tab varies the level of the block", async ({
+  page,
+}) => {
   await page.goto("./pages/edit-block");
 
   const parent = page.getByText("increase level").first();
