@@ -5,8 +5,8 @@ import { Block, refleshBlockFromPageUpdate } from "../markdown/block";
 import { getPageRefTitles } from "@/app/lib/markdown/utils";
 
 import {
-  batchInsertEdges,
-  deleteEdgesByFromId,
+  batchInsertLinks,
+  deleteLinksByFromId,
   getPagesByTitles,
 } from "@/app/lib/sqlite";
 import { putFile } from "@/app/lib/sqlite/pages";
@@ -14,26 +14,26 @@ import { batchInsertBlocks } from "../sqlite/blocks";
 
 export async function importBlockRecursive(block: Block): Promise<Block> {
   const blockUpdated = refleshBlockFromPageUpdate(block);
-  await refreshEdgesFromBlock(blockUpdated);
+  await refreshLinksFromBlock(blockUpdated);
   // FIXME: ここの前にcontentMarkdownをcontentに詰める必要がある
   await batchInsertBlocks(blockUpdated.flatten(), 1000);
   return blockUpdated;
 }
 
-async function refreshEdgesFromBlock(block: Block): Promise<void> {
+async function refreshLinksFromBlock(block: Block): Promise<void> {
   const fromBlockId = block.id || "";
 
-  await deleteEdgesByFromId(fromBlockId);
+  await deleteLinksByFromId(fromBlockId);
   const targetTitles: string[] = getPageRefTitles(block.content);
   const targetPages: File[] = await getPagesByTitles(targetTitles);
-  const edges: [string, string][] = targetPages.map((page) => [
+  const links: [string, string][] = targetPages.map((page) => [
     fromBlockId,
     page.pageId || "",
   ]);
 
-  if (edges.length > 0) {
-    console.log("batchInsertEdges", edges);
-    await batchInsertEdges(edges);
+  if (links.length > 0) {
+    console.log("batchInsertLinks", links);
+    await batchInsertLinks(links);
   }
 }
 

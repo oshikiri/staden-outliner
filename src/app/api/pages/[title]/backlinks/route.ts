@@ -1,4 +1,4 @@
-import { getSourceEdges, getCurrentPage } from "@/app/lib/sqlite";
+import { getSourceLinks, getCurrentPage } from "@/app/lib/sqlite";
 import { Block } from "@/app/lib/markdown/block";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 export async function GET(_req: Request, props: Props) {
   const { title } = await props.params;
 
-  const sourceIds = await getSourceEdges(title || "");
+  const sourceIds = await getSourceLinks(title || "");
   const sourceBlocks: Block[] = (await Promise.all(
     sourceIds.map(async (sourceId) => {
       return resolveBacklink(sourceId);

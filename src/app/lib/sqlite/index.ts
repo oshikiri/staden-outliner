@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 export let db: Database.Database;
 
-import { initializeEdges } from "./edges";
+import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
 import { initializePages } from "./pages";
 
@@ -9,10 +9,10 @@ const stadenRoot = process.env.STADEN_ROOT || "";
 
 export * from "./pages";
 export * from "./blocks";
-export * from "./edges";
+export * from "./links";
 
 export function initializeAllTables() {
-  initializeEdges();
+  initializeLinks();
   initializeBlocks();
   initializePages();
   db.exec(`

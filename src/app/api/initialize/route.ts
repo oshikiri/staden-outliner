@@ -14,12 +14,12 @@ async function initializeSqlite(): Promise<number> {
   sqlite.initializeAllTables();
 
   const importer = new BulkImporter();
-  const { blocks, files, edges } = await importer.run();
+  const { blocks, files, links } = await importer.run();
 
   const BATCH_SIZE = 1000;
   await sqlite.batchInsertBlocks(blocks, BATCH_SIZE);
   await sqlite.batchInsertFiles(files, BATCH_SIZE);
-  await sqlite.batchInsertEdges(edges);
+  await sqlite.batchInsertLinks(links);
 
   console.log("Database initialized");
   sqlite.close();

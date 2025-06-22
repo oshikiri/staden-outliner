@@ -8,7 +8,7 @@ import { File, extractTitle, listAllFilePaths } from "../file";
 export class BulkImporter {
   stadenRoot: string;
 
-  edgesCached: [string, string][] = [];
+  linksCached: [string, string][] = [];
   idToBlocks: Map<string, Block> = new Map();
   files: Map<string, File> = new Map();
   fileTitleToId: Map<string, string> = new Map();
@@ -42,7 +42,7 @@ export class BulkImporter {
     return {
       blocks: Array.from(this.idToBlocks.values()),
       files: Array.from(this.files.values()),
-      edges: this.edgesCached,
+      links: this.linksCached,
     };
   }
 
@@ -86,8 +86,8 @@ export class BulkImporter {
     block.setPropertiesFromContent();
 
     this.idToBlocks.set(block.id, block);
-    for (const target of await this.extractOutEdges(block.content)) {
-      this.edgesCached.push([block.id, target]);
+    for (const target of await this.extractOutLinks(block.content)) {
+      this.linksCached.push([block.id, target]);
     }
 
     const childrenPromised = block.children.map(async (child) => {
@@ -99,7 +99,7 @@ export class BulkImporter {
     await Promise.all(childrenPromised);
   }
 
-  private async extractOutEdges(tokens: Token[]): Promise<string[]> {
+  private async extractOutLinks(tokens: Token[]): Promise<string[]> {
     const targets: string[] = [];
     for (const title of getPageRefTitles(tokens)) {
       const toBlockId = await this.getPageIdOrCreate(title);
