@@ -1,12 +1,14 @@
 import { test, expect, Locator, Page } from "@playwright/test";
 
-test("Pressing key adds characters to the content", async ({ page }) => {
+test("when typing characters, it should add them to the block content", async ({
+  page,
+}) => {
   await page.goto("./pages/edit");
 
   const target = page.getByText("add content");
 
   // Click on the block to enter edit mode
-  await clickRightmost(page, target);
+  await enterEditMode(page, target);
 
   // Type "new" at the end of the content
   await page.keyboard.type("new");
@@ -15,10 +17,10 @@ test("Pressing key adds characters to the content", async ({ page }) => {
   await page.click("h1");
   await page.waitForTimeout(100);
 
-  expect(await target.textContent()).toBe("add content:new");
+  await expect(target).toHaveText("add content:new");
 });
 
-test("Pressing Backspace deletes one character from the content", async ({
+test("when pressing backspace, it should delete characters from the block content", async ({
   page,
 }) => {
   await page.goto("./pages/edit");
@@ -26,7 +28,7 @@ test("Pressing Backspace deletes one character from the content", async ({
   const target = page.getByText("delete content");
 
   // Click on the block to enter edit mode
-  await clickRightmost(page, target);
+  await enterEditMode(page, target);
 
   // Press Backspace three times to delete "xxx"
   await page.keyboard.press("Backspace");
@@ -37,10 +39,11 @@ test("Pressing Backspace deletes one character from the content", async ({
   await page.click("h1");
   await page.waitForTimeout(100);
 
-  expect(await target.textContent()).toBe("delete content:");
+  await expect(target).toHaveText("delete content:");
 });
 
-async function clickRightmost(page: Page, element: Locator) {
+// Enable edit mode by clicking on the block
+async function enterEditMode(page: Page, element: Locator) {
   const box = await element.boundingBox();
   if (box) {
     await page.mouse.click(box.x + box.width, box.y + box.height / 2);
@@ -48,7 +51,7 @@ async function clickRightmost(page: Page, element: Locator) {
   }
 }
 
-test("Pressing Tab/Shift+Tab varies the level of the block", async ({
+test("when pressing Tab/Shift+Tab, it should change the block indentation level", async ({
   page,
 }) => {
   await page.goto("./pages/edit");
