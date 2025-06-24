@@ -6,7 +6,9 @@ export function Command({ token }: { token: CommandEntity }): JSX.Element {
   if (token.name === "embed") {
     return (
       <div className="embed">
-        {token.resolvedContent?.map((c, i) => <Token key={i} token={c} />)}
+        {token.resolvedContent?.map((c, i) => (
+          <Token key={i} token={c} />
+        ))}
       </div>
     );
   }

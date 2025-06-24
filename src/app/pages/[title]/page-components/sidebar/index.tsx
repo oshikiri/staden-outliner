@@ -87,7 +87,9 @@ function SearchBox(): JSX.Element {
         onKeyDown={onKeyDown}
       />
       <datalist id="pagenames">
-        {files?.map((file) => <option key={file} value={file} />)}
+        {files?.map((file) => (
+          <option key={file} value={file} />
+        ))}
       </datalist>
     </div>
   );

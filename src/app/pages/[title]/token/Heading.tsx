@@ -9,7 +9,9 @@ export function Heading({ token }: { token: HeadingEntity }): JSX.Element {
       data-level={token.level}
     >
       {"#".repeat(token.level)}{" "}
-      {token.content?.map((c, i) => <Token key={i} token={c} />)}
+      {token.content?.map((c, i) => (
+        <Token key={i} token={c} />
+      ))}
     </div>
   );
 }
