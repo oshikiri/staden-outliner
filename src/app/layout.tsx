@@ -24,9 +24,9 @@ export default function RootLayout({
         "
       >
         {children}
-        <script src="/vega.js" />
-        <script src="/vega-lite.js" />
-        <script src="/vega-embed.js" />
+        <script src="/vega.js" defer />
+        <script src="/vega-lite.js" defer />
+        <script src="/vega-embed.js" defer />
       </body>
     </html>
   );
