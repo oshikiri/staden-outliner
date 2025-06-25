@@ -1,51 +1,52 @@
-# Staden: An Opinionated and Maintainable Outliner for Me
+# Staden-outliner: An Opinionated and Maintainable Outliner
 
 <img src="./docs/icon.png" alt="staden icon" width="200" height="200" />
 
-- Built with a popular stack (TypeScript/React/Next.js/SQLite)
+- Supports Logseq-like markdown
+- Built with a popular stack (TypeScript/Next.js/SQLite)
 - Limited features
-- Compatible with Logseq markdown
 - Query tables using SQLite
 
 ## Roadmap
-- Automatic export to markdown files
-- Improve markdown editor
+- Fix remaining FIXMEs
+- Add automatic export of markdown files
+- Revise the POST `/pages/[title]` endpoint
+- Improve the Markdown editor
   - See also https://github.com/oshikiri/react-plaintext-outliner
-  - Paste images from clipboard
-  - Caret movement
-  - Implement undo
-  - etc.
-- Android app (viewer)
+  - Support pasting images from the clipboard
+  - Improve caret movement
+  - Implement undo and redo
+- Android viewer app
+- Full-text search
+- Additional E2E tests
 
 ## Getting Started
 
 Requirements:
+- npm
+- SQLite
 
 ```bash
+# Set root directory
 STADEN_ROOT=./docs
 ```
-
-### Run the development server (and read documents)
+### Run the development server and view documents
 
 ```bash
 npm run dev
 ```
 
-GET `/api/initialize`
+```bash
+curl http://localhost:3000/api/initialize
+```
 
-See <http://localhost:3000/pages/index>
+After starting the server with these steps, you can view the documents at <http://localhost:3000/pages/index>.
 
 ![Screenshot at /pages/index](./docs/index-screenshot.png)
 
-### Run the production server
+### Run in Production Mode
 
 ```bash
 npm run build
 npm run start
-```
-
-## Remaining TODOs and Known Issues
-
-```bash
-git grep FIXME
 ```
