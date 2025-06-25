@@ -21,10 +21,7 @@ test("when launching the application, it should not display any console errors",
   // Listen for page errors (unhandled exceptions)
   page.on("pageerror", (error) => {
     console.log(`Page Error: ${error.message}`);
-    // FIXME: Fix vega-lite errors
-    if (!error.stack?.includes("vega-lite")) {
-      consoleErrors.push(error.message);
-    }
+    consoleErrors.push(error.message);
   });
 
   // Wait for the page to fully load and all scripts to execute
