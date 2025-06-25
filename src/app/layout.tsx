@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 import type { Metadata } from "next";
 
 import "./default-theme.css";
@@ -23,9 +24,9 @@ export default function RootLayout({
         "
       >
         {children}
-        <script async src="/vega.js" />
-        <script async src="/vega-lite.js" />
-        <script async src="/vega-embed.js" />
+        <script src="/vega.js" />
+        <script src="/vega-lite.js" />
+        <script src="/vega-embed.js" />
       </body>
     </html>
   );
