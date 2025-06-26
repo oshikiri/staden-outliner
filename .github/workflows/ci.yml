@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -64,6 +68,9 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: test
 
