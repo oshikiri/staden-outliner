@@ -1,5 +1,5 @@
 import { JSX, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
 import { Date } from "@/app/lib/date";
@@ -62,6 +62,7 @@ function SideBarElement({
 
 function SearchBox(): JSX.Element {
   const [files, setFiles] = useState<string[]>();
+  const router = useRouter();
 
   useEffect(() => {
     getAllFiles().then((files) => {
@@ -73,7 +74,7 @@ function SearchBox(): JSX.Element {
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const title = (e.target as HTMLInputElement).value;
-      window.location.href = `/pages/${title}`;
+      router.push(`/pages/${encodeURIComponent(title)}`);
     }
   };
 
