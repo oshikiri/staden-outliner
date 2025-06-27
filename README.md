@@ -24,6 +24,7 @@
 
 Requirements:
 - npm
+- Node.js
 - SQLite
 
 ```bash
