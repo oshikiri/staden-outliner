@@ -6,6 +6,6 @@ describe("invalid input tokens", () => {
   test("it raises an error", () => {
     const tokens = [new ListStart(0), new Text("text")];
     const parser = new Parser(tokens);
-    expect(() => parser.parse()).toThrowError();
+    expect(() => parser.parse()).toThrow();
   });
 });

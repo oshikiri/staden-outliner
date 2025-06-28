@@ -58,7 +58,7 @@ describe("Parser", () => {
         new Block([new Text("item3")], 2, []),
       ];
       const parser = new Parser([]);
-      expect(() => parser.collapseTailUntil(tokens, 1)).toThrowError();
+      expect(() => parser.collapseTailUntil(tokens, 1)).toThrow();
     });
   });
 
@@ -110,7 +110,7 @@ describe("Parser", () => {
     test("when stack is empty, it raises an error", () => {
       const tokens = [new Newline()];
       const parser = new Parser(tokens);
-      expect(() => parser.consumeMarker(0, new Marker("TODO"))).toThrowError();
+      expect(() => parser.consumeMarker(0, new Marker("TODO"))).toThrow();
     });
   });
 
@@ -118,7 +118,7 @@ describe("Parser", () => {
     test("if stack is empty", () => {
       const tokens = [new Text("content")];
       const parser = new Parser(tokens);
-      expect(() => parser.consumeOthers(0, tokens[0])).toThrowError();
+      expect(() => parser.consumeOthers(0, tokens[0])).toThrow();
     });
   });
 });
