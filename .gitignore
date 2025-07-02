@@ -60,3 +60,6 @@ coverage/
 
 # Staden
 *.sqlite3
+
+# VS Code
+.vscode/
