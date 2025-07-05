@@ -1,13 +1,13 @@
 - Staden is an outliner inspired by Logseq.
-- 
+-
 - [[Staden Versions]]
 - [[APIs]]
 - Staden uses Logseq-style markdown syntax
 	- [[Staden Markdown Syntax]]
 	- Staden implements the original [[Markdown Parser]]
 	- Staden imports markdown files using [[Importers]]
-- [[Query]]
-- 
+- [[Staden Query Examples]]
+-
 - ## Glossary
 	- vault: page[] + config
 	- page: block that has no parent (depth=0)
