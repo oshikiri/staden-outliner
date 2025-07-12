@@ -50,6 +50,7 @@ export function getContentMarkdown(block: Block): string {
         return token.toMarkdown();
       })
       .join("")
+      .replaceAll(/\n/g, "\n  ")
       .trimEnd()
   );
 }

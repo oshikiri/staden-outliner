@@ -36,7 +36,7 @@ describe("getContentMarkdown", () => {
   describe("when it has multiline codeblock", () => {
     test("returns the codeblock with newlines", () => {
       const block = new Block([new Text("test\nline2\nline3")], 1, []);
-      expect(getContentMarkdown(block)).toBe("- test\nline2\nline3");
+      expect(getContentMarkdown(block)).toBe("- test\n  line2\n  line3");
     });
   });
 });

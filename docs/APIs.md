@@ -1,4 +1,3 @@
-
 - ## GET: `/api/configs`
 - ## GET: `/api/files`
 - ## GET: `/api/images`

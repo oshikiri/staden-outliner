@@ -5,8 +5,8 @@
 	- Inline code: `content`
 	- Code block
 		- ```javascript
-		array.map(x => f(x))
-		```
+		  array.map(x => f(x))
+		  ```
 	- Quote
 		- >quote content
 	- Heading
@@ -18,4 +18,4 @@
 		- DOING bbbb
 		- DONE cccc
 	- Properties
-		- key:: value
+		- key::  value
