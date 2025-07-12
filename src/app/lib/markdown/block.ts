@@ -229,13 +229,15 @@ export class Block {
     return blocks;
   }
 
-  getContentMarkdown(): string {
-    return this.content
+  getContentMarkdownHead(): string {
+    const markdown = this.content
       .map((token) => {
         return token.toMarkdown();
       })
       .join("")
+      .replaceAll(/\n/g, "\n  ")
       .trimEnd();
+    return markdown.split("\n")[0];
   }
 
   setPropertiesFromContent(): void {

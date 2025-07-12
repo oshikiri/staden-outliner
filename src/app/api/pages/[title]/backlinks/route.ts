@@ -29,11 +29,10 @@ async function resolveBacklink(sourceId: string): Promise<Block> {
   const sourceBlock = pageBlock.getBlockById(sourceId);
 
   let currentBlock: Block | undefined = sourceBlock?.parent || undefined;
-  let ancestors = currentBlock?.getContentMarkdown().split("\n")[0];
+  let ancestors = currentBlock?.getContentMarkdownHead();
   currentBlock = currentBlock?.parent;
   while (currentBlock && currentBlock != pageBlock) {
-    ancestors =
-      currentBlock.getContentMarkdown().split("\n")[0] + " > " + ancestors;
+    ancestors = currentBlock.getContentMarkdownHead() + " > " + ancestors;
     currentBlock = currentBlock.parent;
   }
   if (!sourceBlock?.properties) {

@@ -6,4 +6,3 @@
 	- Initially, all blocks are loaded into memory, so if the number of pages is very large, it could become problematic.
 - ## incremental importer
 	- Used to reflect differences to the vault when blocks are incrementally updated from the UI after bulk import.
-
