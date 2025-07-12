@@ -315,13 +315,6 @@ describe("Block", () => {
     });
   });
 
-  describe("getContentMarkdown", () => {
-    test("when it has no content, returns an empty string", () => {
-      const block = new Block([new Text("test")], 1, []);
-      expect(block.getContentMarkdown()).toBe("test");
-    });
-  });
-
   describe("refleshBlockFromPageUpdate", () => {
     test("when it has no content, returns an empty string", () => {
       const block = new Block([], 1, []);

@@ -29,7 +29,7 @@ export async function exportOnePageToMarkdown(
 }
 
 export function convertToMarkdownRecursive(block: Block): string {
-  let markdown = "- " + block.getContentMarkdown();
+  let markdown = getContentMarkdown(block);
 
   if (block.children.length > 0) {
     const childrenMarkdown = block.children
@@ -40,4 +40,16 @@ export function convertToMarkdownRecursive(block: Block): string {
     markdown += "\n" + childrenMarkdown;
   }
   return markdown;
+}
+
+export function getContentMarkdown(block: Block): string {
+  return (
+    "- " +
+    block.content
+      .map((token) => {
+        return token.toMarkdown();
+      })
+      .join("")
+      .trimEnd()
+  );
 }
