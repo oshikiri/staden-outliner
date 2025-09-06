@@ -74,10 +74,10 @@ export async function getCurrentPage(childId: string): Promise<Block> {
   `,
     [childId],
   );
-    // RV: Use strict equality when checking array length.
-    if (blocks.length == 0) {
-      throw new Error(`Block not found for pageId: ${childId}`);
-    }
+  // RV: Use strict equality when checking array length.
+  if (blocks.length == 0) {
+    throw new Error(`Block not found for pageId: ${childId}`);
+  }
   const rootBlock = createPageFromBlocks(blocks);
   return rootBlock;
 }
@@ -214,10 +214,10 @@ async function batchInsertBlock(blocks: Block[]) {
   insertMany(blocks);
 }
 
-  function createPropertyMap(properties: unknown[][]): object {
-    // RV: Avoid using 'any'; define a typed structure for the property map.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const map: any = {};
+function createPropertyMap(properties: unknown[][]): object {
+  // RV: Avoid using 'any'; define a typed structure for the property map.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const map: any = {};
   properties.forEach((pair: unknown[]) => {
     if (pair.length === 2) {
       const key = pair[0] as string;
