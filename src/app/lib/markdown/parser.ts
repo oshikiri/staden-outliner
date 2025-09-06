@@ -21,6 +21,7 @@ export class Parser {
     if (stack.length === 1) {
       return stack[0];
     }
+    // RV: Serializing the entire stack in the error message can be expensive; include a concise summary instead.
     throw new Error(
       `Invalid stack length = ${stack.length}\n${JSON.stringify(stack)}`,
     );
@@ -141,6 +142,7 @@ export class Parser {
   }
 
   consumeLogbook(i: number, token: Token): number {
+    // RV: Potential infinite loop if footer ":END:" is missing; add a break condition at EOF.
     i++; // consume logbook header
     while (
       token &&
@@ -193,6 +195,7 @@ export class Parser {
     }
     const tail = this.stack.pop();
     if (!tail) {
+      // RV: This fallback constructs a malformed structure instead of recovering gracefully; consider skipping invalid pairs.
       this.stack.push(new Block([], 0, [new Block([new Text("::")], 1, [])]));
       i++;
       return i;

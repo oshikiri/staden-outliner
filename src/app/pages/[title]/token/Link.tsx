@@ -6,6 +6,7 @@ export function Link({ token }: { token: LinkEntity }): JSX.Element {
   return (
     <NextLink
       href={token.url}
+      // RV: Opening in new tab is fine; additionally consider URL validation to prevent javascript: URLs.
       target="_blank"
       rel="noopener noreferrer"
       onClick={(event) => event.stopPropagation()}

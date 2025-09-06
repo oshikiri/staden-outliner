@@ -17,6 +17,7 @@ export function RecentPages({ pageTitle }: { pageTitle: string }): JSX.Element {
 }
 
 function appendAndGetRecentPage(pageTitle: string): string[] {
+  // RV: localStorage access assumes browser context; ensure this code only runs in client components.
   let recentPages: string[] = JSON.parse(
     localStorage.getItem("recentPages") || "[]",
   ) as string[];
@@ -27,6 +28,7 @@ function appendAndGetRecentPage(pageTitle: string): string[] {
 
   recentPages = Array.from(recentPagesSet);
   recentPages = recentPages.slice(-10);
+  // RV: No error handling for storage quota exceeded; wrap in try/catch.
   localStorage.setItem("recentPages", JSON.stringify(recentPages));
 
   return recentPages;

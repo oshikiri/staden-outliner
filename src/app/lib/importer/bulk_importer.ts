@@ -37,6 +37,7 @@ export class BulkImporter {
       await this.importBlockToDB(rootBlock);
     }
 
+    // RV: Misleading log message for a batch import routine; remove or clarify the meaning (e.g., "Import complete").
     console.log("Server started");
 
     return {

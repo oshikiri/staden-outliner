@@ -21,6 +21,7 @@ export async function exportOnePageToMarkdown(
     .map((block) => convertToMarkdownRecursive(block))
     .join("\n");
 
+  // RV: Avoid logging full page content; may leak sensitive data and flood logs.
   console.log(`Exporting to ${pageTitle}:\n${contentMarkdown}`);
 
   await updateFile(file, contentMarkdown + "\n");

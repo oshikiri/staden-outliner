@@ -37,6 +37,7 @@ function readdirRecursively(rootDir: string): string[] {
 }
 
 export async function listAllFilePaths(directoryPath: string) {
+  // RV: Path separator checks use hardcoded '/'; consider using `path.sep` or platform-agnostic methods for cross-platform compatibility.
   return readdirRecursively(directoryPath)
     .filter((p) => p.endsWith(".md"))
     .filter((p) => !p.includes("/.recycle/"))
@@ -47,6 +48,7 @@ export function extractTitle(path: string): string {
   const mk = path.split("/");
   const filename = mk[mk.length - 1];
   // TODO: handle meta characters in filename
+  // RV: `.replace(".md", "")` removes only the first occurrence; prefer suffix-only replacement (e.g., `/\.md$/`).
   const title = filename
     .replace(".md", "")
     .replaceAll("_", "-")
@@ -81,6 +83,7 @@ export async function fillPathToFile(file: File): Promise<void> {
   if (!file.pageId) {
     throw new Error("File pageId is not defined");
   }
+  // RV: If `STADEN_ROOT` is unset, this writes to a relative path. Validate and fail early to avoid unexpected file writes.
   file.path = path.join(process.env.STADEN_ROOT || "", file.title + ".md");
   if (!fs.existsSync(file.path)) {
     fs.writeFileSync(file.path, "");

@@ -30,11 +30,13 @@ export default function Page() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title]);
+  // RV: No error handling; if fetch fails, the page stays blank without feedback.
 
   if (!block) {
     return <></>;
   }
 
+  // RV: Assigning to `window.onkeydown` inside render can cause leaks and duplicate handlers. Use `useEffect` with `addEventListener` and cleanup.
   window.onkeydown = (e: KeyboardEvent) => {
     if (e.key === "s" && e.ctrlKey) {
       e.preventDefault();

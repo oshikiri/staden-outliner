@@ -36,6 +36,7 @@ export async function getPageByTitle(title: string): Promise<File | undefined> {
 }
 
 export async function getPagesByTitles(titles: string[]): Promise<File[]> {
+  // RV: Building an `IN` list via string concatenation is incorrect and risks SQL injection. Use parameter placeholders like `IN (?, ?, ?)` built from `titles.length`.
   const titlesStr = titles.map((title) => `'${title}'`).join(",");
   const result = await query(`SELECT * FROM pages WHERE title IN (?);`, [
     titlesStr,

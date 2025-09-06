@@ -13,16 +13,19 @@ export function JournalCalender({ pathname }: { pathname: string }) {
   const [month, setMonth] = useState<string>(
     monthFromPathname || new Date().format("YYYY-MM"),
   );
+  // RV: Mixed use of custom Date wrapper and native Date string literals; ensure locale/timezone consistency (e.g., dayjs vs JS Date).
 
   useEffect(() => {
     getFilesByPrefix(month).then((files) =>
       setDays(files.map((file: File) => file.title)),
     );
   }, [month]);
+  // RV: No cancellation on unmount; consider aborting pending fetches to avoid state updates on unmounted component.
 
   const dayExists = new Map<string, boolean>();
   days?.forEach((day) => dayExists.set(day, true));
   const month1stDay = new Date(`${month}-01`);
+  // RV: Depending on local timezone, string parsing may lead to off-by-one; prefer constructing via known UTC or library utilities.
   const daysInMonth = month1stDay.daysInMonth();
 
   // Fill the first week with nulls to align the first day of the month

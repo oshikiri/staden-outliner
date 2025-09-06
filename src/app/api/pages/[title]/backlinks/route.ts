@@ -2,6 +2,7 @@ import { getSourceLinks, getCurrentPage } from "@/app/lib/sqlite";
 import { Block } from "@/app/lib/markdown/block";
 
 type Props = {
+  // RV: `params` should be a plain object in Next.js route handlers; prefer `{ params: { title: string } }` without Promise.
   params: Promise<{
     title: string;
   }>;

@@ -1,10 +1,12 @@
 import Database from "better-sqlite3";
 export let db: Database.Database;
+// RV: Global mutable DB handle can cause race conditions in a serverless/concurrent environment; consider connection-per-request or a pool.
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
 import { initializePages } from "./pages";
 
+// RV: `STADEN_ROOT` fallback to empty string makes DB path relative; validate and fail early if unset to avoid accidental relative DB creation.
 const stadenRoot = process.env.STADEN_ROOT || "";
 
 export * from "./pages";
@@ -57,10 +59,12 @@ export async function query(
   }
 }
 
+// RV: Function is declared `async` but contains no `await`; remove `async` to reflect synchronous behavior or make open truly async.
 export async function open() {
   db = new Database(`${stadenRoot}/vault.sqlite3`);
 }
 
+// RV: Same as above: `async` without `await`; make this non-async or await something.
 export async function close() {
   db.close();
 }
