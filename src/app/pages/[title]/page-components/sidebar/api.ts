@@ -1,6 +1,7 @@
 import { File } from "@/app/lib/file";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// RV: Avoid `any` in public API. Define and return a typed shape for configs (e.g., `{ favorites: string[] }`).
 export async function getAllConfigs(): Promise<any> {
   const response = await fetch("/api/configs", {
     cache: "force-cache",

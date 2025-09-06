@@ -15,7 +15,7 @@ import { batchInsertBlocks } from "../sqlite/blocks";
 export async function importBlockRecursive(block: Block): Promise<Block> {
   const blockUpdated = refleshBlockFromPageUpdate(block);
   await refreshLinksFromBlock(blockUpdated);
-  // FIXME: ここの前にcontentMarkdownをcontentに詰める必要がある
+  // RV: FIXME left: contentMarkdown should be reflected to content before persisting; otherwise DB may store stale tokens.
   await batchInsertBlocks(blockUpdated.flatten(), 1000);
   return blockUpdated;
 }
@@ -32,6 +32,7 @@ async function refreshLinksFromBlock(block: Block): Promise<void> {
   ]);
 
   if (links.length > 0) {
+    // RV: Remove verbose logging of link tuples in production to avoid leaking IDs and flooding logs.
     console.log("batchInsertLinks", links);
     await batchInsertLinks(links);
   }

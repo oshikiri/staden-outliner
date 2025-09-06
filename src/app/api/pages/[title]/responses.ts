@@ -8,6 +8,7 @@ interface IResponse {
   toResponse(): Response;
 }
 
+// RV: `status` carries a string like "200" here but subclasses use values like "succeed". Consider unifying the semantics or renaming the field to avoid confusion.
 class Response200 implements IResponse {
   status = "200";
   statusCode = 200;

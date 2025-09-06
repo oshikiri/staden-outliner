@@ -6,6 +6,7 @@ const DATE_FORMAT = "YYYY-MM-DD";
  * A class that represents a Date.
  * This class is a wrapper around the dayjs library in order to replace dayjs in the future.
  */
+// RV: Class name `Date` shadows the global `Date`, which can confuse consumers and tooling. Consider renaming (e.g., `StadenDate`).
 export class Date {
   private dateDayjs: dayjs.Dayjs;
   constructor(dateString?: string) {

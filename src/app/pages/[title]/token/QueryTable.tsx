@@ -54,6 +54,7 @@ function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convert(key: string, value: any): JSX.Element {
   if (key.endsWith("_as_tokens")) {
+    // RV: `JSON.parse` may throw on invalid input; wrap in try/catch and fallback gracefully.
     const tokens = JSON.parse(value);
     return tokens.map((p: TokenEntity, i: number) => (
       <Token key={i} token={createToken(p)} />

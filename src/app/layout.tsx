@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-sync-scripts */
+// RV: Loading sync scripts is disabled via lint rule; consider dynamic import or `next/script` with proper strategy for performance.
 import type { Metadata } from "next";
 
 import "./default-theme.css";
@@ -14,6 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // RV: Language is hardcoded to "en". Consider sourcing from user config (e.g., `${STADEN_ROOT}/config.yaml` or a context provider).
     <html lang="en">
       <body
         className="

@@ -19,6 +19,7 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
       console.error("Block not found");
       return;
     }
+    // RV: Avoid logging content; may leak private data to console.
     console.log("Bullet onClick", { contentMarkdown: target.contentMarkdown });
     target.contentMarkdown = flipCollpased(target.contentMarkdown || "");
 

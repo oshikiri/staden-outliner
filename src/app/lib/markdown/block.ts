@@ -51,6 +51,7 @@ export class Block {
     // case 2: current has no children
     //   Go up the tree until we find a parent that has a next sibling
     let current: Block = create(this);
+    // RV: Verbose console logging in core traversal can degrade performance and spam logs; remove or guard under debug flag.
     console.log(current);
     while (current.parent) {
       const [parent, currentIdx] = current.getParentAndIdx();
@@ -102,6 +103,7 @@ export class Block {
 
   getParentAndIdx(): [Block | null, number] {
     if (!this.parent?.children) {
+      // RV: Avoid logging on hot paths; consider returning `[-1]` and letting callers handle quietly.
       console.log("Block has no parent or the parent has no children.");
       return [null, -1];
     }
@@ -282,6 +284,7 @@ export function create(block: Block): Block {
   return newBlock;
 }
 
+// RV: Typo in function name `reflesh` -> `refresh`; consider renaming (and updating imports) for clarity.
 export function refleshBlockFromPageUpdate(block: Block): Block {
   const contentMarkdown = block.contentMarkdown || "";
   const lexer = new Lexer("- " + contentMarkdown); // FIXME

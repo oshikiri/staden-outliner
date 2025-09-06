@@ -62,5 +62,6 @@ export function Token({ token }: { token: entity.Token }): JSX.Element {
   } else if (token instanceof entity.Newline) {
     return <br />;
   }
+  // RV: Unknown token fallback leaks into UI; consider logging and rendering nothing or a safe placeholder.
   return <span> !!! unknown token !!! </span>;
 }
