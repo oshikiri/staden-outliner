@@ -1,3 +1,4 @@
+// RV: Mark this component as a client component by adding 'use client'.
 import {
   JSX,
   useRef,
@@ -63,9 +64,11 @@ export function Content({
       // edit mode -> render mode
       block.contentMarkdown = contentMarkdown;
     }
+    // RV: Avoid suppressing exhaustive deps; include all dependencies or refactor.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing, offset]);
 
+  // RV: onClickContent is async but contains no await; remove async if not needed.
   const onClickContent: MouseEventHandler = async (event) => {
     if (!editable) {
       return;
@@ -90,6 +93,7 @@ export function Content({
       return;
     }
     const contentMarkdown = extractTextContent(contentRef.current);
+    // RV: Remove console.log before release; use a debugger during development.
     console.log("onBlurContent", { contentMarkdown });
 
     const blockId = block.id || "";
@@ -138,6 +142,7 @@ export function Content({
         contentMarkdown={contentRef.current?.textContent || ""}
         setup={() => {
           setEditingBlockId(null);
+          // RV: Remove console.log or guard behind a debug flag.
           console.log(offset);
         }}
         teardown={(contentMarkdown: string) => {

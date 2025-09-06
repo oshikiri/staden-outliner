@@ -40,10 +40,11 @@ export function extractTextsAroundCursor() {
         textBefore += extractTextContent(child);
       } else {
         const childText = extractTextContent(child);
-        if (textAfter === "" && childText == "\n") continue;
-        textAfter += extractTextContent(child);
+          // RV: Use strict equality when comparing strings.
+          if (textAfter === "" && childText == "\n") continue;
+          textAfter += extractTextContent(child);
+        }
       }
-    }
   }
   return { textBefore, textAfter };
 }

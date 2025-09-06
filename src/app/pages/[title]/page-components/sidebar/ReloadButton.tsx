@@ -1,3 +1,4 @@
+// RV: Mark as client component; hooks require 'use client'.
 import { JSX, useState } from "react";
 
 export function ReloadButton(): JSX.Element {

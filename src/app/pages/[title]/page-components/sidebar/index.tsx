@@ -1,3 +1,4 @@
+// RV: Add 'use client' to use hooks and navigation utilities in this component.
 import { JSX, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 

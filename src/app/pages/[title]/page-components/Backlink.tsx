@@ -1,3 +1,4 @@
+// RV: Add 'use client' because this component uses hooks and client-side data fetching.
 import { JSX, useEffect, useState } from "react";
 
 import {
@@ -22,6 +23,7 @@ export function BacklinksContainer({
       if (!backlinks) {
         return;
       }
+      // RV: Remove console.log for production; use a logger or conditional debug.
       console.log("getPageBacklinks", backlinks);
       setBacklinks(backlinks);
     });

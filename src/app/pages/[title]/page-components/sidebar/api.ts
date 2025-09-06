@@ -1,5 +1,6 @@
 import { File } from "@/app/lib/file";
 
+// RV: Returning Promise<any> obscures the config structure; define a Config interface.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getAllConfigs(): Promise<any> {
   const response = await fetch("/api/configs", {

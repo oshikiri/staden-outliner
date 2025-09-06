@@ -1,4 +1,5 @@
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore?tab=readme-ov-file#_chunk
+// RV: Using any[] loses type information; make chunk generic.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function chunk(input: any[], size: number): any[][] {
   return input.reduce((arr, item, idx) => {

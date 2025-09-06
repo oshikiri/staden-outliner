@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-sync-scripts */
+// RV: Replace raw script tags with next/script rather than disabling lint rules.
 import type { Metadata } from "next";
 
 import "./default-theme.css";
@@ -24,6 +24,7 @@ export default function RootLayout({
         "
       >
         {children}
+        {/* RV: Use next/script with strategy="afterInteractive" instead of raw script tags. */}
         <script src="/vega.js" defer />
         <script src="/vega-lite.js" defer />
         <script src="/vega-embed.js" defer />

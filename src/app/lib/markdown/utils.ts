@@ -1,6 +1,7 @@
 import { Token } from ".";
 import { PageRef, PropertyPair } from "./token";
 
+// RV: Function name is misspelled and optional chaining below is unnecessary; consider renaming to flipCollapsed.
 export function flipCollpased(contentMarkdown: string): string {
   const matched = contentMarkdown.match(/^collapsed::\s*(\S+)/m);
   if (!matched) {

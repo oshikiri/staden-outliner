@@ -28,8 +28,10 @@ export function initializeAllTables() {
 export async function query(
   sql: string,
   params: unknown[] = [],
+  // RV: Returning Promise<any[]> loses type safety and relies on the global db; consider using a generic type parameter and dependency injection.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> {
+  // RV: Avoid using console.log in library code; prefer a configurable logger or remove in production.
   console.log(
     "sqlite.query:",
     sql.replace(/[\n\r]\s*/g, " ").replace(/^\s*/g, " "),
@@ -58,9 +60,11 @@ export async function query(
 }
 
 export async function open() {
+  // RV: This async function performs no await; either remove async or use asynchronous operations.
   db = new Database(`${stadenRoot}/vault.sqlite3`);
 }
 
 export async function close() {
+  // RV: This async function performs no await; either remove async or use asynchronous operations.
   db.close();
 }

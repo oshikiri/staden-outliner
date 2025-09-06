@@ -27,6 +27,7 @@ export class ContentKeyboardEventHandler {
     return (event) => {
       if (event.key === "Enter") {
         this.enter(event);
+        // RV: Use strict equality for key comparisons.
       } else if (event.key == "Tab") {
         this.tab(event);
       } else if (event.key === "ArrowDown") {
@@ -61,6 +62,7 @@ export class ContentKeyboardEventHandler {
 
     this.setEditingBlockId?.(null);
     this.setOffset?.(null);
+    // RV: Remove console.log before shipping; use a logger for debugging.
     console.log("Enter", {
       block: this.block,
       textBefore,
@@ -126,7 +128,7 @@ export class ContentKeyboardEventHandler {
    */
   moveToLineStart(event: KeyboardEvent) {
     event.preventDefault();
-
+    // RV: Avoid non-null assertion on window.getSelection(); guard against null selections.
     const caretPosition = getCursorPositionInBlock(window.getSelection()!);
     const newlineBeforeCaret = caretPosition?.newlines?.findLast((newline) => {
       return newline.index! < caretPosition.anchorOffset;
@@ -143,7 +145,7 @@ export class ContentKeyboardEventHandler {
    */
   moveToLineEnd(event: KeyboardEvent) {
     event.preventDefault();
-
+    // RV: Avoid non-null assertion on window.getSelection(); guard against null selections.
     const caretPosition = getCursorPositionInBlock(window.getSelection()!);
     const newlineAfterCaret = caretPosition?.newlines?.find((newline) => {
       return newline.index! >= caretPosition.anchorOffset;
@@ -202,6 +204,7 @@ export class ContentKeyboardEventHandler {
 
   private async handlePasteItem(clipboardItem: ClipboardItem) {
     const types = clipboardItem.types;
+    // RV: Remove console.log for production; wrap in a debug check if necessary.
     console.log("Pasting item with types:", types);
     if (types.includes("text/plain")) {
       const blob = await clipboardItem.getType("text/plain");

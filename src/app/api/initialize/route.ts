@@ -4,10 +4,12 @@ import * as sqlite from "./../../lib/sqlite";
 export async function GET() {
   const inserted = await initializeSqlite();
 
+  // RV: Prefer NextResponse.json for API routes instead of new Response.
   return new Response(JSON.stringify({ inserted }), {});
 }
 
 async function initializeSqlite(): Promise<number> {
+  // RV: Remove console.log or replace with structured logging.
   console.log("Initializing database...");
 
   sqlite.open();

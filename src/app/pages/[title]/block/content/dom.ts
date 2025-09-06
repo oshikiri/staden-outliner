@@ -40,6 +40,7 @@ export function setCursor(currentNode: ChildNode, offset: number | null): void {
     offset = nodeTextLength;
   }
 
+  // RV: Remove console.log before production; consider using a debugger instead.
   console.log("setCursor", node);
 
   const range = document.createRange();

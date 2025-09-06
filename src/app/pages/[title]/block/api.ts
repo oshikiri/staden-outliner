@@ -8,6 +8,7 @@ export async function postPage(
   }
   const pageTitle = page.getProperty("title") as string;
   page = sanitizePageBeforePost(page);
+  // RV: Remove console.log before deploying; rely on logging only when debugging.
   console.log("postPage", page);
   const encodedTitle = encodeURIComponent(pageTitle);
   const response = await fetch(`/api/pages/${encodedTitle}`, {
@@ -17,6 +18,7 @@ export async function postPage(
     },
     body: JSON.stringify(page?.toJSON()),
   });
+  // RV: Check response.ok before parsing to JSON to handle HTTP errors.
   return response.json();
 }
 

@@ -1,3 +1,4 @@
+// RV: Mark as client component to use hooks for state and effects.
 import { JSX, useEffect, useState } from "react";
 import NextLink from "next/link";
 

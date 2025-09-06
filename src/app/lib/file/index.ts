@@ -2,6 +2,7 @@ import { readdirSync } from "fs";
 import * as path from "path";
 import * as fs from "fs";
 
+// RV: Synchronous fs APIs block the event loop; consider using fs/promises.
 export interface File {
   path?: string;
   title: string;
@@ -17,6 +18,7 @@ export async function create(title: string, pageId: string): Promise<File> {
 }
 
 // https://blog.araya.dev/posts/2019-05-09-node-recursive-readdir/
+// RV: This helper relies on readdirSync; prefer asynchronous traversal for scalability.
 function readdirRecursively(rootDir: string): string[] {
   let files = [];
   const dirs = [];
@@ -57,6 +59,7 @@ export function extractTitle(path: string): string {
 }
 
 export function getLocalFile(path: string) {
+  // RV: readFileSync is synchronous and may block; use fs.promises.readFile instead.
   const data = fs.readFileSync(path);
   return data;
 }
@@ -82,6 +85,7 @@ export async function fillPathToFile(file: File): Promise<void> {
     throw new Error("File pageId is not defined");
   }
   file.path = path.join(process.env.STADEN_ROOT || "", file.title + ".md");
+  // RV: existsSync and writeFileSync block; replace with async alternatives for better performance.
   if (!fs.existsSync(file.path)) {
     fs.writeFileSync(file.path, "");
   }

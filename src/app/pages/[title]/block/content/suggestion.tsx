@@ -1,3 +1,4 @@
+// RV: This component uses client-side events; add 'use client' at the top.
 import { JSX } from "react";
 
 import { File } from "@/app/lib/file";
@@ -15,6 +16,7 @@ export function Suggestion({
   setup: () => void;
   teardown: (contentMarkdown: string) => void;
 }): JSX.Element {
+  // RV: Use strict equality to check for undefined.
   if (suggestionQuery == undefined) {
     return <></>;
   }
@@ -52,6 +54,7 @@ async function cacheFiles() {
     localStorage.setItem("files", JSON.stringify(files));
   });
 }
+// RV: Avoid invoking side effects at module scope; wrap in useEffect within a component.
 if (typeof localStorage !== "undefined") {
   cacheFiles();
 }

@@ -1,3 +1,4 @@
+// RV: Add 'use client' directive since hooks are used in this component.
 import { JSX, useRef, useEffect } from "react";
 import { QueryTable } from "./QueryTable";
 import { CommandQuery as CommandQueryEntity } from "@/app/lib/markdown/token";
@@ -43,6 +44,7 @@ function VegaLiteEmbed({
       },
     };
     element.current.appendChild(
+      // RV: Avoid injecting scripts; use next/script or a dedicated Vega component.
       document
         .createRange()
         .createContextualFragment(

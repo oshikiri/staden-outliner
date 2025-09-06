@@ -1,5 +1,7 @@
 "use client";
 
+// RV: Move this route from src/app/pages/[title] to src/app/[title] to match App Router conventions.
+
 import { JSX, useEffect } from "react";
 import { useParams } from "next/navigation";
 
@@ -19,15 +21,18 @@ export default function Page() {
 
   useEffect(() => {
     if (typeof document !== "undefined") {
+      // RV: Use Next.js metadata API instead of directly mutating document.title.
       document.title = title;
     }
   }, [title]);
 
   useEffect(() => {
     getPageByTitle(title).then((block) => {
+      // RV: Remove console.log before production; prefer a scoped logger.
       console.log("pageUpdate", block);
       setPage(block);
     });
+    // RV: Avoid disabling exhaustive-deps; include dependencies or refactor effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title]);
 
@@ -35,6 +40,7 @@ export default function Page() {
     return <></>;
   }
 
+  // RV: Register global key handlers in useEffect and clean up to prevent leaks.
   window.onkeydown = (e: KeyboardEvent) => {
     if (e.key === "s" && e.ctrlKey) {
       e.preventDefault();
@@ -46,6 +52,7 @@ export default function Page() {
 
   return (
     <>
+      {/* RV: Remove inline <title>; rely on metadata or Head component. */}
       <title>{titleFromProperty}</title>
       <h1
         className="

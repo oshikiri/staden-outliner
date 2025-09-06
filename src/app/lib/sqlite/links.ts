@@ -24,6 +24,7 @@ export async function getSourceLinks(
   `,
     [targetPageTitle],
   );
+  // RV: Mapping links with any obscures row shape; define LinkRow interface.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return links.map((link: any) => link.from_id);
 }

@@ -12,6 +12,7 @@ export class Block {
 
   public contentMarkdown?: string;
   public backlinks?: Block[];
+  // RV: properties typed as unknown[][] hide key-value intent; use a typed record instead.
   public properties?: unknown[][];
   public parent?: Block;
 
@@ -51,6 +52,7 @@ export class Block {
     // case 2: current has no children
     //   Go up the tree until we find a parent that has a next sibling
     let current: Block = create(this);
+    // RV: Remove debug logging or wrap it with a conditional debug flag.
     console.log(current);
     while (current.parent) {
       const [parent, currentIdx] = current.getParentAndIdx();

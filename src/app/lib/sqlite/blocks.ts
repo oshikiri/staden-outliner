@@ -47,6 +47,7 @@ export async function getPageBlockByTitle(
     [title],
   );
 
+  // RV: Use strict equality when comparing numeric lengths.
   if (blocks.length == 0) {
     return undefined;
   }
@@ -73,13 +74,15 @@ export async function getCurrentPage(childId: string): Promise<Block> {
   `,
     [childId],
   );
-  if (blocks.length == 0) {
-    throw new Error(`Block not found for pageId: ${childId}`);
-  }
+    // RV: Use strict equality when checking array length.
+    if (blocks.length == 0) {
+      throw new Error(`Block not found for pageId: ${childId}`);
+    }
   const rootBlock = createPageFromBlocks(blocks);
   return rootBlock;
 }
 
+// RV: Use a typed interface for database rows instead of any[].
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createPageFromBlocks(blocks: any[]): Block {
   if (blocks.length == 0) {
@@ -130,6 +133,7 @@ function createPageFromBlocks(blocks: any[]): Block {
 
 function createBlockFromDbWithChildren(
   currentId: string,
+  // RV: Map values typed as any hide block structure; define a specific row type.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   idToBlocks: Map<string, any>,
   childrenMap: Map<string, Array<{ id: string; order_index: number }>>,
@@ -210,9 +214,10 @@ async function batchInsertBlock(blocks: Block[]) {
   insertMany(blocks);
 }
 
-function createPropertyMap(properties: unknown[][]): object {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const map: any = {};
+  function createPropertyMap(properties: unknown[][]): object {
+    // RV: Avoid using 'any'; define a typed structure for the property map.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map: any = {};
   properties.forEach((pair: unknown[]) => {
     if (pair.length === 2) {
       const key = pair[0] as string;

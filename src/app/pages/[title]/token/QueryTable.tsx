@@ -38,6 +38,7 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
   );
 }
 
+// RV: rowData typed as any hides the shape of table rows; define an interface or generic.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   return (
@@ -51,6 +52,7 @@ function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   );
 }
 
+// RV: value typed as any loses type safety; prefer a union of possible value types.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convert(key: string, value: any): JSX.Element {
   if (key.endsWith("_as_tokens")) {

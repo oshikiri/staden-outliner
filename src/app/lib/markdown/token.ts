@@ -26,6 +26,7 @@ export class Token {
     return "";
   }
   toText(): string {
+    // RV: Avoid casting to any; use a type guard to ensure textContent exists.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this as any).textContent || "";
   }
@@ -245,6 +246,7 @@ export class Marker extends Token {
   }
 }
 
+// RV: Strongly type token objects instead of using any.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createToken(obj: any): Token {
   const tokenType = obj.type;
