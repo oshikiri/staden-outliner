@@ -84,6 +84,7 @@ export async function fillPathToFile(file: File): Promise<void> {
     throw new Error("File pageId is not defined");
   }
   // RV: If `STADEN_ROOT` is unset, this writes to a relative path. Validate and fail early to avoid unexpected file writes.
+  // RV(security): Potential filename issues with special characters (e.g., `../`); sanitize `file.title` to ensure valid filenames.
   file.path = path.join(process.env.STADEN_ROOT || "", file.title + ".md");
   if (!fs.existsSync(file.path)) {
     fs.writeFileSync(file.path, "");
