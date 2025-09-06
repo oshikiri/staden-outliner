@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-package-lock.json
 /node_modules
 /.pnp
 .pnp.*
@@ -44,9 +43,6 @@ next-env.d.ts
 
 
 # Node.js
-node_modules/
-package-lock.json
-
 built/
 tsconfig.tsbuildinfo
 
