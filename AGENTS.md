@@ -7,7 +7,7 @@
   - React conventions
   - Next.js conventions
   - Web security standards
-- Do not remove or skip tests unless explicitly instructed.
+- Do not remove tests. Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
 
 ## Reviewing
 - When asked to review code:
