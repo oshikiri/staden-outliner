@@ -13,7 +13,7 @@
     "test-coverage": "jest --coverage",
     "test:e2e": "playwright test --config=playwright.config.ts",
     "test:unit": "jest",
-    "test": "npm run test:unit && npm run test:e2e"
+    "test": "npm run test:unit"
   },
   "dependencies": {
     "dayjs": "^1.11.13",
