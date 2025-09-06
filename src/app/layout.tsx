@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-sync-scripts */
 // RV: Loading sync scripts is disabled via lint rule; consider dynamic import or `next/script` with proper strategy for performance.
 import type { Metadata } from "next";
 
