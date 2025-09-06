@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   const queryPath: string = url.searchParams.get("path") || "";
   const imagePath = path.join(stadenRoot + "/pages/", queryPath);
   const imageBuffer = await fs.readFile(imagePath);
-  return new Response(imageBuffer, {
+  return new Response(new Uint8Array(imageBuffer), {
     headers: {
       "Content-Type": "image/png",
     },
