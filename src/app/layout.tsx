@@ -1,5 +1,5 @@
-// RV: Loading sync scripts is disabled via lint rule; consider dynamic import or `next/script` with proper strategy for performance.
 import type { Metadata } from "next";
+import Script from "next/script";
 
 import "./default-theme.css";
 
@@ -14,6 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // RV: Tailwind w-300 is likely invalid. Use w-[300px] or a configured size token.
     // RV: Language is hardcoded to "en". Consider sourcing from user config (e.g., `${STADEN_ROOT}/config.yaml` or a context provider).
     <html lang="en">
       <body
@@ -22,12 +23,13 @@ export default function RootLayout({
           ml-20
           text-primary
           bg-background
-        "
+          "
       >
         {children}
-        <script src="/vega.js" defer />
-        <script src="/vega-lite.js" defer />
-        <script src="/vega-embed.js" defer />
+        {/* NOTE: we must load these Vega scripts in this order */}
+        <Script src="/vega.js" strategy="afterInteractive" />
+        <Script src="/vega-lite.js" strategy="afterInteractive" />
+        <Script src="/vega-embed.js" strategy="afterInteractive" />
       </body>
     </html>
   );
