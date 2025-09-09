@@ -1,7 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 import NextLink from "next/link";
 
-import { Date } from "@/app/lib/date";
+import { StadenDate } from "@/app/lib/date";
 import { File } from "@/app/lib/file";
 import { getFilesByPrefix } from "./api";
 
@@ -11,7 +11,7 @@ export function JournalCalender({ pathname }: { pathname: string }) {
 
   const [days, setDays] = useState<string[]>();
   const [month, setMonth] = useState<string>(
-    monthFromPathname || new Date().format("YYYY-MM"),
+    monthFromPathname || new StadenDate().format("YYYY-MM"),
   );
   // RV: Mixed use of custom Date wrapper and native Date string literals; ensure locale/timezone consistency (e.g., dayjs vs JS Date).
 
@@ -24,7 +24,7 @@ export function JournalCalender({ pathname }: { pathname: string }) {
 
   const dayExists = new Map<string, boolean>();
   days?.forEach((day) => dayExists.set(day, true));
-  const month1stDay = new Date(`${month}-01`);
+  const month1stDay = new StadenDate(`${month}-01`);
   // RV: Depending on local timezone, string parsing may lead to off-by-one; prefer constructing via known UTC or library utilities.
   const daysInMonth = month1stDay.daysInMonth();
 
@@ -92,7 +92,7 @@ function MoveToPrevMonth({
   month1stDay,
   setMonth,
 }: {
-  month1stDay: Date;
+  month1stDay: StadenDate;
   setMonth: (month: string) => void;
 }) {
   const goToPrevMonth = () => {
@@ -107,7 +107,7 @@ function MoveToNextMonth({
   month1stDay,
   setMonth,
 }: {
-  month1stDay: Date;
+  month1stDay: StadenDate;
   setMonth: (month: string) => void;
 }) {
   const goToNextMonth = () => {

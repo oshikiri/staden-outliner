@@ -2,7 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
-import { Date } from "@/app/lib/date";
+import { StadenDate } from "@/app/lib/date";
 import { PageRef } from "../../token";
 import { JournalCalender } from "./Calender";
 import { RecentPages } from "./RecentPages";
@@ -114,6 +114,6 @@ function Favorites() {
 }
 
 function RecentJournal() {
-  const todayStr = new Date().format();
+  const todayStr = new StadenDate().format();
   return <PageRef pageref={new PageRefEntity(todayStr)} />;
 }
