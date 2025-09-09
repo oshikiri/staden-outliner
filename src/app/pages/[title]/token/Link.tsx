@@ -3,10 +3,15 @@ import { JSX } from "react";
 import { Link as LinkEntity } from "@/app/lib/markdown/token";
 
 export function Link({ token }: { token: LinkEntity }): JSX.Element {
+  const url = token.url;
+
+  if (!url.startsWith("http")) {
+    return <span>{url}</span>;
+  }
+
   return (
     <NextLink
-      href={token.url}
-      // RV: Opening in new tab is fine; additionally consider URL validation to prevent javascript: URLs.
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(event) => event.stopPropagation()}
