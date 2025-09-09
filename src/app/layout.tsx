@@ -23,7 +23,7 @@ export default function RootLayout({
           ml-20
           text-primary
           bg-background
-          "
+        "
       >
         {children}
         {/* NOTE: we must load these Vega scripts in this order */}
