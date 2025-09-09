@@ -6,8 +6,10 @@ import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
 import { initializePages } from "./pages";
 
-// RV: `STADEN_ROOT` fallback to empty string makes DB path relative; validate and fail early if unset to avoid accidental relative DB creation.
-const stadenRoot = process.env.STADEN_ROOT || "";
+const stadenRoot = process.env.STADEN_ROOT;
+if (!stadenRoot) {
+  throw new Error("Environment variable STADEN_ROOT is not set.");
+}
 
 export * from "./pages";
 export * from "./blocks";
@@ -59,12 +61,10 @@ export async function query(
   }
 }
 
-// RV: Function is declared `async` but contains no `await`; remove `async` to reflect synchronous behavior or make open truly async.
 export async function open() {
   db = new Database(`${stadenRoot}/vault.sqlite3`);
 }
 
-// RV: Same as above: `async` without `await`; make this non-async or await something.
 export async function close() {
   db.close();
 }
