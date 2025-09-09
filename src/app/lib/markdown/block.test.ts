@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach } from "@jest/globals";
 
-import { Block, create, refleshBlockFromPageUpdate } from "./block";
+import { Block, create, refreshBlockFromPageUpdate } from "./block";
 import { Text, PropertyPair, Marker } from "./token";
 
 describe("Block", () => {
@@ -320,14 +320,14 @@ describe("Block", () => {
       const block = new Block([], 1, []);
       block.contentMarkdown = undefined;
 
-      refleshBlockFromPageUpdate(block);
+      refreshBlockFromPageUpdate(block);
       expect(block.content).toStrictEqual([]);
     });
     test("when it has content, returns an empty string", () => {
       const block = new Block([], 1, []);
       block.contentMarkdown = "test";
 
-      refleshBlockFromPageUpdate(block);
+      refreshBlockFromPageUpdate(block);
       expect(block.content).toStrictEqual([new Text("test")]);
     });
   });

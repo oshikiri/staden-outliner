@@ -284,8 +284,7 @@ export function create(block: Block): Block {
   return newBlock;
 }
 
-// RV: Typo in function name `reflesh` -> `refresh`; consider renaming (and updating imports) for clarity.
-export function refleshBlockFromPageUpdate(block: Block): Block {
+export function refreshBlockFromPageUpdate(block: Block): Block {
   const contentMarkdown = block.contentMarkdown || "";
   const lexer = new Lexer("- " + contentMarkdown); // FIXME
   const tokens = lexer.exec();
@@ -294,7 +293,7 @@ export function refleshBlockFromPageUpdate(block: Block): Block {
 
   block.content = blockForMarkdown.children[0].content;
   block.properties = blockForMarkdown.children[0].properties;
-  block.children = block.children.map(refleshBlockFromPageUpdate);
+  block.children = block.children.map(refreshBlockFromPageUpdate);
 
   return block;
 }

@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 
 import { File, create as createFile } from "../file";
-import { Block, refleshBlockFromPageUpdate } from "../markdown/block";
+import { Block, refreshBlockFromPageUpdate } from "../markdown/block";
 import { getPageRefTitles } from "@/app/lib/markdown/utils";
 
 import {
@@ -13,7 +13,7 @@ import { putFile } from "@/app/lib/sqlite/pages";
 import { batchInsertBlocks } from "../sqlite/blocks";
 
 export async function importBlockRecursive(block: Block): Promise<Block> {
-  const blockUpdated = refleshBlockFromPageUpdate(block);
+  const blockUpdated = refreshBlockFromPageUpdate(block);
   await refreshLinksFromBlock(blockUpdated);
   // RV: FIXME left: contentMarkdown should be reflected to content before persisting; otherwise DB may store stale tokens.
   await batchInsertBlocks(blockUpdated.flatten(), 1000);
