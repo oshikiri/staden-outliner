@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     // RV: Tailwind w-300 is likely invalid. Use w-[300px] or a configured size token.
-    // RV: Language is hardcoded to "en". Consider sourcing from user config (e.g., `${STADEN_ROOT}/config.yaml` or a context provider).
+    // RV: Language is hardcoded to "en". Consider sourcing from user config (e.g., `${STADEN_ROOT}/config.json` or a context provider).
     <html lang="en">
       <body
         className="
