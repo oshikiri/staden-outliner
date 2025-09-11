@@ -6,10 +6,8 @@ import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
 import { initializePages } from "./pages";
 
+// RV: Consider validating that `STADEN_ROOT` is set and is an absolute path to avoid runtime errors.
 const stadenRoot = process.env.STADEN_ROOT;
-if (!stadenRoot) {
-  throw new Error("Environment variable STADEN_ROOT is not set.");
-}
 
 export * from "./pages";
 export * from "./blocks";
