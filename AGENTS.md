@@ -1,5 +1,7 @@
 # AGENTS.md
 
+- Please response in Japanese
+
 ## Coding styles
 - Adhere to:
   - JavaScript best practices
