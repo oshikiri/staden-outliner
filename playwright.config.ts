@@ -26,8 +26,10 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/global-setup"),
 
   webServer: {
-    // RV: Injecting env via command string is brittle; prefer `env` property. Ensure the dev server is hardened for tests.
-    command: "STADEN_ROOT=./e2e/ npm run dev",
+    command: "npm run dev",
+    env: {
+      STADEN_ROOT: "./e2e/",
+    },
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
