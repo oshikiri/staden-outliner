@@ -7,7 +7,9 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
-  // RV: Consider setting `timeout` and `expect.timeout` to avoid hanging tests.
+  expect: {
+    timeout: 5000,
+  },
 
   use: {
     baseURL: "http://localhost:3000",
@@ -24,8 +26,10 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/global-setup"),
 
   webServer: {
-    // RV: Injecting env via command string is brittle; prefer `env` property. Ensure the dev server is hardened for tests.
-    command: "STADEN_ROOT=./e2e/ npm run dev",
+    command: "npm run dev",
+    env: {
+      STADEN_ROOT: "./e2e/",
+    },
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
