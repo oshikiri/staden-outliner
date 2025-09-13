@@ -30,7 +30,7 @@ export {
   Marker,
 };
 
-export function Token({ token }: { token: entity.Token }): JSX.Element {
+export function Token({ token }: { token: entity.Token }): JSX.Element | null {
   if (token instanceof entity.Text) {
     return <span>{token.textContent}</span>;
   } else if (token instanceof entity.Heading) {
@@ -62,6 +62,6 @@ export function Token({ token }: { token: entity.Token }): JSX.Element {
   } else if (token instanceof entity.Newline) {
     return <br />;
   }
-  // RV: Unknown token fallback leaks into UI; consider logging and rendering nothing or a safe placeholder.
-  return <span> !!! unknown token !!! </span>;
+  console.warn("Unknown token type:", token);
+  return null;
 }
