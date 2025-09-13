@@ -34,20 +34,20 @@ export class StadenDate {
     return this.dateDayjs.day();
   }
 
+  /**
+   * Adds a specified amount of time to the current date.
+   *
+   * @param amount - The number of units to add.
+   * @param unit - The unit of time to add. Must be one of "year", "month", or "day".
+   * @returns A new `StadenDate` instance representing the updated date.
+   * @throws {Error} If the unit is not "year", "month", or "day".
+   */
   public add(amount: number, unit: string): StadenDate {
-    const dayjsUnit = convertToManipulateType(unit);
-    const dayjsDate = this.dateDayjs.add(amount, dayjsUnit);
+    if (unit != "year" && unit != "month" && unit != "day") {
+      throw new Error(`Unknown unit: ${unit}`);
+    }
+
+    const dayjsDate = this.dateDayjs.add(amount, unit);
     return new StadenDate(dayjsDate.format(DATE_FORMAT));
   }
-}
-
-function convertToManipulateType(str: string): dayjs.ManipulateType {
-  if (str === "y" || str === "year") {
-    return "year";
-  } else if (str === "m" || str === "month") {
-    return "month";
-  } else if (str === "d" || str === "day") {
-    return "day";
-  }
-  throw new Error(`Unknown manipulate type: ${str}`);
 }
