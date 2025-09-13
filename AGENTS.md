@@ -1,6 +1,7 @@
 # AGENTS.md
 
-- Please respond in Japanese.
+## Communication
+- Please respond in Japanese in chat UI.
 
 ## Coding styles
 - Adhere to the best practices and conventions of:
@@ -23,7 +24,7 @@
     - Do not use `refactor:` if the behavior changes; use `feat:`, `fix:`, or `BREAKING:` as appropriate.
 
 ## Reviewing
+- You must write review comments in English
 - When asked to review code:
   - Carefully read the source code first.
-  - If you find an issue, add a comment prefixed with `RV:` above the relevant line.
-- You must write review comments in English
+  - Add a comment prefixed with `RV(${agent_name}):` above the relevant line.
