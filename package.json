@@ -16,7 +16,6 @@
     "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
-    "dayjs": "^1.11.13",
     "highlight.js": "^11.11.1",
     "next": "^15.5.3",
     "react": "^19.1.0",
