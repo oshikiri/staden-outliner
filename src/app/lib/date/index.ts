@@ -72,7 +72,7 @@ function parseISO(str: string): Date {
   // Fallback to native parsing
   const d = new Date(str);
   if (isNaN(d.getTime())) {
-    throw Error(`Invalid date string: "${str}"`);
+    throw new Error(`Invalid date string: "${str}"`);
   }
   return d;
 }
