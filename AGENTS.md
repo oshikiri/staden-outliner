@@ -12,6 +12,8 @@
   - Tailwind CSS
   - Web security standards
 - Do not remove tests. Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
+Please ignore the following issues for now. We will address them later:
+  - Accessibility issues (e.g., aria-label, WCAG contrast, role)
 
 ## Commit
 - Use clear and conventional commit message prefixes:
