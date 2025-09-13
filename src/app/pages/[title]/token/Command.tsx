@@ -2,7 +2,7 @@ import { JSX } from "react";
 import { Token } from ".";
 import { Command as CommandEntity } from "@/app/lib/markdown/token";
 
-export function Command({ token }: { token: CommandEntity }): JSX.Element {
+export function Command({ token }: { token: CommandEntity }): JSX.Element | null{
   if (token.name === "embed") {
     return (
       <div className="bg-gray-200">
@@ -14,6 +14,5 @@ export function Command({ token }: { token: CommandEntity }): JSX.Element {
   }
   // Return nothing if the name is unknown
   console.warn(`Unknown command name: ${token.name}`);
-  // RV(codex): Prefer returning `null` instead of an empty fragment when rendering nothing.
-  return <></>;
+  return null;
 }
