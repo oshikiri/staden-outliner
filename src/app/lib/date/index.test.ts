@@ -33,6 +33,11 @@ describe("Date", () => {
       const newDate = date.add(5, "day");
       expect(newDate.format()).toBe("2023-01-28");
     });
+    test("2023-01-31 + 1 month should be 2023-03-03", () => {
+      const date = new StadenDate("2023-01-31");
+      const newDate = date.add(1, "month");
+      expect(newDate.format()).toBe("2023-03-03");
+    });
     test("add invalid unit", () => {
       const date = new StadenDate("2023-01-23");
       expect(() => date.add(5, "invalid")).toThrow(
