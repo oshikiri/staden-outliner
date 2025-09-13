@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Check code formatting
         run: npm run format:check
@@ -95,10 +95,18 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
       - name: Run build
         run: npm run build
