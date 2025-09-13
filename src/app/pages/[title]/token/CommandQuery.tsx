@@ -9,6 +9,7 @@ export function CommandQuery({
 }): JSX.Element {
   return (
     <div>
+      {/* RV: `text-primary/50` はコントラストが不足する可能性があります。背景 `bg-background` との比率を確認し、必要に応じて `opacity-60/70` へ調整してください。 */}
       <div className="text-sm w-full text-right text-primary/50">
         {token.resolvedBlocks?.length || 0} results, execution time:{" "}
         {token.queryExecutionMilliseconds || "?"} ms

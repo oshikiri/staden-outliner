@@ -120,6 +120,7 @@ export function Content({
       <div
         key={`content-${block.id}-${isEditing ? "editing" : "rendered"}`}
         ref={contentRef}
+        // RV: `break-all` は CJK や長い URL が極端に分割される可能性があります。`break-words` + `overflow-wrap:anywhere` 相当の構成も検討してください。
         className="w-full min-h-[1em] inline-block whitespace-pre-wrap break-all px-1"
         contentEditable={isEditing || undefined}
         suppressContentEditableWarning={isEditing || undefined}

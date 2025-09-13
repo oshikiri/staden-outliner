@@ -18,6 +18,7 @@ export default function Block({
   block = createBlock(block);
   return (
     <div
+      // RV: `list-none` は ul/ol で効果がありますが、div では意味がありません。不要なら削除してください。
       className="
         ml-2 flex list-none
         data-[status=DONE]:opacity-30

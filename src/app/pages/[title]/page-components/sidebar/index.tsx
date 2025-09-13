@@ -13,6 +13,8 @@ import { getAllFiles, getAllConfigs } from "./api";
 export function SideBar({ pageTitle }: { pageTitle: string }) {
   return (
     <div
+      // RV: `w-120` はデフォルト幅スケールにありません。目的のサイズに合わせ `w-[30rem]` などの任意値か、テーマトークンを定義して使用してください。
+      // RV: 固定サイドバーは小画面でコンテンツと競合しがちです。Tailwind のレスポンシブユーティリティ（例: `hidden lg:block`）で表示制御を検討してください。
       className="
       fixed top-0 right-0
       m-2 p-6

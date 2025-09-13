@@ -27,6 +27,7 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
   };
   return (
     <div
+      // RV: データ属性バリアントは `data-[collapsed=true]:...` の形にしてください。現在の `data-collapsed:bg-...` は解決されません。
       className="
         data-collapsed:bg-primary/30
         inline-block

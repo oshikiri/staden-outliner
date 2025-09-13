@@ -20,6 +20,7 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
       className="text-sm text-left m-1"
       onClick={(e) => e.stopPropagation()}
     >
+      {/* RV: Tailwind の `border-b-3` はデフォルトでは存在しません。`border-b-[3px]` の任意値か、テーマに 3px を追加してください。 */}
       <thead className="border-b-3 border-line">
         <tr>
           {columns.map((col) => (
@@ -41,6 +42,7 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   return (
+    // RV: 行ハイライト色（`--color-datatable-row-odd`）は背景とのコントラストを確認してください。`odd:` バリアントの適用は適切です。
     <tr className="odd:bg-datatable-row-odd">
       {columns.map((col) => (
         <td className="px-2 py-1" key={col}>

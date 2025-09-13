@@ -30,6 +30,8 @@ export function CodeBlock({
       >
         {language}
       </span>
+      {/* RV: Tailwind の `border-l-3` はデフォルトに無いので `border-l-[3px]` を使用してください。 */}
+      {/* RV: `border-l-line` は存在しません。色は `border-line` を使い、幅は `border-l-*` で左辺みに適用されます。 */}
       <pre
         className="
           text-xs

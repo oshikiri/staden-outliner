@@ -15,6 +15,7 @@ export function Link({ token }: { token: LinkEntity }): JSX.Element {
       target="_blank"
       rel="noopener noreferrer"
       onClick={(event) => event.stopPropagation()}
+      // RV: `break-all` は英単語を強制分割します。可読性重視なら `break-words`/`break-normal` も検討してください。
       className="text-link break-all"
     >
       {token.title}

@@ -49,6 +49,7 @@ export default function Page() {
   return (
     <>
       <title>{titleFromProperty}</title>
+      {/* RV: `z-100` はデフォルトスケールにありません。`z-[100]` の任意値か、テーマにレイヤーを追加して使用してください。 */}
       <h1
         className="
           text-3xl
