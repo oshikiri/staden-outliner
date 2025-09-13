@@ -12,6 +12,7 @@ export class StadenDate {
   }
 
   public format(format?: string): string {
+    if (isNaN(this.date.getTime())) return "Invalid Date";
     const fmt = format || DATE_FORMAT;
     return formatDate(this.date, fmt);
   }
@@ -70,7 +71,9 @@ function parseISO(str: string): Date {
   }
   // Fallback to native parsing
   const d = new Date(str);
-  if (isNaN(d.getTime())) return new Date();
+  if (isNaN(d.getTime())) {
+    throw Error(`Invalid date string: "${str}"`);
+  }
   return d;
 }
 
@@ -83,7 +86,16 @@ function formatDate(date: Date, fmt: string): string {
   const M = pad2(date.getMonth() + 1);
   const D = pad2(date.getDate());
 
-  // Minimal token replacement to satisfy usages:
-  // Supports YYYY, MM, DD
-  return fmt.replace(/YYYY/g, String(Y)).replace(/MM/g, M).replace(/DD/g, D);
+  return fmt.replace(/YYYY|MM|DD/g, (token) => {
+    switch (token) {
+      case "YYYY":
+        return String(Y);
+      case "MM":
+        return M;
+      case "DD":
+        return D;
+      default:
+        return token;
+    }
+  });
 }
