@@ -20,8 +20,7 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
       className="text-sm text-left m-1"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* RV: Tailwind の `border-b-3` はデフォルトでは存在しません。`border-b-[3px]` の任意値か、テーマに 3px を追加してください。 */}
-      <thead className="border-b-3 border-line">
+      <thead className="border-b-2 border-line">
         <tr>
           {columns.map((col) => (
             <th className="px-2 py-1" key={col}>
