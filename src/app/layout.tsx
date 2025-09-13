@@ -14,13 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // RV: Tailwind w-300 is likely invalid. Use w-[300px] or a configured size token.
-    // RV: Language is hardcoded to "en". Consider sourcing from user config (e.g., `${STADEN_ROOT}/config.json` or a context provider).
+    // RV: Language is hardcoded to "en". Consider sourcing from user config
     <html lang="en">
       <body
         className="
-          w-300
-          ml-20
+          max-w-full
+          mx-20
           text-primary
           bg-background
         "
