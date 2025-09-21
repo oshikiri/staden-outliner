@@ -12,7 +12,7 @@
   - Tailwind CSS
   - Web security standards
 - Do not remove tests. Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
-Please ignore the following issues for now. We will address them later:
+- Please ignore the following issues for now. We will address them later:
   - Accessibility issues (e.g., aria-label, WCAG contrast, role)
 
 ## Commit
@@ -21,9 +21,8 @@ Please ignore the following issues for now. We will address them later:
   - `fix:` for bug fixes
   - `test:` for adding or updating tests
   - `chore:` for maintenance tasks
-  - `BREAKING:` or `BREAKING CHANGE:` for changes that break backward compatibility
   - `refactor:` for internal code changes that do not affect behavior
-    - Do not use `refactor:` if the behavior changes; use `feat:`, `fix:`, or `BREAKING:` as appropriate.
+    - Do not use `refactor:` if the behavior changes; use `feat:` or `fix:` as appropriate.
 
 ## Reviewing
 - You must write review comments in English
