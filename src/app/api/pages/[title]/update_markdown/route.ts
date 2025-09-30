@@ -7,7 +7,7 @@ type Props = {
   }>;
 };
 
-export async function GET(_req: Request, props: Props) {
+export async function POST(_req: Request, props: Props) {
   const { title } = await props.params;
 
   await exportOnePageToMarkdown(title);
