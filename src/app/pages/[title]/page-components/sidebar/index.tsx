@@ -13,12 +13,12 @@ import { getAllFiles, getAllConfigs } from "./api";
 export function SideBar({ pageTitle }: { pageTitle: string }) {
   return (
     <div
-      // @agent 固定サイドバーは小画面でコンテンツと競合しがちです。Tailwind のレスポンシブユーティリティ（例: `hidden lg:block`）で表示制御を検討してください。
       className="
-        fixed top-20 right-0
-        m-2 p-6
-        w-96
-        z-10
+        hidden lg:block
+        lg:fixed lg:top-20 lg:right-0
+        lg:m-2 lg:p-6
+        lg:w-96
+        lg:z-10
         bg-background
         rounded-xl
         border border-primary/50
