@@ -30,7 +30,7 @@ export async function resolveAllCommandTokens(page: Block): Promise<Block> {
     if (content instanceof Command) {
       content = await resolveCommand(content);
     } else if (content instanceof CommandQuery) {
-      // RV: Empty catch swallows runtime errors, making debugging difficult. Log or propagate the error.
+      // @owner Empty catch swallows runtime errors, making debugging difficult. Log or propagate the error.
       try {
         page.content[i] = await resolveCommandQuery(content, page.id || "");
       } catch {}
@@ -61,7 +61,8 @@ async function resolveCommandQuery(
   if (!block) {
     return command;
   }
-  // RV: Assumes the first child is a CodeBlock containing the query; add guards to avoid runtime errors when structure differs.
+  // @owner Assumes the first child is a CodeBlock containing the query;
+  // add guards to avoid runtime errors when structure differs.
   const code: unknown = block.children[0].content[0];
   if (!(code instanceof CodeBlock)) {
     return command;
@@ -75,13 +76,12 @@ async function resolveCommandQuery(
     command.resolvedBlocks = rows;
   }
 
-  // RV: Also assumes the second child holds Vega-Lite JSON; validate before use.
+  // @owner Also assumes the second child holds Vega-Lite JSON; validate before use.
   const vlJsonCodeBlock = block.children[1]?.content?.[0];
   if (vlJsonCodeBlock instanceof CodeBlock && vlJsonCodeBlock.lang === "json") {
     const vlJsonStr = vlJsonCodeBlock.textContent;
     command.vlJsonStr = vlJsonStr;
     command.resolvedDataForVlJson = rows;
-    // RV: Remove debug logging or guard under an environment flag to avoid leaking data to server logs.
     console.log({ vlJsonStr, rows });
   }
 

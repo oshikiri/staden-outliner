@@ -61,7 +61,7 @@ export class ContentKeyboardEventHandler {
 
     this.setEditingBlockId?.(null);
     this.setOffset?.(null);
-    // RV: Remove verbose console logs in production; consider a debug flag or logger with levels.
+    // @owner Remove verbose console logs in production; consider a debug flag or logger with levels.
     console.log("Enter", {
       block: this.block,
       textBefore,
@@ -203,12 +203,12 @@ export class ContentKeyboardEventHandler {
 
   private async handlePasteItem(clipboardItem: ClipboardItem) {
     const types = clipboardItem.types;
-    // RV: Consider limiting clipboard logging; may expose sensitive clipboard content in logs.
+    // @owner Consider limiting clipboard logging; may expose sensitive clipboard content in logs.
     console.log("Pasting item with types:", types);
     if (types.includes("text/plain")) {
       const blob = await clipboardItem.getType("text/plain");
       const text = await blob.text();
-      // RV: Avoid logging pasted text; sensitive data may be exposed.
+      // @owner Avoid logging pasted text; sensitive data may be exposed.
       console.log("Pasted text:", text);
 
       const { beforeCursor, afterCursor } = dom.getTextsAroundCursor();

@@ -13,9 +13,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteLanguage = process.env.NEXT_PUBLIC_SITE_LANGUAGE ?? "en";
   return (
-    // RV: Language is hardcoded to "en". Consider sourcing from user config
-    <html lang="en">
+    <html lang={siteLanguage}>
       <body
         className="
           max-w-full

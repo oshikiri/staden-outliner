@@ -8,8 +8,6 @@ export async function postPage(
   }
   const pageTitle = page.getProperty("title") as string;
   page = sanitizePageBeforePost(page);
-  // RV: Avoid logging entire page payload; can be large and sensitive.
-  console.log("postPage", page);
   const encodedTitle = encodeURIComponent(pageTitle);
   const response = await fetch(`/api/pages/${encodedTitle}`, {
     method: "POST",
