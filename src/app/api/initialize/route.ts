@@ -1,7 +1,7 @@
 import { BulkImporter } from "../../lib/importer/bulk_importer";
 import * as sqlite from "../../lib/sqlite";
 
-export async function GET() {
+export async function POST(_request: Request) {
   await initializeSqlite();
 
   return new Response("", {
