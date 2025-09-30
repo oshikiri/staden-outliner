@@ -13,7 +13,7 @@ import { getAllFiles, getAllConfigs } from "./api";
 export function SideBar({ pageTitle }: { pageTitle: string }) {
   return (
     <div
-      // RV: 固定サイドバーは小画面でコンテンツと競合しがちです。Tailwind のレスポンシブユーティリティ（例: `hidden lg:block`）で表示制御を検討してください。
+      // @agent 固定サイドバーは小画面でコンテンツと競合しがちです。Tailwind のレスポンシブユーティリティ（例: `hidden lg:block`）で表示制御を検討してください。
       className="
         fixed top-20 right-0
         m-2 p-6
