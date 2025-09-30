@@ -14,13 +14,12 @@ export default function Block({
   block: BlockEntity;
   editable?: boolean;
 }): JSX.Element {
-  // RV: `createBlock` clones and recalculates properties; doing this on every render can be costly. Memoize or move to data layer.
+  // @owner `createBlock` clones and recalculates properties; doing this on every render can be costly. Memoize or move to data layer.
   block = createBlock(block);
   return (
     <div
-      // RV: `list-none` は ul/ol で効果がありますが、div では意味がありません。不要なら削除してください。
       className="
-        ml-2 flex list-none
+        ml-2 flex
         data-[status=DONE]:opacity-30
       "
       key={block.id}

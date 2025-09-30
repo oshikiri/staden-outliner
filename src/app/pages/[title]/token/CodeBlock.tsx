@@ -38,7 +38,7 @@ export function CodeBlock({
           px-4 py-2
           whitespace-pre-wrap
         "
-        // RV: Rendering untrusted HTML via dangerouslySetInnerHTML can enable XSS. Sanitize or trust only server-escaped output.
+        // @owner Rendering untrusted HTML via dangerouslySetInnerHTML can enable XSS. Sanitize or trust only server-escaped output.
         dangerouslySetInnerHTML={{ __html: html }}
       ></pre>
     </div>
