@@ -15,7 +15,6 @@ async function initializeSqlite(): Promise<void> {
   // RV: No error handling around migration/import. Wrap in try/catch and ensure `sqlite.close()` in finally.
   sqlite.open();
   sqlite.initializeAllTables();
-  sqlite.close();
 
   const importer = new BulkImporter();
   // RV: Ensure required env vars (e.g., STADEN_ROOT) are validated before running importer to avoid ambiguous failures.
@@ -25,6 +24,8 @@ async function initializeSqlite(): Promise<void> {
   await sqlite.batchInsertBlocks(blocks, BATCH_SIZE);
   await sqlite.batchInsertFiles(files, BATCH_SIZE);
   await sqlite.batchInsertLinks(links);
+
+  sqlite.close();
 
   console.log("Database initialized");
 
