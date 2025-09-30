@@ -1,6 +1,8 @@
 import { BulkImporter } from "../../lib/importer/bulk_importer";
 import * as sqlite from "../../lib/sqlite";
 
+// @owner Exposing a DB initialization via GET is unsafe; prefer a protected POST with auth and CSRF protections.
+// See https://github.com/oshikiri/staden-outliner/commit/b677b28a4a41f1daf16776149fc7a3a9a0f1bf66
 export async function GET() {
   await initializeSqlite();
 
