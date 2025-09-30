@@ -1,8 +1,7 @@
 import { Token } from ".";
 import { PageRef, PropertyPair } from "./token";
 
-// RV: Typo: `flipCollpased` -> `flipCollapsed`; consider renaming for clarity.
-export function flipCollpased(contentMarkdown: string): string {
+export function flipCollapsed(contentMarkdown: string): string {
   const matched = contentMarkdown.match(/^collapsed::\s*(\S+)/m);
   if (!matched) {
     if (contentMarkdown === "") {
