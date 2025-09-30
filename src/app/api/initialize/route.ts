@@ -4,7 +4,9 @@ import * as sqlite from "../../lib/sqlite";
 export async function POST(_request: Request) {
   await initializeSqlite();
 
-  return new Response("{}");
+  return new Response("", {
+    status: 204,
+  });
 }
 
 async function initializeSqlite(): Promise<void> {
