@@ -1,10 +1,31 @@
-import { JSX } from "react";
+"use client";
+
+import { JSX, useEffect, useState } from "react";
 
 import { PageRef } from "../../token";
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
 
 export function RecentPages({ pageTitle }: { pageTitle: string }): JSX.Element {
-  const recentPages = appendAndGetRecentPage(pageTitle);
+  const [recentPages, setRecentPages] = useState<string[]>([]);
+
+  useEffect(() => {
+    let canceled = false;
+
+    appendAndGetRecentPage(pageTitle)
+      .then((pages) => {
+        if (!canceled) {
+          setRecentPages(pages);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load recent pages", error);
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [pageTitle]);
+
   return (
     <div>
       {recentPages?.reverse().map((page, key) => (
@@ -16,20 +37,20 @@ export function RecentPages({ pageTitle }: { pageTitle: string }): JSX.Element {
   );
 }
 
-function appendAndGetRecentPage(pageTitle: string): string[] {
-  // RV: localStorage access assumes browser context; ensure this code only runs in client components.
-  let recentPages: string[] = JSON.parse(
-    localStorage.getItem("recentPages") || "[]",
-  ) as string[];
+async function appendAndGetRecentPage(pageTitle: string): Promise<string[]> {
+  const response = await fetch("/api/recent-pages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ pageTitle }),
+    cache: "no-store",
+  });
 
-  const recentPagesSet: Set<string> = new Set(recentPages);
-  recentPagesSet.delete(pageTitle);
-  recentPagesSet.add(pageTitle);
+  if (!response.ok) {
+    throw new Error(`Failed to update recent pages: ${response.status}`);
+  }
 
-  recentPages = Array.from(recentPagesSet);
-  recentPages = recentPages.slice(-10);
-  // RV: No error handling for storage quota exceeded; wrap in try/catch.
-  localStorage.setItem("recentPages", JSON.stringify(recentPages));
-
-  return recentPages;
+  const data: { pages: string[] } = await response.json();
+  return data.pages;
 }
