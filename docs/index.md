@@ -1,5 +1,5 @@
 - Staden is an outliner inspired by Logseq.
-- 
+- ![](../icon.png)
 - [[Staden Versions]]
 - [[APIs]]
 - Staden uses Logseq-style markdown syntax
