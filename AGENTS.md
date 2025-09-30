@@ -26,6 +26,3 @@
 
 ## Reviewing
 - You must write review comments in English
-- When asked to review code:
-  - Carefully read the source code first.
-  - Add a comment prefixed with `RV(${agent_name}):` above the relevant line.
