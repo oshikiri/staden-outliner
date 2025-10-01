@@ -2,7 +2,11 @@ import * as fs from "fs";
 
 const stadenRoot: string = process.env.STADEN_ROOT || "";
 
-export async function getAllConfigs() {
+export interface Configs {
+  favorites: string[];
+}
+
+export async function getAllConfigs(): Promise<Configs> {
   const configFile = `${stadenRoot}/config.json`;
   if (!fs.existsSync(configFile)) {
     return { favorites: [] };
@@ -10,7 +14,7 @@ export async function getAllConfigs() {
   const jsonTxt = fs.readFileSync(configFile, "utf8");
   const configs = JSON.parse(jsonTxt);
 
-  const response = { favorites: [] };
+  const response: Configs = { favorites: [] };
   if (configs?.favorites) {
     response.favorites = configs.favorites;
   }

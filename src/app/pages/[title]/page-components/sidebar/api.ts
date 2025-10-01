@@ -1,14 +1,15 @@
+import type { Configs } from "@/app/lib/file/config";
 import { File } from "@/app/lib/file";
 
-// RV: Avoid `any` in public API. Define and return a typed shape for configs (e.g., `{ favorites: string[] }`).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getAllConfigs(): Promise<any> {
+export async function getAllConfigs(): Promise<Configs> {
   const response = await fetch("/api/configs", {
     cache: "force-cache",
     next: { revalidate: 30 },
   });
-  const json = await response.json();
-  return json;
+  const json = (await response.json()) as Partial<Configs>;
+  return {
+    favorites: Array.isArray(json.favorites) ? json.favorites : [],
+  };
 }
 
 export async function getAllFiles(): Promise<File[]> {
