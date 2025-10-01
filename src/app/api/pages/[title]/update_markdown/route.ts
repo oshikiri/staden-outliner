@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { exportOnePageToMarkdown } from "@/app/lib/exporter/incremental_exporter";
 
 type Props = {
-  // RV: `params` should be a plain object in Next.js route handlers; using Promise forces `await` unnecessarily.
+  // @owner `params` should be a plain object in Next.js route handlers; using Promise forces `await` unnecessarily.
   params: Promise<{
     title: string;
   }>;

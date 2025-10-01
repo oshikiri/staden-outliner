@@ -11,7 +11,7 @@ import * as IncrementalImporter from "@/app/lib/importer/incremental_importer";
 import { ResponseError, ResponseUpdated, ResponseSuccess } from "./responses";
 
 type Props = {
-  // RV: In Next.js route handlers, `params` is a plain object; avoid wrapping in Promise and remove unnecessary `await`.
+  // @owner In Next.js route handlers, `params` is a plain object; avoid wrapping in Promise and remove unnecessary `await`.
   params: Promise<{
     title: string;
   }>;
