@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { NextRequest, NextResponse } from "next/server";
 
 import { getStadenRoot } from "@/app/lib/env/stadenRoot";
 
@@ -9,10 +8,11 @@ function resolvePagesRoot(): string {
   return path.join(stadenRoot, "pages");
 }
 
-export async function GET(req: NextRequest) {
-  const queryPath: string = req.nextUrl.searchParams.get("path") || "";
+export async function GET(req: Request) {
+  const url = new URL(req.url || "");
+  const queryPath: string = url.searchParams.get("path") || "";
   if (!queryPath) {
-    return new NextResponse("Missing path parameter", { status: 400 });
+    return new Response("Missing path parameter", { status: 400 });
   }
 
   const pagesRoot = resolvePagesRoot();
@@ -20,12 +20,12 @@ export async function GET(req: NextRequest) {
   const imagePath = path.resolve(pagesRoot, normalizedQuery);
   const relative = path.relative(pagesRoot, imagePath);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
-    return new NextResponse("Invalid image path", { status: 400 });
+    return new Response("Invalid image path", { status: 400 });
   }
 
   const imageBuffer = await fs.readFile(imagePath);
   const mimeType = getMimeTypeFromPath(queryPath);
-  return new NextResponse(new Uint8Array(imageBuffer), {
+  return new Response(new Uint8Array(imageBuffer), {
     headers: {
       "Content-Type": mimeType,
     },
