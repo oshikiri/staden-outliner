@@ -14,7 +14,7 @@ export async function GET() {
 async function initializeSqlite(): Promise<void> {
   console.log("Initializing database...");
 
-  // RV: No error handling around migration/import. Wrap in try/catch and ensure `sqlite.close()` in finally.
+  // @owner No error handling around migration/import. Wrap in try/catch and ensure `sqlite.close()` in finally.
   await sqlite.open();
   sqlite.initializeAllTables();
 

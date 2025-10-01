@@ -35,7 +35,7 @@ export default function Page() {
     return <></>;
   }
 
-  // RV: Assigning to `window.onkeydown` inside render can cause leaks and duplicate handlers. Use `useEffect` with `addEventListener` and cleanup.
+  // @owner Assigning to `window.onkeydown` inside render can cause leaks and duplicate handlers. Use `useEffect` with `addEventListener` and cleanup.
   window.onkeydown = (e: KeyboardEvent) => {
     if (e.key === "s" && e.ctrlKey) {
       e.preventDefault();

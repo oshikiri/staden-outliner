@@ -3,7 +3,7 @@ import Database from "better-sqlite3";
 import { getStadenRoot } from "../env/stadenRoot";
 
 export let db: Database.Database;
-// RV: Global mutable DB handle can cause race conditions in a serverless/concurrent environment; consider connection-per-request or a pool.
+// @owner Global mutable DB handle can cause race conditions in a serverless/concurrent environment; consider connection-per-request or a pool.
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";

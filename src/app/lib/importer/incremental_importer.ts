@@ -15,7 +15,7 @@ import { batchInsertBlocks } from "../sqlite/blocks";
 export async function importBlockRecursive(block: Block): Promise<Block> {
   const blockUpdated = refreshBlockFromPageUpdate(block);
   await refreshLinksFromBlock(blockUpdated);
-  // RV: FIXME left: contentMarkdown should be reflected to content before persisting; otherwise DB may store stale tokens.
+  // @owner contentMarkdown should be reflected to content before persisting; otherwise DB may store stale tokens.
   await batchInsertBlocks(blockUpdated.flatten(), 1000);
   return blockUpdated;
 }

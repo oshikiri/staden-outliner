@@ -26,7 +26,7 @@ export class Token {
     return "";
   }
   toText(): string {
-    // RV: Uses `any` cast to access `textContent`; prefer a typed union or a virtual method on subclasses for safer access.
+    // @owner Uses `any` cast to access `textContent`; prefer a typed union or a virtual method on subclasses for safer access.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this as any).textContent || "";
   }

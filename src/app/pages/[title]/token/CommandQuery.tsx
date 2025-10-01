@@ -42,7 +42,7 @@ function VegaLiteEmbed({
         values: data,
       },
     };
-    // RV: Injecting a script tag built from `vlJsonStr` can be risky. Ensure `vlJsonStr` is validated/sanitized and avoid dynamic script injection when possible.
+    // @owner Injecting a script tag built from `vlJsonStr` can be risky. Ensure `vlJsonStr` is validated/sanitized and avoid dynamic script injection when possible.
     element.current.appendChild(
       document
         .createRange()

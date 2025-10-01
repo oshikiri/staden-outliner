@@ -197,7 +197,7 @@ export class Parser {
     }
     const tail = this.stack.pop();
     if (!tail) {
-      // RV: This fallback constructs a malformed structure instead of recovering gracefully; consider skipping invalid pairs.
+      // @owner This fallback constructs a malformed structure instead of recovering gracefully; consider skipping invalid pairs.
       this.stack.push(new Block([], 0, [new Block([new Text("::")], 1, [])]));
       i++;
       return i;

@@ -210,7 +210,7 @@ async function batchInsertBlock(blocks: Block[]) {
   insertMany(blocks);
 }
 
-// RV: Coerces property values to strings; consider preserving types (JSON) if non-string values are expected.
+// @owner Coerces property values to strings; consider preserving types (JSON) if non-string values are expected.
 function createPropertyMap(properties: unknown[][]): object {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map: any = {};

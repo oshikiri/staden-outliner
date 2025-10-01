@@ -103,7 +103,7 @@ export class Block {
 
   getParentAndIdx(): [Block | null, number] {
     if (!this.parent?.children) {
-      // RV: Avoid logging on hot paths; consider returning `[-1]` and letting callers handle quietly.
+      // @owner Avoid logging on hot paths; consider returning `[-1]` and letting callers handle quietly.
       console.log("Block has no parent or the parent has no children.");
       return [null, -1];
     }

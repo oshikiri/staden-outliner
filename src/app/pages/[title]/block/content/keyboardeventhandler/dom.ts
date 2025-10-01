@@ -4,7 +4,7 @@ export function getTextsAroundCursor(): {
   startOffset: number;
 } {
   const selection = window.getSelection();
-  // RV: Accessing `getRangeAt(0)` without checking `rangeCount` can throw when no selection exists.
+  // @owner Accessing `getRangeAt(0)` without checking `rangeCount` can throw when no selection exists.
   const range = selection?.getRangeAt(0);
   const text = range?.startContainer.textContent;
   if (!text) {
@@ -17,7 +17,7 @@ export function getTextsAroundCursor(): {
 
 export function extractTextsAroundCursor() {
   const selection = window.getSelection();
-  // RV: Ensure `selection?.rangeCount > 0` before calling `getRangeAt(0)` to avoid exceptions.
+  // @owner Ensure `selection?.rangeCount > 0` before calling `getRangeAt(0)` to avoid exceptions.
   const range = selection?.getRangeAt(0);
 
   let beforeCursor = true;
