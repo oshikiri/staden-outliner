@@ -19,7 +19,6 @@ async function initializeSqlite(): Promise<void> {
   sqlite.initializeAllTables();
 
   const importer = new BulkImporter();
-  // RV: Ensure required env vars (e.g., STADEN_ROOT) are validated before running importer to avoid ambiguous failures.
   const { blocks, files, links } = await importer.run();
 
   const BATCH_SIZE = 1000;

@@ -1,13 +1,14 @@
 import * as fs from "fs";
+import path from "path";
 
-const stadenRoot: string = process.env.STADEN_ROOT || "";
+import { getStadenRoot } from "../env/stadenRoot";
 
 export interface Configs {
   favorites: string[];
 }
 
 export async function getAllConfigs(): Promise<Configs> {
-  const configFile = `${stadenRoot}/config.json`;
+  const configFile = path.join(getStadenRoot(), "config.json");
   if (!fs.existsSync(configFile)) {
     return { favorites: [] };
   }

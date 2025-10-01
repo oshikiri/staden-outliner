@@ -1,13 +1,13 @@
 import Database from "better-sqlite3";
+
+import { getStadenRoot } from "../env/stadenRoot";
+
 export let db: Database.Database;
 // RV: Global mutable DB handle can cause race conditions in a serverless/concurrent environment; consider connection-per-request or a pool.
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
 import { initializePages } from "./pages";
-
-// RV: Consider validating that `STADEN_ROOT` is set and is an absolute path to avoid runtime errors.
-const stadenRoot = process.env.STADEN_ROOT;
 
 export * from "./pages";
 export * from "./blocks";
@@ -60,6 +60,7 @@ export async function query(
 }
 
 export async function open() {
+  const stadenRoot = getStadenRoot();
   db = new Database(`${stadenRoot}/vault.sqlite3`);
 }
 

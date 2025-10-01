@@ -4,6 +4,7 @@ import { loadMarkdown } from ".";
 import { Block, Token } from "../markdown";
 import { getPageRefTitles } from "../markdown/utils";
 import { File, extractTitle, listAllFilePaths } from "../file";
+import { getStadenRoot } from "../env/stadenRoot";
 
 export class BulkImporter {
   stadenRoot: string;
@@ -14,7 +15,7 @@ export class BulkImporter {
   fileTitleToId: Map<string, string> = new Map();
 
   constructor() {
-    this.stadenRoot = process.env.STADEN_ROOT || "";
+    this.stadenRoot = getStadenRoot();
   }
 
   /**

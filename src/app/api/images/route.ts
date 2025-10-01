@@ -1,14 +1,25 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-// @owner Using an empty default for `STADEN_ROOT` may read from the CWD unintentionally. Validate that it is set and is an absolute, expected path.
-const stadenRoot = process.env.STADEN_ROOT || "";
+import { getStadenRoot } from "@/app/lib/env/stadenRoot";
+
+const stadenRoot = getStadenRoot();
+const pagesRoot = path.join(stadenRoot, "pages");
 
 export async function GET(req: Request) {
   const url = new URL(req.url || "");
   const queryPath: string = url.searchParams.get("path") || "";
-  // @owner Potential path traversal. Normalize and ensure the resolved path stays under `${stadenRoot}/pages` before reading.
-  const imagePath = path.join(stadenRoot + "/pages/", queryPath);
+  if (!queryPath) {
+    return new Response("Missing path parameter", { status: 400 });
+  }
+
+  const normalizedQuery = path.normalize(queryPath);
+  const imagePath = path.resolve(pagesRoot, normalizedQuery);
+  const relative = path.relative(pagesRoot, imagePath);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    return new Response("Invalid image path", { status: 400 });
+  }
+
   const imageBuffer = await fs.readFile(imagePath);
   const mimeType = getMimeTypeFromPath(queryPath);
   return new Response(new Uint8Array(imageBuffer), {
