@@ -3,8 +3,10 @@ import path from "path";
 
 import { getStadenRoot } from "@/app/lib/env/stadenRoot";
 
-const stadenRoot = getStadenRoot();
-const pagesRoot = path.join(stadenRoot, "pages");
+function resolvePagesRoot(): string {
+  const stadenRoot = getStadenRoot();
+  return path.join(stadenRoot, "pages");
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url || "");
@@ -13,6 +15,7 @@ export async function GET(req: Request) {
     return new Response("Missing path parameter", { status: 400 });
   }
 
+  const pagesRoot = resolvePagesRoot();
   const normalizedQuery = path.normalize(queryPath);
   const imagePath = path.resolve(pagesRoot, normalizedQuery);
   const relative = path.relative(pagesRoot, imagePath);
