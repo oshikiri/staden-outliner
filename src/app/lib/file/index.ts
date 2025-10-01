@@ -36,21 +36,24 @@ function readdirRecursively(rootDir: string): string[] {
   return files;
 }
 
-export async function listAllFilePaths(directoryPath: string) {
-  // RV: Path separator checks use hardcoded '/'; consider using `path.sep` or platform-agnostic methods for cross-platform compatibility.
+export async function listAllFilePaths(
+  directoryPath: string,
+): Promise<string[]> {
+  const disallowedSegments = new Set([".recycle", "bak"]);
   return readdirRecursively(directoryPath)
-    .filter((p) => p.endsWith(".md"))
-    .filter((p) => !p.includes("/.recycle/"))
-    .filter((p) => !p.includes("/bak/"));
+    .map((filePath) => path.normalize(filePath))
+    .filter((filePath) => filePath.endsWith(".md"))
+    .filter((filePath) => {
+      const segments = filePath.split(path.sep);
+      return !segments.some((segment) => disallowedSegments.has(segment));
+    });
 }
 
-export function extractTitle(path: string): string {
-  const mk = path.split("/");
-  const filename = mk[mk.length - 1];
+export function extractTitle(filePath: string): string {
+  const filename = path.basename(filePath);
   // TODO: handle meta characters in filename
-  // RV: `.replace(".md", "")` removes only the first occurrence; prefer suffix-only replacement (e.g., `/\.md$/`).
   const title = filename
-    .replace(".md", "")
+    .replace(/\.md$/i, "")
     .replaceAll("_", "-")
     .replaceAll("%20", " ")
     .replaceAll("%3A", ":")
