@@ -23,7 +23,7 @@ function sanitizePageBeforePost(page: BlockEntity): BlockEntity {
   const sanitizedPage = new BlockEntity([], page.depth, []).withId(
     page.id || "",
   );
-  // RV: Only whitelists a few fields; ensure no client-only fields leak (e.g., event handlers, UI state).
+  // @owner Only whitelists a few fields; ensure no client-only fields leak (e.g., event handlers, UI state).
   sanitizedPage.contentMarkdown = page.contentMarkdown;
   sanitizedPage.children = page.children.map((child) =>
     sanitizePageBeforePost(child),

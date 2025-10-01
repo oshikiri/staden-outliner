@@ -20,7 +20,8 @@ export function extractTextContent(content: HTMLDivElement | null): string {
 }
 
 export function getNearestCursorOffset(x: number, y: number): number {
-  // RV: `document.caretPositionFromPoint` is non-standard and not supported in all browsers; provide a fallback (e.g., `caretRangeFromPoint`).
+  // NOTE: `document.caretPositionFromPoint` is not supported in Safari; provide a fallback (e.g., `caretRangeFromPoint`).
+  // https://developer.mozilla.org/ja/docs/Web/API/Document/caretPositionFromPoint
   const caretPosition = document.caretPositionFromPoint(x, y);
   return caretPosition?.offset || 0;
 }

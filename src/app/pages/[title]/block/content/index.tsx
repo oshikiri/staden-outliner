@@ -138,14 +138,14 @@ export function Content({
         contentMarkdown={contentRef.current?.textContent || ""}
         setup={() => {
           setEditingBlockId(null);
-          // RV: Debug log left in UI code; remove or guard.
+          // @owner Debug log left in UI code; remove or guard.
           console.log(offset);
         }}
         teardown={(contentMarkdown: string) => {
-          // RV: Avoid logging content payloads; may leak sensitive data.
+          // @owner Avoid logging content payloads; may leak sensitive data.
           console.log("teardown", contentMarkdown);
           block.contentMarkdown = contentMarkdown;
-          // RV: Remove debug logs or guard under a debug flag.
+          // @owner Remove debug logs or guard under a debug flag.
           console.log("teardown", contentMarkdown.length);
           setOffset(contentMarkdown.length - 1 || 0);
           setEditingBlockId(block.id || null);
