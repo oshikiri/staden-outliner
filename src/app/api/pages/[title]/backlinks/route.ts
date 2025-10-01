@@ -1,3 +1,5 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { getSourceLinks, getCurrentPage } from "@/app/lib/sqlite";
 import { Block } from "@/app/lib/markdown/block";
 
@@ -8,7 +10,7 @@ type Props = {
   }>;
 };
 
-export async function GET(_req: Request, props: Props) {
+export async function GET(_req: NextRequest, props: Props) {
   const { title } = await props.params;
 
   const sourceIds = await getSourceLinks(title || "");
@@ -18,11 +20,7 @@ export async function GET(_req: Request, props: Props) {
     }),
   )) as Block[];
 
-  return new Response(JSON.stringify(sourceBlocks), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return NextResponse.json(sourceBlocks);
 }
 
 async function resolveBacklink(sourceId: string): Promise<Block> {

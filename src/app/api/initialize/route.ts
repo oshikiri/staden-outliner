@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 import { BulkImporter } from "../../lib/importer/bulk_importer";
 import * as sqlite from "../../lib/sqlite";
 
@@ -6,9 +8,7 @@ import * as sqlite from "../../lib/sqlite";
 export async function GET() {
   await initializeSqlite();
 
-  return new Response("", {
-    status: 204,
-  });
+  return new NextResponse(null, { status: 204 });
 }
 
 async function initializeSqlite(): Promise<void> {

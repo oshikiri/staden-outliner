@@ -9,6 +9,7 @@
   - TypeScript
   - React
   - Next.js
+    - For Next.js App Router API routes, always use `NextRequest` / `NextResponse` (avoid bare `Request`/`Response`) and prefer helpers like `NextResponse.json()`.
   - Tailwind CSS
   - Web security standards
 - Do not remove tests. Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
