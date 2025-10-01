@@ -21,7 +21,7 @@ export class Parser {
     if (stack.length === 1) {
       return stack[0];
     }
-    // RV: Serializing the entire stack in the error message can be expensive; include a concise summary instead.
+    // @owner Serializing the entire stack in the error message can be expensive; include a concise summary instead.
     throw new Error(
       `Invalid stack length = ${stack.length}\n${JSON.stringify(stack)}`,
     );
@@ -142,16 +142,18 @@ export class Parser {
   }
 
   consumeLogbook(i: number, token: Token): number {
-    // RV: Potential infinite loop if footer ":END:" is missing; add a break condition at EOF.
     i++; // consume logbook header
-    while (
-      token &&
-      !(token instanceof Text && token.textContent.startsWith(":END:"))
-    ) {
+    while (i < this.tokens.length) {
+      if (
+        token instanceof Text &&
+        token.textContent.trimStart().startsWith(":END:")
+      ) {
+        i++; // consume logbook footer
+        break;
+      }
       i++;
       token = this.tokens[i];
     }
-    i++; // consume logbook footer
     return i;
   }
 

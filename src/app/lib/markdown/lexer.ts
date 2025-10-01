@@ -80,7 +80,7 @@ export class Lexer {
   consumeUntil(i: number, end: string): [number, string] {
     let text = "";
     [i, text] = this.consumeWhile(i, (c) => c !== end);
-    // RV: If `end` is not found, this increments past buffer end; guard against EOF to avoid off-by-one.
+    // If `end` is not found, this increments past buffer end; guard against EOF to avoid off-by-one.
     i++; // pop the end
     return [i, text];
   }
@@ -96,7 +96,7 @@ export class Lexer {
       content += c;
       c = this.content[i];
     }
-    // RV: Assumes `end` exists; if not, this will skip beyond content. Validate presence of the terminator.
+    // Assumes `end` exists; if not, this will skip beyond content. Validate presence of the terminator.
     i += end.length; // pop the end
     return [i, content];
   }
@@ -220,7 +220,7 @@ export class Lexer {
     i++; // pop `(`
 
     let src = "";
-    // RV: Does not support nested parentheses or escaped `)` in URLs; consider a more robust parser.
+    // Does not support nested parentheses or escaped `)` in URLs; consider a more robust parser.
     [i, src] = this.consumeUntil(i, ")");
     return [i, new Link(src, alt)];
   }
@@ -247,7 +247,7 @@ export class Lexer {
     [i, depth] = this.consumeWhitespaces(i);
 
     let code = "";
-    // RV: Triple-backtick terminator search is naive; fenced code blocks with language hints containing ``` may break.
+    // Triple-backtick terminator search is naive; fenced code blocks with language hints containing ``` may break.
     [i, code] = this.consumeUntilMulti(i, "```");
     code = code.replaceAll(new RegExp(`^[\\t ]{${depth}}`, "mg"), "");
     return [i, new CodeBlock(code, lang)];

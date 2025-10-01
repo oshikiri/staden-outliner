@@ -185,7 +185,7 @@ export class PropertyPair extends Token {
     return `${this.key.toMarkdown()}:: ${this.value.map((v) => v.toMarkdown()).join(" ")}\n`;
   }
   toPair(): [string, string] {
-    // RV: Key uses `toMarkdown()` which may include formatting; consider `toText()` to extract plain key.
+    // @owner Key uses `toMarkdown()` which may include formatting; consider `toText()` to extract plain key.
     return [this.key.toMarkdown(), this.value.map((v) => v.toText()).join("")];
   }
 }
@@ -249,7 +249,7 @@ export class Marker extends Token {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createToken(obj: any): Token {
-  // RV: `obj` is `any`; add runtime validation or a type guard to prevent crashes from malformed input.
+  // @owner `obj` is `any`; add runtime validation or a type guard to prevent crashes from malformed input.
   const tokenType = obj.type;
   switch (tokenType) {
     case TokenType.NewLine:
@@ -291,7 +291,7 @@ export function createToken(obj: any): Token {
     case TokenType.Marker:
       return new Marker(obj.status);
     default:
-      // RV: Throwing with full serialized object may leak sensitive data; include only minimal info.
+      // Throwing with full serialized object may leak sensitive data; include only minimal info.
       throw new Error(`Unknown token type: ${JSON.stringify(obj)}`);
   }
 }
