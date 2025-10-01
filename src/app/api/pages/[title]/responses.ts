@@ -1,16 +1,15 @@
 import { Block } from "@/app/lib/markdown";
 
 interface IResponse {
-  status: string;
+  statusDescription: string;
   statusCode: number;
 
   toJSON(): object;
   toResponse(): Response;
 }
 
-// RV: `status` carries a string like "200" here but subclasses use values like "succeed". Consider unifying the semantics or renaming the field to avoid confusion.
 class Response200 implements IResponse {
-  status = "200";
+  statusDescription = "ok";
   statusCode = 200;
 
   constructor(private page: Block) {}
@@ -25,22 +24,22 @@ class Response200 implements IResponse {
   toJSON() {
     return {
       updateResults: {
-        status: this.status,
+        status: this.statusDescription,
       },
     };
   }
 }
 
 export class ResponseSuccess extends Response200 {
-  status = "succeed";
+  statusDescription = "succeed";
 }
 
 export class ResponseUpdated extends Response200 {
-  status = "updated";
+  statusDescription = "updated";
 }
 
 export class ResponseUnchanged implements IResponse {
-  status = "unchanged";
+  statusDescription = "unchanged";
   statusCode = 200;
 
   constructor(public message: string) {}
@@ -52,7 +51,7 @@ export class ResponseUnchanged implements IResponse {
   toJSON() {
     return {
       updateResults: {
-        status: this.status,
+        status: this.statusDescription,
         message: this.message,
       },
     };
@@ -60,7 +59,7 @@ export class ResponseUnchanged implements IResponse {
 }
 
 export class ResponseError implements IResponse {
-  status = "unchanged";
+  statusDescription = "unchanged";
   statusCode = 400;
 
   constructor(public message: string) {}
@@ -72,7 +71,7 @@ export class ResponseError implements IResponse {
   toJSON() {
     return {
       updateResults: {
-        status: this.status,
+        status: this.statusDescription,
         message: this.message,
       },
     };

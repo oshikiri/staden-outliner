@@ -51,7 +51,7 @@ export class Block {
     // case 2: current has no children
     //   Go up the tree until we find a parent that has a next sibling
     let current: Block = create(this);
-    // RV: Verbose console logging in core traversal can degrade performance and spam logs; remove or guard under debug flag.
+    // @owner Verbose console logging in core traversal can degrade performance and spam logs; remove or guard under debug flag.
     console.log(current);
     while (current.parent) {
       const [parent, currentIdx] = current.getParentAndIdx();

@@ -32,7 +32,7 @@ async function refreshLinksFromBlock(block: Block): Promise<void> {
   ]);
 
   if (links.length > 0) {
-    // RV: Remove verbose logging of link tuples in production to avoid leaking IDs and flooding logs.
+    // @owner Remove verbose logging of link tuples in production to avoid leaking IDs and flooding logs.
     console.log("batchInsertLinks", links);
     await batchInsertLinks(links);
   }
