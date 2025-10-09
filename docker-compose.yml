@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      STADEN_ROOT: /app/docs
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_ENV: development
+      HOST: 0.0.0.0
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    tty: true
+    stdin_open: true
+
+volumes:
+  node_modules:
