@@ -22,7 +22,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.1",
+    "@playwright/test": "^1.56.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24",
