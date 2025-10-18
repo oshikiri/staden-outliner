@@ -286,7 +286,7 @@ export function create(block: Block): Block {
 
 export function refreshBlockFromPageUpdate(block: Block): Block {
   const contentMarkdown = block.contentMarkdown || "";
-  const lexer = new Lexer("- " + contentMarkdown); // FIXME
+  const lexer = new Lexer("- " + contentMarkdown); // @owner workaround
   const tokens = lexer.exec();
   const parser = new Parser(tokens);
   const blockForMarkdown = parser.parse();

@@ -8,9 +8,8 @@
 - Query tables using SQLite
 
 ## Roadmap
-- Fix remaining FIXMEs
+- Fix remaining `@owner` comments
 - Add automatic export of markdown files
-- Revise the POST `/pages/[title]` endpoint
 - Improve the Markdown editor
   - See also https://github.com/oshikiri/react-plaintext-outliner
   - Support pasting images from the clipboard
