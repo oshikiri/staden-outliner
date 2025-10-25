@@ -42,7 +42,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload lint results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: eslint-report
           path: eslint-report.json
@@ -115,7 +115,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Upload E2E test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: playwright-report
