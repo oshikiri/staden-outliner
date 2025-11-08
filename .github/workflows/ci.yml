@@ -78,13 +78,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup Vega
-        run: bash scripts/setup-vega.sh
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "24.x"
+
+      - name: Cache Vega bundles
+        id: cache-vega-e2e
+        uses: actions/cache@v4
+        with:
+          path: |
+            public/vega.js
+            public/vega-lite.js
+            public/vega-embed.js
+          key: ${{ runner.os }}-vega-${{ hashFiles('scripts/setup-vega.sh') }}
+
+      - name: Setup Vega bundles
+        if: steps.cache-vega-e2e.outputs.cache-hit != 'true'
+        run: ./scripts/setup-vega.sh
 
       - name: Cache dependencies
         uses: actions/cache@v4
