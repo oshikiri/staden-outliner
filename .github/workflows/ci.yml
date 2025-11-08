@@ -48,6 +48,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload lint results
+        if: hashFiles('eslint-report.json') != ''
         uses: actions/upload-artifact@v5
         with:
           name: eslint-report
