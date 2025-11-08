@@ -18,12 +18,14 @@
 /out/
 
 # production
-/public
 /build
 
 # misc
 .DS_Store
 *.pem
+public/vega.js
+public/vega-lite.js
+public/vega-embed.js
 
 # debug
 npm-debug.log*
