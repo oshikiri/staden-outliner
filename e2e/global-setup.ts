@@ -9,7 +9,7 @@ async function globalSetup(config: FullConfig) {
       "http://localhost:3000/api/initialize",
     );
 
-    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
   } finally {
     await requestContext.dispose();
   }
