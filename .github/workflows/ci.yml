@@ -53,8 +53,24 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
+      - name: Restore Next.js cache
+        id: restore-next-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json', 'next.config.ts', 'src/**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-next-
+
       - name: Run build
         run: npm run build
+
+      - name: Cache Next.js build artifacts
+        if: steps.restore-next-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json', 'next.config.ts', 'src/**/*') }}
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v5
