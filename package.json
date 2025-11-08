@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "highlight.js": "^11.11",
-    "next": "^15.5",
+    "next": "^16.0",
     "react": "^19.1",
     "react-dom": "^19.2"
   },
