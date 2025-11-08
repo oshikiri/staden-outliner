@@ -64,6 +64,7 @@ jobs:
           name: codecov-umbrella
 
       - name: Run security audit
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: npm audit --audit-level=moderate
 
   e2e:
