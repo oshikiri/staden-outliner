@@ -1,6 +1,6 @@
 import { JSX } from "react";
 
-import { File } from "@/app/lib/file";
+import type { File } from "@/app/lib/file";
 
 export function Suggestion({
   suggestionQuery,

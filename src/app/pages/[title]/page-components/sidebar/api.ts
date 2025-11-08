@@ -1,5 +1,5 @@
 import type { Configs } from "@/app/lib/file/config";
-import { File } from "@/app/lib/file";
+import type { File } from "@/app/lib/file";
 
 export async function getAllConfigs(): Promise<Configs> {
   const response = await fetch("/api/configs", {

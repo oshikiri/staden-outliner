@@ -2,7 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import NextLink from "next/link";
 
 import { StadenDate } from "@/app/lib/date";
-import { File } from "@/app/lib/file";
+import type { File } from "@/app/lib/file";
 import { getFilesByPrefix } from "./api";
 
 export function JournalCalender({ pathname }: { pathname: string }) {
