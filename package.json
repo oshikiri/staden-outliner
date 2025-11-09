@@ -9,7 +9,7 @@
     "format:check": "prettier --check .",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test-coverage": "jest --coverage",
     "test:e2e": "playwright test --config=playwright.config.ts",
     "test:unit": "jest",
