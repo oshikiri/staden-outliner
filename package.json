@@ -30,7 +30,7 @@
     "@types/react-dom": "^19.2",
     "better-sqlite3": "^12.5",
     "eslint": "^9.39",
-    "eslint-config-next": "^15.5",
+    "eslint-config-next": "^16.0",
     "jest": "^30.2",
     "postcss": "^8.5",
     "prettier": "^3.7",
