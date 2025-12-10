@@ -6,7 +6,7 @@ import * as sqlite from "../../lib/sqlite";
 export async function GET() {
   await initializeSqlite();
 
-  return new Response("", {
+  return new Response(null, {
     status: 204,
   });
 }
