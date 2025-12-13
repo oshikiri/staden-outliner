@@ -24,7 +24,7 @@ jobs:
           node-version: "24.x"
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -35,7 +35,7 @@ jobs:
         run: npm ci
 
       - name: Cache workspace node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
@@ -62,7 +62,7 @@ jobs:
 
       - name: Restore Next.js cache
         id: restore-next-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json', 'next.config.ts', 'src/**/*') }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Cache Next.js build artifacts
         if: steps.restore-next-cache.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json', 'next.config.ts', 'src/**/*') }}
@@ -109,7 +109,7 @@ jobs:
 
       - name: Cache Vega bundles
         id: cache-vega-e2e
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             public/vega.js
@@ -122,7 +122,7 @@ jobs:
         run: ./scripts/setup-vega.sh
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -131,7 +131,7 @@ jobs:
 
       - name: Restore workspace node_modules
         id: cache-node-modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
@@ -141,7 +141,7 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
