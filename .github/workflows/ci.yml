@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload lint results
         if: hashFiles('eslint-report.json') != ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: eslint-report
           path: eslint-report.json
@@ -155,7 +155,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Upload E2E test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: playwright-report
