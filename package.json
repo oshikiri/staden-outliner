@@ -16,27 +16,27 @@
     "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
-    "highlight.js": "^11.11",
-    "next": "^16.1",
-    "react": "^19.2",
-    "react-dom": "^19.2"
+    "highlight.js": "11.11.1",
+    "next": "16.1.2",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57",
-    "@tailwindcss/postcss": "^4.1",
-    "@types/better-sqlite3": "^7.6",
-    "@types/node": "^24.10",
-    "@types/react": "^19.2",
-    "@types/react-dom": "^19.2",
-    "better-sqlite3": "^12.5",
-    "eslint": "^9.39",
-    "eslint-config-next": "^16.1",
-    "jest": "^30.2",
-    "postcss": "^8.5",
-    "prettier": "^3.7",
-    "tailwindcss": "^4.1",
-    "ts-jest": "^29.4",
-    "typescript": "^5.9",
-    "zustand": "^5.0"
+    "@playwright/test": "1.57.0",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "25.0.9",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
+    "better-sqlite3": "12.6.0",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.1.2",
+    "jest": "30.2.0",
+    "postcss": "8.5.6",
+    "prettier": "3.8.0",
+    "tailwindcss": "4.1.18",
+    "ts-jest": "29.4.6",
+    "typescript": "5.9.3",
+    "zustand": "5.0.10"
   }
 }
