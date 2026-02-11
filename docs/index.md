@@ -1,5 +1,5 @@
 - Staden is an outliner inspired by Logseq.
-- ![](../icon.png)
+- ![](./icon.png)
 - [[Staden Versions]]
 - [[APIs]]
 - Staden uses Logseq-style markdown syntax
@@ -7,7 +7,7 @@
 	- Staden implements the original [[Markdown Parser]]
 	- Staden imports markdown files using [[Importers]]
 - [[Staden Query Examples]]
-- 
+-
 - ## Glossary
 	- vault: page[] + config
 	- page: block that has no parent (depth=0)
@@ -30,3 +30,4 @@
 	- Blocks are retrieved in bulk by page_id and stored in memory, then reconstructed into a hierarchical structure in JavaScript based on the parent_id.
 	- This approach has the following limitation:
 		- The number of blocks within a page is typically small (< 100)
+	- Access is limited to files under `STADEN_ROOT`. Any operation that resolves outside `STADEN_ROOT` is prohibited.

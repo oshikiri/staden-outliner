@@ -3,11 +3,6 @@ import path from "path";
 
 import { getStadenRoot } from "@/app/lib/env/stadenRoot";
 
-function resolvePagesRoot(): string {
-  const stadenRoot = getStadenRoot();
-  return path.join(stadenRoot, "pages");
-}
-
 export async function GET(req: Request) {
   const url = new URL(req.url || "");
   const queryPath: string = url.searchParams.get("path") || "";
@@ -15,10 +10,11 @@ export async function GET(req: Request) {
     return new Response("Missing path parameter", { status: 400 });
   }
 
-  const pagesRoot = resolvePagesRoot();
-  const normalizedQuery = path.normalize(queryPath);
-  const imagePath = path.resolve(pagesRoot, normalizedQuery);
-  const relative = path.relative(pagesRoot, imagePath);
+  const stadenRoot = path.resolve(getStadenRoot());
+  const imagePath = path.resolve(stadenRoot, queryPath);
+  const relative = path.relative(stadenRoot, imagePath);
+
+  // Prevent directory traversal attacks by ensuring the resolved path is within the stadenRoot
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
     return new Response("Invalid image path", { status: 400 });
   }
