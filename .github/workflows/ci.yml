@@ -45,7 +45,6 @@ jobs:
 
       - name: Run linter with reports
         run: npm run lint -- --format=json --output-file=eslint-report.json
-        continue-on-error: true
 
       - name: Upload lint results
         if: hashFiles('eslint-report.json') != ''
