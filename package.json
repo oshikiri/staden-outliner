@@ -28,7 +28,7 @@
     "@types/node": "25.3.3",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "better-sqlite3": "12.6.0",
+    "better-sqlite3": "12.6.2",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.6",
     "jest": "30.2.0",
