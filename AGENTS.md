@@ -25,6 +25,11 @@
   - `chore:` for maintenance tasks
   - `refactor:` for internal code changes that do not affect behavior
     - Do not use `refactor:` if the behavior changes; use `feat:` or `fix:` as appropriate.
+- Commit footer policy for AI usage:
+  - Add these footers when AI substantially contributed to the commit:
+    - `Co-authored-by: Codex <codex@users.noreply.github.com>`
+    - `AI-Generated-By: Codex[bot] (GPT-5)`
+      - only when the commit is almost entirely AI-generated.
 
 ## Reviewing
 - You must write review comments in English
