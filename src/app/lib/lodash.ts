@@ -1,7 +1,7 @@
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore?tab=readme-ov-file#_chunk
 export function chunk<T>(input: T[], size: number): T[][] {
-  if (size < 1) {
-    return [];
+  if (!Number.isInteger(size) || size < 1) {
+    throw new TypeError("chunk size must be a positive integer");
   }
 
   return input.reduce<T[][]>((acc, item, index) => {
