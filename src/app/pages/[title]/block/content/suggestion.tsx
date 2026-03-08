@@ -2,6 +2,7 @@ import { JSX } from "react";
 
 import type { File } from "@/app/lib/file";
 
+// eslint-disable-next-line max-lines-per-function
 export function Suggestion({
   suggestionQuery,
   setSuggestionQuery,

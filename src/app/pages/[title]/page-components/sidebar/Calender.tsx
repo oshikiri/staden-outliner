@@ -5,6 +5,7 @@ import { StadenDate } from "@/app/lib/date";
 import type { File } from "@/app/lib/file";
 import { getFilesByPrefix } from "./api";
 
+// eslint-disable-next-line max-lines-per-function
 export function JournalCalender({ pathname }: { pathname: string }) {
   const dateFromPathname = getDateFromPathname(pathname);
   const monthFromPathname = dateFromPathname

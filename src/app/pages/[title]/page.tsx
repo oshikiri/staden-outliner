@@ -10,6 +10,7 @@ import { SideBar } from "./page-components/sidebar";
 import { useStore } from "./state";
 import { getPageByTitle } from "./api";
 
+// eslint-disable-next-line max-lines-per-function
 export default function Page() {
   const params = useParams<{ title: string }>();
   const title = decodeURIComponent(params.title);

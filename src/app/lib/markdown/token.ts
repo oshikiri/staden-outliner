@@ -247,7 +247,7 @@ export class Marker extends Token {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, max-lines-per-function
 export function createToken(obj: any): Token {
   // @owner `obj` is `any`; add runtime validation or a type guard to prevent crashes from malformed input.
   const tokenType = obj.type;

@@ -22,6 +22,7 @@ import {
   setCursor,
 } from "./dom";
 
+// eslint-disable-next-line max-lines-per-function
 export function Content({
   block,
   editable,

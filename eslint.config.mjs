@@ -23,6 +23,23 @@ const eslintConfig = [
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "max-lines-per-function": [
+        "error",
+        {
+          max: 40,
+          skipBlankLines: true,
+          skipComments: true,
+          IIFEs: true,
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      "**/*.test.{js,jsx,ts,tsx}"
+    ],
+    rules: {
+      "max-lines-per-function": "off",
     },
   },
 ];
