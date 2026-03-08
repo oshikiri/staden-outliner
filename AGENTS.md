@@ -2,6 +2,7 @@
 
 ## Communication
 - Please respond in Japanese in chat UI.
+- You must write review comments in English
 
 ## Coding
 - 作業完了後は以下のコマンドを実行し成功することを確認する:
@@ -25,16 +26,6 @@
   - Logging issues
 
 ## Commit
-- Use clear and conventional commit message prefixes:
-  - `feat:` for new features or changes in functionality
-  - `fix:` for bug fixes
-  - `test:` for adding or updating tests
-  - `chore:` for maintenance tasks
-  - `refactor:` for internal code changes that do not affect behavior
-    - Do not use `refactor:` if the behavior changes; use `feat:` or `fix:` as appropriate.
+- Use clear and conventional commit message prefixes
 - Include `Co-authored-by` footer when AI contributed to the commit:
   - `Co-authored-by: Codex <codex@users.noreply.github.com>` (Codexの場合)
-
-
-## Reviewing
-- You must write review comments in English
