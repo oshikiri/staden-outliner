@@ -6,5 +6,9 @@ module.exports = {
   collectCoverageFrom: [
     "<rootDir>/src/app/lib/markdown/**/*.ts",
     "<rootDir>/src/app/lib/date/**/*.ts",
+    "<rootDir>/src/app/lib/sqlite/**/*.ts",
+    "<rootDir>/src/app/lib/importer/**/*.ts",
+    "<rootDir>/src/app/lib/exporter/**/*.ts",
+    "<rootDir>/src/app/api/**/*.ts",
   ],
 };
