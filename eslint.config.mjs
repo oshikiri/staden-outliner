@@ -1,5 +1,6 @@
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
+import { fixupConfigRules } from "@eslint/compat";
 
 const eslintConfig = [
   {
@@ -10,8 +11,8 @@ const eslintConfig = [
       "public/vega-embed.js",
     ],
   },
-  ...nextCoreWebVitals,
-  ...nextTypescript,
+  ...fixupConfigRules(nextCoreWebVitals),
+  ...fixupConfigRules(nextTypescript),
   {
     rules: {
       "@typescript-eslint/no-unused-vars": [
