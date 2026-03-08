@@ -35,9 +35,7 @@ const eslintConfig = [
     },
   },
   {
-    files: [
-      "**/*.test.{js,jsx,ts,tsx}"
-    ],
+    files: ["**/*.test.{js,jsx,ts,tsx}"],
     rules: {
       "max-lines-per-function": "off",
     },
