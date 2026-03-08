@@ -25,12 +25,10 @@
   - `chore:` for maintenance tasks
   - `refactor:` for internal code changes that do not affect behavior
     - Do not use `refactor:` if the behavior changes; use `feat:` or `fix:` as appropriate.
-- Commit footer policy for AI usage:
-  - Add these footers when AI substantially contributed to the commit:
-    - `Co-authored-by: Codex`
-    - `AI-Generated-By: Codex (GPT-5)`
-  - Add `AI-Generated: true` only when the commit is almost entirely AI-generated.
-  - Write trailer footers as a single contiguous block with no blank lines between footer lines.
+- Commit author policy for AI usage:
+  - Use `Codex <codex@users.noreply.github.com>` as the commit author when AI fully contributed to the commit.
+  - Include the following footer when AI contributed to the commit:
+    - `Co-authored-by: Codex <codex@users.noreply.github.com>`
 
 ## Reviewing
 - You must write review comments in English
