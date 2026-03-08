@@ -3,6 +3,13 @@
 ## Communication
 - Please respond in Japanese in chat UI.
 
+## Coding
+- 作業完了後は以下のコマンドを実行し成功することを確認する:
+  - `npm run format:check`
+  - `npm run lint`
+  - `npm run build`
+  - `npm test`
+
 ## Coding styles
 - Adhere to the best practices and conventions of:
   - JavaScript
@@ -25,10 +32,9 @@
   - `chore:` for maintenance tasks
   - `refactor:` for internal code changes that do not affect behavior
     - Do not use `refactor:` if the behavior changes; use `feat:` or `fix:` as appropriate.
-- Commit author policy for AI usage:
-  - Use `Codex <codex@users.noreply.github.com>` as the commit author when AI fully contributed to the commit.
-  - Include the following footer when AI contributed to the commit:
-    - `Co-authored-by: Codex <codex@users.noreply.github.com>`
+- Include `Co-authored-by` footer when AI contributed to the commit:
+  - `Co-authored-by: Codex <codex@users.noreply.github.com>` (Codexの場合)
+
 
 ## Reviewing
 - You must write review comments in English
