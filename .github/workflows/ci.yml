@@ -79,7 +79,7 @@ jobs:
           key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json', 'next.config.ts', 'src/**/*') }}
 
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage/lcov.info
           flags: unittests
