@@ -1,15 +1,7 @@
 # AGENTS.md
 
 ## Communication
-- Please respond in Japanese in chat UI.
 - You must write review comments in English
-
-## Coding
-- 作業完了後は以下のコマンドを実行し成功することを確認する:
-  - `npm run format:check`
-  - `npm run lint`
-  - `npm run build`
-  - `npm test`
 
 ## Coding styles
 - Adhere to the best practices and conventions of:
@@ -25,10 +17,4 @@
   - Logging issues
 
 ## Testing
-- Do not remove tests unless explicitly instructed.
 - Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
-
-## Commit
-- Use clear and conventional commit message prefixes
-- Include `Co-authored-by` footer when AI contributed to the commit:
-  - `Co-authored-by: Codex <codex@users.noreply.github.com>` (Codexの場合)
