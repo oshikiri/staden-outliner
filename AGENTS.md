@@ -19,11 +19,14 @@
   - Next.js
   - Tailwind CSS
   - Web security standards
-- Do not remove tests. Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
 - Please ignore the following issues for now. We will address them later:
   - Accessibility issues (e.g., aria-label, WCAG contrast, role)
   - Responsive issues
   - Logging issues
+
+## Testing
+- Do not remove tests unless explicitly instructed.
+- Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
 
 ## Commit
 - Use clear and conventional commit message prefixes
