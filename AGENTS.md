@@ -8,6 +8,3 @@
   - Accessibility issues (e.g., aria-label, WCAG contrast, role)
   - Responsive issues
   - Logging issues
-
-## Testing
-- Do not commit focused or skipped tests (e.g., `test.only`, `test.skip`) unless explicitly instructed.
