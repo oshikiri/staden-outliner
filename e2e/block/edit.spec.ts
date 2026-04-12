@@ -51,7 +51,7 @@ async function enterEditMode(page: Page, element: Locator) {
   }
 }
 
-test.skip("when pressing Tab/Shift+Tab, it should change the block indentation level", async ({
+test.fixme("when pressing Tab/Shift+Tab, it should change the block indentation level", async ({
   page,
 }) => {
   await page.goto("./pages/edit");

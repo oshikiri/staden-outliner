@@ -35,9 +35,51 @@ const eslintConfig = [
     },
   },
   {
-    files: ["**/*.test.{js,jsx,ts,tsx}"],
+    files: ["**/*.{test,spec}.{js,jsx,ts,tsx}"],
     rules: {
       "max-lines-per-function": "off",
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "test",
+          property: "only",
+          message: "Do not commit focused tests.",
+        },
+        {
+          object: "test",
+          property: "skip",
+          message:
+            "Do not commit skipped tests. Use test.fixme only when the test is intentionally deferred.",
+        },
+        {
+          object: "it",
+          property: "only",
+          message: "Do not commit focused tests.",
+        },
+        {
+          object: "it",
+          property: "skip",
+          message: "Do not commit skipped tests.",
+        },
+        {
+          object: "describe",
+          property: "only",
+          message: "Do not commit focused test suites.",
+        },
+        {
+          object: "describe",
+          property: "skip",
+          message: "Do not commit skipped test suites.",
+        },
+      ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.name=/^(fit|fdescribe|xit|xdescribe)$/]",
+          message: "Do not commit focused or skipped tests.",
+        },
+      ],
     },
   },
 ];
