@@ -1,16 +1,22 @@
-import { Block } from "../../../lib/markdown";
+import { Block } from "@/app/lib/markdown";
 import {
   BlockRef,
   CodeBlock,
   Command,
   CommandQuery,
-} from "../../../lib/markdown/token";
+} from "@/app/lib/markdown/token";
 import {
-  query as sqliteQuery,
   getBlockById as getBlockByIdDb,
-} from "../../../lib/sqlite";
+  query as sqliteQuery,
+} from "@/app/lib/sqlite";
 
-export async function resolveBlockRef(page: Block) {
+export async function resolvePageContent(page: Block): Promise<Block> {
+  await resolveBlockRefs(page);
+  await resolveCommandTokens(page);
+  return fillContentMarkdown(page);
+}
+
+async function resolveBlockRefs(page: Block): Promise<void> {
   for (const i in page.content) {
     const content = page.content[i];
     if (content instanceof BlockRef) {
@@ -20,17 +26,19 @@ export async function resolveBlockRef(page: Block) {
   }
 
   for (const child of page.children) {
-    await resolveBlockRef(child);
+    await resolveBlockRefs(child);
   }
 }
 
-export async function resolveAllCommandTokens(page: Block): Promise<Block> {
+async function resolveCommandTokens(page: Block): Promise<void> {
   for (const i in page.content) {
-    let content = page.content[i];
+    const content = page.content[i];
     if (content instanceof Command) {
-      content = await resolveCommand(content);
-    } else if (content instanceof CommandQuery) {
-      // @owner Empty catch swallows runtime errors, making debugging difficult. Log or propagate the error.
+      await resolveCommand(content);
+      continue;
+    }
+
+    if (content instanceof CommandQuery) {
       try {
         page.content[i] = await resolveCommandQuery(content, page.id || "");
       } catch {}
@@ -38,19 +46,18 @@ export async function resolveAllCommandTokens(page: Block): Promise<Block> {
   }
 
   for (const child of page.children) {
-    await resolveAllCommandTokens(child);
+    await resolveCommandTokens(child);
   }
-
-  return page;
 }
 
-async function resolveCommand(command: Command): Promise<Command> {
-  if (command.name === "embed") {
-    const id = command.args.replace("((", "").replace("))", "");
-    const block = await getBlockByIdDb(id);
-    command.resolvedContent = block.content || [];
+async function resolveCommand(command: Command): Promise<void> {
+  if (command.name !== "embed") {
+    return;
   }
-  return command;
+
+  const id = command.args.replace("((", "").replace("))", "");
+  const block = await getBlockByIdDb(id);
+  command.resolvedContent = block.content || [];
 }
 
 async function resolveCommandQuery(
@@ -61,14 +68,13 @@ async function resolveCommandQuery(
   if (!block) {
     return command;
   }
-  // @owner Assumes the first child is a CodeBlock containing the query;
-  // add guards to avoid runtime errors when structure differs.
-  const code: unknown = block.children[0].content[0];
+
+  const code: unknown = block.children[0]?.content[0];
   if (!(code instanceof CodeBlock)) {
     return command;
   }
 
-  const query: string = code.textContent;
+  const query = code.textContent;
   const queryExecutionStart = Date.now();
   const rows = await sqliteQuery(query);
   command.queryExecutionMilliseconds = Date.now() - queryExecutionStart;
@@ -78,22 +84,22 @@ async function resolveCommandQuery(
 
   const vlJsonCodeBlock = block.children[1]?.content?.[0];
   if (vlJsonCodeBlock instanceof CodeBlock && vlJsonCodeBlock.lang === "json") {
-    const vlJsonStr = vlJsonCodeBlock.textContent;
-    command.vlJsonStr = vlJsonStr;
+    command.vlJsonStr = vlJsonCodeBlock.textContent;
     command.resolvedDataForVlJson = rows;
-    console.log({ vlJsonStr, rows });
+    console.log({ vlJsonStr: command.vlJsonStr, rows });
   }
 
   return command;
 }
 
-export function fillContentMarkdown(page: Block): Block {
+function fillContentMarkdown(page: Block): Block {
   page.contentMarkdown = page.content
     .map((token) => {
       return token.toMarkdown();
     })
     .join("")
     .trimEnd();
+
   page.children.forEach((child) => {
     fillContentMarkdown(child);
   });

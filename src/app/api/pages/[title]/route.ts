@@ -1,12 +1,5 @@
-import {
-  resolveBlockRef,
-  resolveAllCommandTokens,
-  fillContentMarkdown,
-} from "./resolve-components";
-import { Block, create as createBlock } from "@/app/lib/markdown/block";
-import { getPageByTitle } from "@/app/lib/sqlite";
-import { getPageBlockByTitle } from "@/app/lib/sqlite/blocks";
-import * as IncrementalImporter from "@/app/lib/importer/incremental_importer";
+import type { Block } from "@/app/lib/markdown/block";
+import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
 
 import { ResponseError, ResponseUpdated, ResponseSuccess } from "./responses";
 
@@ -22,15 +15,7 @@ export async function GET(_req: Request, props: Props) {
     return new ResponseError("Missing title").toResponse();
   }
 
-  let page = await resolvePage(title);
-
-  await resolveBlockRef(page);
-  await resolveAllCommandTokens(page);
-
-  if (!page) {
-    return new ResponseError("Page not found").toResponse();
-  }
-  page = fillContentMarkdown(page);
+  const page = await getPageByTitle(title);
   return new ResponseSuccess(page).toResponse();
 }
 
@@ -49,46 +34,11 @@ export async function POST(req: Request, props: Props) {
   if (!title) {
     return new ResponseError("Missing title").toResponse();
   }
-  const pagePrev = await resolvePage(title);
-  if (!pagePrev) {
-    return new ResponseError("Page not found").toResponse();
-  }
-  const pageNext: Block = await req.json();
-  if (!pageNext) {
+  const pagePayload: Block = await req.json();
+  if (!pagePayload) {
     return new ResponseError("Missing page content").toResponse();
   }
 
-  const pageUpdated = createBlock(pageNext);
-  pageUpdated.setProperty("title", pagePrev.getProperty("title") || "");
-  await IncrementalImporter.importBlockRecursive(pageUpdated);
-  await resolveBlockRef(pageUpdated);
-  await resolveAllCommandTokens(pageUpdated);
-
+  const pageUpdated = await updatePageByTitle(title, pagePayload);
   return new ResponseUpdated(pageUpdated).toResponse();
-}
-
-async function resolvePage(title: string) {
-  const decodedTitle = decodeURIComponent(title);
-  const page = await getPageBlockByTitle(decodedTitle);
-
-  if (page) {
-    return page;
-  }
-
-  const file = await getPageByTitle(decodedTitle);
-  if (!file) {
-    console.info(`No file found with title ${decodedTitle}`);
-    const { block } = await IncrementalImporter.createNewFileWithEmptyBlock(
-      decodedTitle,
-      undefined,
-    );
-    return block;
-  }
-
-  const { block: blockUpdated } =
-    await IncrementalImporter.createNewFileWithEmptyBlock(
-      decodedTitle,
-      file.pageId,
-    );
-  return blockUpdated;
 }
