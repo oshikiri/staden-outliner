@@ -59,5 +59,8 @@ coverage/
 # Staden
 *.sqlite3
 
+# Staden metadata
+.issues/
+
 # VS Code
 .vscode/
