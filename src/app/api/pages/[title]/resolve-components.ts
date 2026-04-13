@@ -76,7 +76,6 @@ async function resolveCommandQuery(
     command.resolvedBlocks = rows;
   }
 
-  // @owner Also assumes the second child holds Vega-Lite JSON; validate before use.
   const vlJsonCodeBlock = block.children[1]?.content?.[0];
   if (vlJsonCodeBlock instanceof CodeBlock && vlJsonCodeBlock.lang === "json") {
     const vlJsonStr = vlJsonCodeBlock.textContent;

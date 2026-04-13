@@ -9,7 +9,6 @@ export function loadMarkdown(file: File): Block {
   }
 
   const markdown: string = fs.readFileSync(file.path || "", "utf8");
-  // @owner Synchronous FS read blocks the event loop; prefer async IO in server contexts.
   const pageBlock = parse(markdown);
 
   pageBlock.id = file.pageId;

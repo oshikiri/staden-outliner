@@ -1,6 +1,5 @@
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
 
-// @owner update with diff?
 export async function postPage(
   page: BlockEntity | null,
 ): Promise<BlockEntity | null> {
@@ -24,7 +23,6 @@ function sanitizePageBeforePost(page: BlockEntity): BlockEntity {
   const sanitizedPage = new BlockEntity([], page.depth, []).withId(
     page.id || "",
   );
-  // @owner Only whitelists a few fields; ensure no client-only fields leak (e.g., event handlers, UI state).
   sanitizedPage.contentMarkdown = page.contentMarkdown;
   sanitizedPage.children = page.children.map((child) =>
     sanitizePageBeforePost(child),
