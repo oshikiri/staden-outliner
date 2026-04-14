@@ -13,7 +13,7 @@ import {
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);
   await resolveCommandTokens(page);
-  return fillContentMarkdown(page);
+  return page;
 }
 
 async function resolveBlockRefs(page: Block): Promise<void> {
@@ -90,19 +90,4 @@ async function resolveCommandQuery(
   }
 
   return command;
-}
-
-function fillContentMarkdown(page: Block): Block {
-  page.contentMarkdown = page.content
-    .map((token) => {
-      return token.toMarkdown();
-    })
-    .join("")
-    .trimEnd();
-
-  page.children.forEach((child) => {
-    fillContentMarkdown(child);
-  });
-
-  return page;
 }

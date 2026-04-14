@@ -1,4 +1,4 @@
-import { Block, getContentMarkdown } from "./block";
+import { Block } from "./block";
 import { createToken, TokenType } from "./token";
 
 export type BlockPropertyDto = [string, unknown];
@@ -16,7 +16,6 @@ export type BlockDto = {
   id?: string;
   parentId?: string;
   pageId?: string;
-  contentMarkdown?: string;
   properties?: BlockPropertyDto[];
   depth: number;
   content: TokenDto[];
@@ -28,7 +27,6 @@ export function toBlockDto(block: Block): BlockDto {
     id: block.id,
     parentId: block.parentId,
     pageId: block.pageId,
-    contentMarkdown: getContentMarkdown(block),
     properties: cloneProperties(block.properties),
     depth: block.depth,
     content: block.content.map(toTokenDto),
@@ -45,7 +43,6 @@ export function fromBlockDto(dto: BlockDto): Block {
   block.id = dto.id;
   block.parentId = dto.parentId;
   block.pageId = dto.pageId;
-  block.contentMarkdown = dto.contentMarkdown;
   block.properties = cloneProperties(dto.properties);
   block.setPropertiesFromContent();
   block.children.forEach((child) => {

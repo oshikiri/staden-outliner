@@ -2,16 +2,11 @@ import { createToken, Token, TokenType, PropertyPair, Marker } from "./token";
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 
-/**
- * For simplicity, Block includes items only used on the client side.
- */
 export class Block {
   public id?: string;
   public parentId?: string;
   public pageId?: string;
 
-  public contentMarkdown?: string;
-  public backlinks?: Block[];
   public properties?: unknown[][];
   public parent?: Block;
 
@@ -266,8 +261,6 @@ export function create(block: Block): Block {
   newBlock.children.forEach((child) => {
     child.parent = newBlock;
   });
-  newBlock.contentMarkdown = block.contentMarkdown;
-  newBlock.backlinks = block.backlinks;
   newBlock.pageId = block.pageId;
   newBlock.id = block.id;
   newBlock.parentId = block.parentId;
@@ -277,14 +270,6 @@ export function create(block: Block): Block {
   newBlock.setPropertiesFromContent();
 
   return newBlock;
-}
-
-export function refreshBlockFromPageUpdate(block: Block): Block {
-  const contentMarkdown = block.contentMarkdown || "";
-  applyContentMarkdown(block, contentMarkdown);
-  block.children = block.children.map(refreshBlockFromPageUpdate);
-
-  return block;
 }
 
 export function applyContentMarkdown(

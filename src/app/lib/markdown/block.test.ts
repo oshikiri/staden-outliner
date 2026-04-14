@@ -5,7 +5,6 @@ import {
   Block,
   create,
   getContentMarkdown,
-  refreshBlockFromPageUpdate,
 } from "./block";
 import { Text, PropertyPair, Marker } from "./token";
 
@@ -176,7 +175,6 @@ describe("Block", () => {
         1,
         [],
       );
-      block.contentMarkdown = "key:: value";
       block.withProperties([["key", "value"]]);
       const newBlock = create(block);
       expect(newBlock.getProperty("key")).toBe("value");
@@ -311,23 +309,6 @@ describe("Block", () => {
       const childBlock = new Block([], 2, []);
       const block = new Block([], 1, [childBlock]);
       expect(block.flatten()).toEqual([block, childBlock]);
-    });
-  });
-
-  describe("refleshBlockFromPageUpdate", () => {
-    test("when it has no content, returns an empty string", () => {
-      const block = new Block([], 1, []);
-      block.contentMarkdown = undefined;
-
-      refreshBlockFromPageUpdate(block);
-      expect(block.content).toStrictEqual([]);
-    });
-    test("when it has content, returns an empty string", () => {
-      const block = new Block([], 1, []);
-      block.contentMarkdown = "test";
-
-      refreshBlockFromPageUpdate(block);
-      expect(block.content).toStrictEqual([new Text("test")]);
     });
   });
 });
