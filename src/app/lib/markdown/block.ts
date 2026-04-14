@@ -133,20 +133,6 @@ export class Block {
     return null;
   }
 
-  toJSON(): unknown {
-    return {
-      content: this.content,
-      contentMarkdown: this.contentMarkdown,
-      depth: this.depth,
-      children: this.children.map((child) => child.toJSON()),
-      properties: this.properties,
-      id: this.id,
-      parentId: this.parentId,
-      backlinks: this.backlinks,
-      pageId: this.pageId,
-    };
-  }
-
   increaseLevel(): void {
     const [parent, currentIdx] = this.getParentAndIdx();
     if (!parent || currentIdx === -1) {

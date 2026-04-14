@@ -148,33 +148,6 @@ describe("Block", () => {
     });
   });
 
-  describe("toJSON", () => {
-    test("returns a JSON representation of the block", () => {
-      const block = new Block([], 1, []);
-      block.withId("test-id");
-      block.withProperties([["key", "value"]]);
-      expect(block.toJSON()).toEqual({
-        content: [],
-        contentMarkdown: undefined,
-        depth: 1,
-        children: [],
-        id: "test-id",
-        properties: [["key", "value"]],
-        page: undefined,
-        parentId: undefined,
-        backlinks: undefined,
-        marker: undefined,
-      });
-    });
-
-    test("with children", () => {
-      const block = new Block([], 1, [new Block([], 2, []).withId("child-id")]);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const json: any = block.toJSON();
-      expect(json.children).toHaveLength(1);
-    });
-  });
-
   describe("create", () => {
     test("returns a new Block instance", () => {
       const block = new Block([], 1, []);
