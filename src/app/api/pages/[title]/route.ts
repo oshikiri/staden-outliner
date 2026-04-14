@@ -1,4 +1,4 @@
-import type { Block } from "@/app/lib/markdown/block";
+import { BlockDto, fromBlockDto } from "@/app/lib/markdown/blockDto";
 import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
 
 import { ResponseError, ResponseUpdated, ResponseSuccess } from "./responses";
@@ -34,11 +34,11 @@ export async function POST(req: Request, props: Props) {
   if (!title) {
     return new ResponseError("Missing title").toResponse();
   }
-  const pagePayload: Block = await req.json();
+  const pagePayload: BlockDto = await req.json();
   if (!pagePayload) {
     return new ResponseError("Missing page content").toResponse();
   }
 
-  const pageUpdated = await updatePageByTitle(title, pagePayload);
+  const pageUpdated = await updatePageByTitle(title, fromBlockDto(pagePayload));
   return new ResponseUpdated(pageUpdated).toResponse();
 }

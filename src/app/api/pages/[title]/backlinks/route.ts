@@ -1,5 +1,6 @@
 import { getSourceLinks, getCurrentPage } from "@/app/lib/sqlite";
 import { Block } from "@/app/lib/markdown/block";
+import { toBlockDto } from "@/app/lib/markdown/blockDto";
 
 type Props = {
   params: Promise<{
@@ -17,7 +18,7 @@ export async function GET(_req: Request, props: Props) {
     }),
   )) as Block[];
 
-  return new Response(JSON.stringify(sourceBlocks), {
+  return new Response(JSON.stringify(sourceBlocks.map(toBlockDto)), {
     headers: {
       "Content-Type": "application/json",
     },

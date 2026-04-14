@@ -1,3 +1,4 @@
+import { BlockDto, toBlockDto } from "@/app/lib/markdown/blockDto";
 import { Block } from "@/app/lib/markdown";
 
 interface IResponse {
@@ -12,9 +13,10 @@ class Response200 implements IResponse {
   statusDescription = "ok";
   statusCode = 200;
 
-  constructor(private page: Block) {}
+  constructor(private page: Block | BlockDto) {}
   toResponse() {
-    return new Response(JSON.stringify(this.page), {
+    const dto = this.page instanceof Block ? toBlockDto(this.page) : this.page;
+    return new Response(JSON.stringify(dto), {
       status: this.statusCode,
       headers: {
         "Content-Type": "application/json",

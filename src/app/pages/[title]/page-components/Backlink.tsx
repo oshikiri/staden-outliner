@@ -1,9 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 
-import {
-  Block as BlockEntity,
-  create as createBlock,
-} from "@/app/lib/markdown/block";
+import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import { BlockDto, fromBlockDto } from "@/app/lib/markdown/blockDto";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
@@ -58,8 +56,8 @@ async function getPageBacklinks(
   if (!response.ok) {
     return null;
   }
-  const json = await response.json();
-  return json.map((block: BlockEntity) => createBlock(block));
+  const json: BlockDto[] = await response.json();
+  return json.map((block) => fromBlockDto(block));
 }
 
 function BacklinkPage({

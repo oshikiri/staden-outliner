@@ -1,9 +1,6 @@
 import { create } from "zustand";
 
-import {
-  Block as BlockEntity,
-  create as createBlock,
-} from "@/app/lib/markdown/block";
+import { Block as BlockEntity } from "@/app/lib/markdown/block";
 
 export interface PageState {
   page: BlockEntity | null;
@@ -21,7 +18,6 @@ export const useStore = create<PageState>((set) => ({
     if (!page) {
       return;
     }
-    page = createBlock(page);
     set({ page });
   },
 

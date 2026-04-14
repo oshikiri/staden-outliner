@@ -1,0 +1,67 @@
+import { Block } from "./block";
+import { createToken, TokenType } from "./token";
+
+export type BlockPropertyDto = [string, unknown];
+
+export type TokenDto = {
+  type: TokenType;
+  [key: string]: unknown;
+};
+
+/**
+ * Transport shape for page and block payloads at API boundaries.
+ * This DTO still carries temporary fields that will be split further later.
+ */
+export type BlockDto = {
+  id?: string;
+  parentId?: string;
+  pageId?: string;
+  contentMarkdown?: string;
+  properties?: BlockPropertyDto[];
+  depth: number;
+  content: TokenDto[];
+  children: BlockDto[];
+};
+
+export function toBlockDto(block: Block): BlockDto {
+  return {
+    id: block.id,
+    parentId: block.parentId,
+    pageId: block.pageId,
+    contentMarkdown: block.contentMarkdown,
+    properties: cloneProperties(block.properties),
+    depth: block.depth,
+    content: block.content.map(toTokenDto),
+    children: block.children.map((child) => toBlockDto(child)),
+  };
+}
+
+export function fromBlockDto(dto: BlockDto): Block {
+  const block = new Block(
+    dto.content.map((token) => createToken(token)),
+    dto.depth,
+    dto.children.map((child) => fromBlockDto(child)),
+  );
+  block.id = dto.id;
+  block.parentId = dto.parentId;
+  block.pageId = dto.pageId;
+  block.contentMarkdown = dto.contentMarkdown;
+  block.properties = cloneProperties(dto.properties);
+  block.setPropertiesFromContent();
+  block.children.forEach((child) => {
+    child.parent = block;
+  });
+  return block;
+}
+
+function cloneProperties(
+  properties?: BlockPropertyDto[] | unknown[][],
+): BlockPropertyDto[] | undefined {
+  return properties?.map((property) => {
+    return [property[0] as string, property[1]];
+  });
+}
+
+function toTokenDto(token: object): TokenDto {
+  return JSON.parse(JSON.stringify(token)) as TokenDto;
+}
