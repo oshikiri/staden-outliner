@@ -246,6 +246,15 @@ export class Block {
   }
 }
 
+export function getContentMarkdown(block: Block): string {
+  return block.content
+    .map((token) => {
+      return token.toMarkdown();
+    })
+    .join("")
+    .trimEnd();
+}
+
 export function create(block: Block): Block {
   const content: Token[] = block.content.map((token) => createToken(token));
 
@@ -272,6 +281,16 @@ export function create(block: Block): Block {
 
 export function refreshBlockFromPageUpdate(block: Block): Block {
   const contentMarkdown = block.contentMarkdown || "";
+  applyContentMarkdown(block, contentMarkdown);
+  block.children = block.children.map(refreshBlockFromPageUpdate);
+
+  return block;
+}
+
+export function applyContentMarkdown(
+  block: Block,
+  contentMarkdown: string,
+): Block {
   const lexer = new Lexer("- " + contentMarkdown); // @owner workaround
   const tokens = lexer.exec();
   const parser = new Parser(tokens);
@@ -279,7 +298,5 @@ export function refreshBlockFromPageUpdate(block: Block): Block {
 
   block.content = blockForMarkdown.children[0].content;
   block.properties = blockForMarkdown.children[0].properties;
-  block.children = block.children.map(refreshBlockFromPageUpdate);
-
   return block;
 }

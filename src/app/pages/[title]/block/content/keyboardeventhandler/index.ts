@@ -1,6 +1,9 @@
 import { KeyboardEventHandler, KeyboardEvent, RefObject } from "react";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import {
+  applyContentMarkdown,
+  Block as BlockEntity,
+} from "@/app/lib/markdown/block";
 import { postPage } from "../../api";
 import { extractTextContent } from "../dom";
 import * as caret from "./caret";
@@ -84,7 +87,7 @@ export class ContentKeyboardEventHandler {
   tab(event: KeyboardEvent) {
     event.preventDefault();
     const currentTextContent = extractTextContent(this.contentRef.current);
-    this.block.contentMarkdown = currentTextContent;
+    applyContentMarkdown(this.block, currentTextContent);
     updatePageByIndent(this.page, this.block.id, event.shiftKey);
     postPage(this.page).then((pageUpdated) => {
       this.setPage(pageUpdated);
@@ -181,7 +184,7 @@ export class ContentKeyboardEventHandler {
       return;
     }
     this.contentRef.current.textContent = newTextContent;
-    this.block.contentMarkdown = newTextContent;
+    applyContentMarkdown(this.block, newTextContent);
 
     this.setOffset?.(startOffset);
   }
@@ -249,13 +252,13 @@ function updateMarkdownByEnter(
   if (!blockBefore) {
     return [page, undefined];
   }
-  blockBefore.contentMarkdown = textBefore;
+  applyContentMarkdown(blockBefore, textBefore);
 
   const blockAfter = new BlockEntity([], blockBefore.depth, []).withId(
     self.crypto.randomUUID(),
   );
   blockAfter.pageId = blockBefore.pageId;
-  blockAfter.contentMarkdown = textAfter;
+  applyContentMarkdown(blockAfter, textAfter || "");
 
   const [parent, idx] = blockBefore.getParentAndIdx();
   if (!parent) {

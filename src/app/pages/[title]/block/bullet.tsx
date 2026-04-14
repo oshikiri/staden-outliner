@@ -1,6 +1,10 @@
 import { JSX, MouseEventHandler } from "react";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import {
+  applyContentMarkdown,
+  Block as BlockEntity,
+  getContentMarkdown,
+} from "@/app/lib/markdown/block";
 import { flipCollapsed } from "@/app/lib/markdown/utils";
 import { postPage } from "./api";
 import { useStore } from "../state";
@@ -20,8 +24,9 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
       return;
     }
     // @owner Avoid logging content; may leak private data to console.
-    console.log("Bullet onClick", { contentMarkdown: target.contentMarkdown });
-    target.contentMarkdown = flipCollapsed(target.contentMarkdown || "");
+    const contentMarkdown = getContentMarkdown(target);
+    console.log("Bullet onClick", { contentMarkdown });
+    applyContentMarkdown(target, flipCollapsed(contentMarkdown));
 
     postPage(page).then(setPage);
   };

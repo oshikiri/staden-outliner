@@ -8,7 +8,6 @@ export async function postPage(
     return null;
   }
   const pageTitle = page.getProperty("title") as string;
-  page = sanitizePageBeforePost(page);
   const encodedTitle = encodeURIComponent(pageTitle);
   const response = await fetch(`/api/pages/${encodedTitle}`, {
     method: "POST",
@@ -18,18 +17,4 @@ export async function postPage(
     body: JSON.stringify(toBlockDto(page)),
   });
   return fromBlockDto(await response.json());
-}
-
-function sanitizePageBeforePost(page: BlockEntity): BlockEntity {
-  const sanitizedPage = new BlockEntity([], page.depth, []).withId(
-    page.id || "",
-  );
-  sanitizedPage.contentMarkdown = page.contentMarkdown;
-  sanitizedPage.children = page.children.map((child) =>
-    sanitizePageBeforePost(child),
-  );
-  sanitizedPage.properties = page.properties;
-  sanitizedPage.parentId = page.parentId;
-  sanitizedPage.pageId = page.pageId;
-  return sanitizedPage;
 }

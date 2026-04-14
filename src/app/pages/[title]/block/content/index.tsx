@@ -8,7 +8,11 @@ import {
   KeyboardEventHandler,
 } from "react";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import {
+  applyContentMarkdown,
+  Block as BlockEntity,
+  getContentMarkdown,
+} from "@/app/lib/markdown/block";
 import { Token } from "../../token";
 import { postPage } from "../api";
 import { useStore } from "../../state";
@@ -43,14 +47,14 @@ export function Content({
     undefined,
   );
   const [contentMarkdown, setContentMarkdown] = useState<string>(
-    block.contentMarkdown || "",
+    getContentMarkdown(block),
   );
 
   const isEditing = editingBlockId === block.id;
   useEffect(() => {
     if (isEditing) {
       // render mode -> edit mode
-      setContentMarkdown(block.contentMarkdown || "");
+      setContentMarkdown(getContentMarkdown(block));
       contentRef.current?.focus();
 
       if (contentRef.current) {
@@ -60,9 +64,6 @@ export function Content({
           setCursor(currentNode, cursorOffset);
         }
       }
-    } else {
-      // edit mode -> render mode
-      block.contentMarkdown = contentMarkdown;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing, offset]);
@@ -100,7 +101,7 @@ export function Content({
       return;
     }
 
-    blockOnPage.contentMarkdown = contentMarkdown;
+    applyContentMarkdown(blockOnPage, contentMarkdown);
     postPage(page).then((page) => setPage(page));
   };
 
@@ -145,7 +146,7 @@ export function Content({
         teardown={(contentMarkdown: string) => {
           // @owner Avoid logging content payloads; may leak sensitive data.
           console.log("teardown", contentMarkdown);
-          block.contentMarkdown = contentMarkdown;
+          setContentMarkdown(contentMarkdown);
           // @owner Remove debug logs or guard under a debug flag.
           console.log("teardown", contentMarkdown.length);
           setOffset(contentMarkdown.length - 1 || 0);

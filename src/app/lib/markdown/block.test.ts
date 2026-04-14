@@ -1,6 +1,12 @@
 import { describe, expect, test, beforeEach } from "@jest/globals";
 
-import { Block, create, refreshBlockFromPageUpdate } from "./block";
+import {
+  applyContentMarkdown,
+  Block,
+  create,
+  getContentMarkdown,
+  refreshBlockFromPageUpdate,
+} from "./block";
 import { Text, PropertyPair, Marker } from "./token";
 
 describe("Block", () => {
@@ -179,6 +185,26 @@ describe("Block", () => {
       const block = new Block([new Marker("DOING")], 1, []);
       const newBlock = create(block);
       expect(newBlock.getProperty("status")).toBe("DOING");
+    });
+  });
+
+  describe("getContentMarkdown", () => {
+    test("returns markdown rendered from tokens", () => {
+      const block = new Block([new Text("test")], 1, []);
+      expect(getContentMarkdown(block)).toBe("test");
+    });
+  });
+
+  describe("applyContentMarkdown", () => {
+    test("updates content and properties from markdown", () => {
+      const block = new Block([], 1, []);
+
+      applyContentMarkdown(block, "key:: value");
+
+      expect(block.content).toStrictEqual([
+        new PropertyPair(new Text("key"), [new Text(" value")]),
+      ]);
+      expect(block.getProperty("key")).toBe("value");
     });
   });
 
