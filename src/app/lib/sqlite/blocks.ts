@@ -1,7 +1,11 @@
 import { Block } from "../markdown";
 import { chunk } from "../lodash";
 import { db, query } from ".";
-import { createToken } from "../markdown/token";
+import {
+  BlockInsertOptions,
+  createPageBlockFromRows,
+  toBlockInsertRecord,
+} from "./blockRecordMapper";
 
 export async function initializeBlocks() {
   db.exec("DROP TABLE IF EXISTS blocks");
@@ -30,7 +34,7 @@ export async function getPageBlockById(pageId: string): Promise<Block> {
     [pageId],
   );
 
-  const rootBlock = createPageFromBlocks(blocks);
+  const rootBlock = createPageBlockFromRows(blocks);
   return rootBlock;
 }
 
@@ -51,7 +55,7 @@ export async function getPageBlockByTitle(
     return undefined;
   }
 
-  const rootBlock = createPageFromBlocks(blocks);
+  const rootBlock = createPageBlockFromRows(blocks);
   return rootBlock;
 }
 
@@ -76,94 +80,14 @@ export async function getCurrentPage(childId: string): Promise<Block> {
   if (blocks.length == 0) {
     throw new Error(`Block not found for pageId: ${childId}`);
   }
-  const rootBlock = createPageFromBlocks(blocks);
+  const rootBlock = createPageBlockFromRows(blocks);
   return rootBlock;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createPageFromBlocks(blocks: any[]): Block {
-  if (blocks.length == 0) {
-    throw new Error("No blocks found");
-  }
-
-  const idToBlocks = new Map<string, Block>();
-  const childrenMap = new Map<
-    string,
-    Array<{ id: string; order_index: number }>
-  >();
-
-  for (const block of blocks) {
-    idToBlocks.set(block.id, block);
-    if (!childrenMap.has(block.id)) {
-      childrenMap.set(block.id, []);
-    }
-
-    if (block.parent_id) {
-      if (!childrenMap.has(block.parent_id)) {
-        childrenMap.set(block.parent_id, []);
-      }
-      childrenMap.get(block.parent_id)!.push({
-        id: block.id,
-        order_index: block.order_index || 0,
-      });
-    }
-  }
-
-  for (const [_parentId, children] of childrenMap.entries()) {
-    children.sort((a, b) => a.order_index - b.order_index);
-  }
-
-  const pageId = blocks[0].page_id;
-  const rootBlockData = blocks.find((b) => !b.parent_id);
-
-  if (!rootBlockData) {
-    throw new Error(`Root block not found for page: ${pageId}`);
-  }
-
-  const rootBlock = createBlockFromDbWithChildren(
-    rootBlockData.id,
-    idToBlocks,
-    childrenMap,
-  );
-  return rootBlock;
-}
-
-function createBlockFromDbWithChildren(
-  currentId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  idToBlocks: Map<string, any>,
-  childrenMap: Map<string, Array<{ id: string; order_index: number }>>,
-): Block {
-  const b = idToBlocks.get(currentId);
-  if (!b) {
-    throw new Error(`Block not found for id: ${currentId}`);
-  }
-
-  const childData = childrenMap.get(currentId) || [];
-  const childIds = childData.map((child) => child.id);
-
-  const childBlocks = childIds.map((childId: string) => {
-    return createBlockFromDbWithChildren(childId, idToBlocks, childrenMap);
-  });
-
-  const content = JSON.parse(b.content).map(createToken);
-  const block = new Block(content, b.depth, childBlocks);
-  block.id = b.id;
-  block.setProperty("title", b.page_title);
-  block.children.forEach((child) => {
-    child.parent = block;
-  });
-
-  return block;
 }
 
 export async function batchInsertBlocks(
   blocks: Block[],
   BATCH_SIZE: number,
-  options: {
-    defaultPageId?: string;
-    pageIdByBlockId?: Map<string, string>;
-  } = {},
+  options: BlockInsertOptions = {},
 ) {
   let i = 0;
   for (const batch of chunk(Array.from(blocks), BATCH_SIZE)) {
@@ -175,13 +99,7 @@ export async function batchInsertBlocks(
   }
 }
 
-async function batchInsertBlock(
-  blocks: Block[],
-  options: {
-    defaultPageId?: string;
-    pageIdByBlockId?: Map<string, string>;
-  },
-) {
+async function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
   const insert = db.prepare(`
     REPLACE INTO blocks
       (id, page_id, parent_id, depth, order_index, content, content_markdown, properties)
@@ -198,62 +116,4 @@ async function batchInsertBlock(
     }
   });
   insertMany(blocks);
-}
-
-function toBlockInsertRecord(
-  block: Block,
-  options: {
-    defaultPageId?: string;
-    pageIdByBlockId?: Map<string, string>;
-  },
-): unknown[] | null {
-  if (!block.id) {
-    return null;
-  }
-
-  const pageId =
-    options.pageIdByBlockId?.get(block.id) || options.defaultPageId;
-  if (!pageId) {
-    throw new Error(`Missing pageId for block: ${block.id}`);
-  }
-
-  return [
-    block.id,
-    pageId,
-    block.parent?.id || null,
-    block.depth,
-    getOrderIndex(block),
-    JSON.stringify(block.content),
-    getContentMarkdown(block),
-    JSON.stringify(createPropertyMap(block.properties || [])),
-  ];
-}
-
-function getOrderIndex(block: Block): number {
-  if (!block.parent) {
-    return 0;
-  }
-  return block.parent.children.indexOf(block);
-}
-
-function getContentMarkdown(block: Block): string {
-  return block.content
-    .map((token) => {
-      return token.toMarkdown();
-    })
-    .join("")
-    .trimEnd();
-}
-
-function createPropertyMap(properties: unknown[][]): object {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const map: any = {};
-  properties.forEach((pair: unknown[]) => {
-    if (pair.length === 2) {
-      const key = pair[0] as string;
-      const value = pair[1] as string;
-      map[key] = value;
-    }
-  });
-  return map;
 }
