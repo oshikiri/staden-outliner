@@ -80,29 +80,44 @@ export function Content({
   };
 
   const onBlurContent: FocusEventHandler = (event) => {
-    if (editingBlockId === null) {
+    if (editingBlockId !== block.id) {
       return;
     }
 
     event.stopPropagation();
-    setEditingBlockId?.(null);
 
-    if (!contentRef.current) {
-      console.error("ContentRef is null");
-      return;
-    }
-    const contentMarkdown = extractTextContent(contentRef.current);
-    console.log("onBlurContent", { contentMarkdown });
+    window.requestAnimationFrame(() => {
+      const currentElement = contentRef.current;
+      if (!currentElement) {
+        return;
+      }
 
-    const blockId = block.id || "";
-    const blockOnPage = page.getBlockById(blockId);
-    if (!blockOnPage) {
-      console.error(`Block not found: id=${blockId}`);
-      return;
-    }
+      if (document.activeElement === currentElement) {
+        return;
+      }
 
-    applyContentMarkdown(blockOnPage, contentMarkdown);
-    postPage(page).then((page) => setPage(page));
+      if (isEditableElementForBlock(document.activeElement, block.id || "")) {
+        return;
+      }
+
+      if (useStore.getState().editingBlockId !== block.id) {
+        return;
+      }
+
+      const contentMarkdown = extractTextContent(currentElement);
+      console.log("onBlurContent", { contentMarkdown });
+
+      const blockId = block.id || "";
+      const blockOnPage = page.getBlockById(blockId);
+      if (!blockOnPage) {
+        console.error(`Block not found: id=${blockId}`);
+        return;
+      }
+
+      applyContentMarkdown(blockOnPage, contentMarkdown);
+      postPage(page).then((page) => setPage(page));
+      setEditingBlockId?.(null);
+    });
   };
 
   const onKeyDown: KeyboardEventHandler = new ContentKeyboardEventHandler(
@@ -122,6 +137,7 @@ export function Content({
         key={`content-${block.id}-${isEditing ? "editing" : "rendered"}`}
         ref={contentRef}
         className="w-full min-h-[1em] inline-block whitespace-pre-wrap break-all px-1"
+        data-block-id={block.id}
         contentEditable={isEditing || undefined}
         suppressContentEditableWarning={isEditing || undefined}
         onClick={onClickContent}
@@ -164,5 +180,19 @@ function RenderedContent({ block }: { block: BlockEntity }): JSX.Element {
         <Token key={`content-${block.id}/${i}`} token={t} />
       ))}
     </>
+  );
+}
+
+function isEditableElementForBlock(
+  element: Element | null,
+  blockId: string,
+): boolean {
+  if (!(element instanceof HTMLDivElement)) {
+    return false;
+  }
+
+  return (
+    element.getAttribute("contenteditable") === "true" &&
+    element.dataset.blockId === blockId
   );
 }
