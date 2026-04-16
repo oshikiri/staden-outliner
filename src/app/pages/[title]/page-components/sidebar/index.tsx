@@ -67,10 +67,14 @@ function SearchBox(): JSX.Element {
   const router = useRouter();
 
   useEffect(() => {
-    getAllFiles().then((files) => {
-      const titles = files.map((file: { title: string }) => file.title);
-      setFiles(new Array(...new Set(titles)).sort());
-    });
+    getAllFiles()
+      .then((files) => {
+        const titles = files.map((file: { title: string }) => file.title);
+        setFiles(new Array(...new Set(titles)).sort());
+      })
+      .catch((error) => {
+        console.error("Failed to load sidebar files", error);
+      });
   }, []);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -102,7 +106,11 @@ function Favorites() {
   const [favorites, setFavorites] = useState<string[]>();
 
   useEffect(() => {
-    getAllConfigs().then((configs) => setFavorites(configs.favorites));
+    getAllConfigs()
+      .then((configs) => setFavorites(configs.favorites))
+      .catch((error) => {
+        console.error("Failed to load favorites", error);
+      });
   }, []);
 
   const listElement = favorites?.map((favorite) => {

@@ -51,6 +51,15 @@ async function appendAndGetRecentPage(pageTitle: string): Promise<string[]> {
     throw new Error(`Failed to update recent pages: ${response.status}`);
   }
 
-  const data: { pages: string[] } = await response.json();
-  return data.pages;
+  const text = await response.text();
+  if (text.trim() === "") {
+    throw new Error("Empty JSON response");
+  }
+
+  try {
+    const data = JSON.parse(text) as { pages: string[] };
+    return data.pages;
+  } catch {
+    throw new Error("Invalid JSON response");
+  }
 }

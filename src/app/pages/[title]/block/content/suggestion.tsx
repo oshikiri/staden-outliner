@@ -48,10 +48,14 @@ export function Suggestion({
 
 let files: string[] = [];
 async function cacheFiles() {
-  getAllFiles().then((f) => {
-    files = f.map((file: { title: string }) => file.title);
-    localStorage.setItem("files", JSON.stringify(files));
-  });
+  getAllFiles()
+    .then((f) => {
+      files = f.map((file: { title: string }) => file.title);
+      localStorage.setItem("files", JSON.stringify(files));
+    })
+    .catch((error) => {
+      console.error("Failed to cache files", error);
+    });
 }
 if (typeof localStorage !== "undefined") {
   cacheFiles();
@@ -76,6 +80,16 @@ async function getAllFiles(): Promise<File[]> {
     cache: "force-cache",
     next: { revalidate: 30 },
   });
-  const json = await response.json();
-  return json;
+  if (!response.ok) {
+    throw new Error(`Failed to load files: ${response.status}`);
+  }
+  const text = await response.text();
+  if (text.trim() === "") {
+    throw new Error("Empty JSON response");
+  }
+  try {
+    return JSON.parse(text) as File[];
+  } catch {
+    throw new Error("Invalid JSON response");
+  }
 }
