@@ -149,7 +149,6 @@ function createBlockFromDbWithChildren(
   const content = JSON.parse(b.content).map(createToken);
   const block = new Block(content, b.depth, childBlocks);
   block.id = b.id;
-  block.pageId = b.page_id;
   block.setProperty("title", b.page_title);
   block.children.forEach((child) => {
     child.parent = block;
@@ -158,18 +157,31 @@ function createBlockFromDbWithChildren(
   return block;
 }
 
-export async function batchInsertBlocks(blocks: Block[], BATCH_SIZE: number) {
+export async function batchInsertBlocks(
+  blocks: Block[],
+  BATCH_SIZE: number,
+  options: {
+    defaultPageId?: string;
+    pageIdByBlockId?: Map<string, string>;
+  } = {},
+) {
   let i = 0;
   for (const batch of chunk(Array.from(blocks), BATCH_SIZE)) {
     console.log(
       `Importing batch ${i + 1} of ${Math.ceil(blocks.length / BATCH_SIZE)}`,
     );
     i++;
-    await batchInsertBlock(batch);
+    await batchInsertBlock(batch, options);
   }
 }
 
-async function batchInsertBlock(blocks: Block[]) {
+async function batchInsertBlock(
+  blocks: Block[],
+  options: {
+    defaultPageId?: string;
+    pageIdByBlockId?: Map<string, string>;
+  },
+) {
   const insert = db.prepare(`
     REPLACE INTO blocks
       (id, page_id, parent_id, depth, order_index, content, content_markdown, properties)
@@ -177,37 +189,60 @@ async function batchInsertBlock(blocks: Block[]) {
   `);
   const insertMany = db.transaction((blocks: Block[]) => {
     for (const block of blocks) {
-      if (!block.id) {
+      const record = toBlockInsertRecord(block, options);
+      if (!record) {
         continue;
       }
 
-      const contentMarkdown = block.content
-        .map((token) => {
-          return token.toMarkdown();
-        })
-        .join("")
-        .trimEnd();
-
-      const parentId = block.parent?.id || block.parentId || null;
-
-      let orderIndex = 0;
-      if (block.parent) {
-        orderIndex = block.parent.children.indexOf(block);
-      }
-
-      insert.run([
-        block.id,
-        block.pageId || "",
-        parentId,
-        block.depth,
-        orderIndex,
-        JSON.stringify(block.content),
-        contentMarkdown || "",
-        JSON.stringify(createPropertyMap(block.properties || [])),
-      ]);
+      insert.run(record);
     }
   });
   insertMany(blocks);
+}
+
+function toBlockInsertRecord(
+  block: Block,
+  options: {
+    defaultPageId?: string;
+    pageIdByBlockId?: Map<string, string>;
+  },
+): unknown[] | null {
+  if (!block.id) {
+    return null;
+  }
+
+  const pageId =
+    options.pageIdByBlockId?.get(block.id) || options.defaultPageId;
+  if (!pageId) {
+    throw new Error(`Missing pageId for block: ${block.id}`);
+  }
+
+  return [
+    block.id,
+    pageId,
+    block.parent?.id || null,
+    block.depth,
+    getOrderIndex(block),
+    JSON.stringify(block.content),
+    getContentMarkdown(block),
+    JSON.stringify(createPropertyMap(block.properties || [])),
+  ];
+}
+
+function getOrderIndex(block: Block): number {
+  if (!block.parent) {
+    return 0;
+  }
+  return block.parent.children.indexOf(block);
+}
+
+function getContentMarkdown(block: Block): string {
+  return block.content
+    .map((token) => {
+      return token.toMarkdown();
+    })
+    .join("")
+    .trimEnd();
 }
 
 function createPropertyMap(properties: unknown[][]): object {

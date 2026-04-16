@@ -28,9 +28,14 @@ describe("pageService", () => {
     const page = await getPageByTitle("draft-page");
 
     expect(page.getProperty("title")).toBe("draft-page");
-    expect(page.id).toBe(page.pageId);
+    expect(page.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
     expect(page.children).toHaveLength(1);
-    expect(page.children[0].pageId).toBe(page.pageId);
+    expect(page.children[0].id).toBeDefined();
+    expect(page.children[0].id).not.toBe(page.id);
+    expect(page.children[0].parent).toBe(page);
+    expect(page.children[0].parent?.id).toBe(page.id);
     expect(resolvePageContentSpy).toHaveBeenCalledWith(page);
     expect(createNewFileSpy).not.toHaveBeenCalled();
   });
@@ -40,7 +45,6 @@ describe("pageService", () => {
       new Block([], 1, []).withId("child-1"),
     ]);
     draftPage.withId("page-1");
-    draftPage.pageId = "page-1";
     draftPage.setProperty("title", "draft-page");
 
     jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
@@ -66,8 +70,7 @@ describe("pageService", () => {
     expect(importSpy).toHaveBeenCalledWith(savedPage);
     expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage);
     expect(savedPage.id).toBe("page-1");
-    expect(savedPage.pageId).toBe("page-1");
-    expect(savedPage.children[0].parentId).toBe("page-1");
+    expect(savedPage.children[0].parent).toBe(savedPage);
     expect(savedPage.getProperty("title")).toBe("draft-page");
   });
 });

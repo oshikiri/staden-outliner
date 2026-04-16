@@ -12,21 +12,31 @@ export async function GET(_req: Request, props: Props) {
   const { title } = await props.params;
 
   const sourceIds = await getSourceLinks(title || "");
-  const sourceBlocks: Block[] = (await Promise.all(
+  const sourceBlocks = await Promise.all(
     sourceIds.map(async (sourceId) => {
       return resolveBacklink(sourceId);
     }),
-  )) as Block[];
+  );
 
-  return new Response(JSON.stringify(sourceBlocks.map(toBlockDto)), {
-    headers: {
-      "Content-Type": "application/json",
+  return new Response(
+    JSON.stringify(
+      sourceBlocks.map(({ block, pageId }) => toBlockDto(block, { pageId })),
+    ),
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
 }
 
-async function resolveBacklink(sourceId: string): Promise<Block> {
+async function resolveBacklink(
+  sourceId: string,
+): Promise<{ block: Block; pageId: string }> {
   const pageBlock = await getCurrentPage(sourceId);
+  if (!pageBlock.id) {
+    throw new Error(`Page block id is missing for source: ${sourceId}`);
+  }
   const sourceBlock = pageBlock.getBlockById(sourceId);
 
   let currentBlock: Block | undefined = sourceBlock?.parent || undefined;
@@ -41,5 +51,5 @@ async function resolveBacklink(sourceId: string): Promise<Block> {
   }
   sourceBlock?.properties?.push(["ancestors", ancestors]);
 
-  return sourceBlock!;
+  return { block: sourceBlock!, pageId: pageBlock.id };
 }

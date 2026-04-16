@@ -11,6 +11,7 @@ export class BulkImporter {
 
   linksCached: [string, string][] = [];
   idToBlocks: Map<string, Block> = new Map();
+  pageIdByBlockId: Map<string, string> = new Map();
   files: Map<string, File> = new Map();
   fileTitleToId: Map<string, string> = new Map();
 
@@ -35,13 +36,14 @@ export class BulkImporter {
         continue;
       }
       const rootBlock = loadMarkdown(file);
-      await this.importBlockToDB(rootBlock);
+      await this.importBlockToDB(rootBlock, file.pageId || "", undefined);
     }
 
     console.log("Import complete");
 
     return {
       blocks: Array.from(this.idToBlocks.values()),
+      pageIdByBlockId: this.pageIdByBlockId,
       files: Array.from(this.files.values()),
       links: this.linksCached,
     };
@@ -70,6 +72,7 @@ export class BulkImporter {
     const pageId = fileCreated?.pageId || "";
     const block = new Block([], 1, []).withId(pageId);
     this.idToBlocks.set(pageId, block);
+    this.pageIdByBlockId.set(pageId, pageId);
 
     return fileCreated;
   }
@@ -82,19 +85,23 @@ export class BulkImporter {
     return Promise.resolve(file);
   }
 
-  private async importBlockToDB(block: Block): Promise<void> {
+  private async importBlockToDB(
+    block: Block,
+    pageId: string,
+    parent: Block | undefined,
+  ): Promise<void> {
     block.id = block.id || randomUUID();
+    block.parent = parent;
     block.setPropertiesFromContent();
 
     this.idToBlocks.set(block.id, block);
+    this.pageIdByBlockId.set(block.id, pageId);
     for (const target of await this.extractOutLinks(block.content)) {
       this.linksCached.push([block.id, target]);
     }
 
     const childrenPromised = block.children.map(async (child) => {
-      child.pageId = block.pageId;
-      child.parentId = block.id;
-      await this.importBlockToDB(child);
+      await this.importBlockToDB(child, pageId, block);
       return;
     });
     await Promise.all(childrenPromised);

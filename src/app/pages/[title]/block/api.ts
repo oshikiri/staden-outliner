@@ -1,5 +1,5 @@
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
-import { fromBlockDto, toBlockDto } from "@/app/lib/markdown/blockDto";
+import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 
 export async function postPage(
   page: BlockEntity | null,
@@ -14,7 +14,7 @@ export async function postPage(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(toBlockDto(page)),
+    body: JSON.stringify(toPageDto(page)),
   });
   return fromBlockDto(await response.json());
 }

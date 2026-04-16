@@ -4,8 +4,6 @@ import { Parser } from "./parser";
 
 export class Block {
   public id?: string;
-  public parentId?: string;
-  public pageId?: string;
 
   public properties?: unknown[][];
   public parent?: Block;
@@ -261,9 +259,7 @@ export function create(block: Block): Block {
   newBlock.children.forEach((child) => {
     child.parent = newBlock;
   });
-  newBlock.pageId = block.pageId;
   newBlock.id = block.id;
-  newBlock.parentId = block.parentId;
   newBlock.parent = block.parent;
 
   newBlock.properties = block.properties;

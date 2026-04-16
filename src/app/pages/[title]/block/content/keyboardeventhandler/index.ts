@@ -257,7 +257,6 @@ function updateMarkdownByEnter(
   const blockAfter = new BlockEntity([], blockBefore.depth, []).withId(
     self.crypto.randomUUID(),
   );
-  blockAfter.pageId = blockBefore.pageId;
   applyContentMarkdown(blockAfter, textAfter || "");
 
   const [parent, idx] = blockBefore.getParentAndIdx();
@@ -267,8 +266,10 @@ function updateMarkdownByEnter(
   }
 
   if (blockBefore.hasChildren()) {
+    blockAfter.parent = blockBefore;
     blockBefore.children.splice(0, 0, blockAfter);
   } else {
+    blockAfter.parent = parent;
     parent.children.splice(idx + 1, 0, blockAfter);
   }
 

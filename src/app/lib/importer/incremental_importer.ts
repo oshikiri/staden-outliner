@@ -13,8 +13,12 @@ import { putFile } from "@/app/lib/sqlite/pages";
 import { batchInsertBlocks } from "../sqlite/blocks";
 
 export async function importBlockRecursive(block: Block): Promise<Block> {
+  const pageId = block.id;
+  if (!pageId) {
+    throw new Error("Root block id is required for persistence");
+  }
   await refreshLinksFromBlock(block);
-  await batchInsertBlocks(block.flatten(), 1000);
+  await batchInsertBlocks(block.flatten(), 1000, { defaultPageId: pageId });
   return block;
 }
 
@@ -49,12 +53,10 @@ export async function createNewFileWithEmptyBlock(
   const file = await createFile(title, pageId);
   const child = new Block([], 1, []).withId(randomUUID());
   const page = new Block([], 0, [child]).withId(pageId);
-  child.pageId = pageId;
-  child.parentId = page.id;
-  page.pageId = pageId;
+  child.parent = page;
 
   await putFile(file);
-  await batchInsertBlocks([page, child], 2);
+  await batchInsertBlocks([page, child], 2, { defaultPageId: pageId });
 
   return { block: page, file };
 }

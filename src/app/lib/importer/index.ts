@@ -12,7 +12,6 @@ export function loadMarkdown(file: File): Block {
   const pageBlock = parse(markdown);
 
   pageBlock.id = file.pageId;
-  pageBlock.pageId = file.pageId;
 
   return pageBlock;
 }

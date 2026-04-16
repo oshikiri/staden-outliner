@@ -1,4 +1,4 @@
-import { BlockDto, toBlockDto } from "@/app/lib/markdown/blockDto";
+import { BlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { Block } from "@/app/lib/markdown";
 
 interface IResponse {
@@ -15,7 +15,7 @@ class Response200 implements IResponse {
 
   constructor(private page: Block | BlockDto) {}
   toResponse() {
-    const dto = this.page instanceof Block ? toBlockDto(this.page) : this.page;
+    const dto = this.page instanceof Block ? toPageDto(this.page) : this.page;
     return new Response(JSON.stringify(dto), {
       status: this.statusCode,
       headers: {

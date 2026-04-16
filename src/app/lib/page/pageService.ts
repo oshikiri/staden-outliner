@@ -25,7 +25,7 @@ export async function updatePageByTitle(
   const pagePrev = await findPageByTitle(decodedTitle);
   const pageFile = await PageStore.getPageByTitle(decodedTitle);
   const pageUpdated = createBlock(pagePayload);
-  const pageId = pageFile?.pageId || pageUpdated.pageId || pageUpdated.id;
+  const pageId = pageFile?.pageId || pageUpdated.id;
   if (!pageId) {
     throw new Error(`Missing pageId for page "${decodedTitle}"`);
   }
@@ -77,16 +77,12 @@ function assignPageTreeMetadata(
   if (!parent) {
     block.id = pageId;
     block.parent = undefined;
-    block.parentId = undefined;
   } else {
     if (!block.id) {
       block.id = randomUUID();
     }
     block.parent = parent;
-    block.parentId = parent.id;
   }
-
-  block.pageId = pageId;
 
   for (const child of block.children) {
     assignPageTreeMetadata(child, pageId, block);
