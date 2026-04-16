@@ -28,7 +28,7 @@ Requirements:
 
 ```bash
 # Set root directory
-STADEN_ROOT=./docs
+export STADEN_ROOT=./docs
 ```
 ### Run the development server and view documents
 
@@ -37,7 +37,7 @@ npm run dev
 ```
 
 ```bash
-curl http://localhost:3000/api/initialize
+curl -X POST http://localhost:3000/api/initialize
 ```
 
 After starting the server with these steps, you can view the documents at <http://localhost:3000/pages/index>.
