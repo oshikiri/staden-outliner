@@ -1,8 +1,9 @@
 import { File } from "../file";
-import { query, db } from ".";
+import { getDb, query } from ".";
 import { chunk } from "../lodash";
 
 export async function initializePages() {
+  const db = getDb();
   db.exec("DROP TABLE IF EXISTS pages");
   db.exec(`
     CREATE TABLE IF NOT EXISTS pages (
@@ -68,6 +69,7 @@ export async function batchInsertFiles(files: File[], BATCH_SIZE: number) {
 }
 
 export async function putFile(file: File) {
+  const db = getDb();
   const insert = db.prepare(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );
@@ -76,6 +78,7 @@ export async function putFile(file: File) {
 }
 
 async function insertFiles(files: File[]) {
+  const db = getDb();
   const insert = db.prepare(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );

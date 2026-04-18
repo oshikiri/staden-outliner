@@ -1,6 +1,7 @@
-import { db, query } from ".";
+import { getDb, query } from ".";
 
 export async function initializeLinks() {
+  const db = getDb();
   db.exec("DROP TABLE IF EXISTS links");
   db.exec(`
     CREATE TABLE IF NOT EXISTS links (
@@ -29,6 +30,7 @@ export async function getSourceLinks(
 }
 
 export async function deleteLinksByFromId(fromId: string) {
+  const db = getDb();
   db.prepare("DELETE FROM links WHERE from_id = ?").run([fromId]);
 }
 
@@ -37,6 +39,7 @@ export async function batchInsertLinks(links: [string, string][]) {
     return;
   }
 
+  const db = getDb();
   const insert = db.prepare(
     "REPLACE INTO links (from_id, to_id) VALUES (?, ?)",
   );

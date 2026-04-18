@@ -12,19 +12,20 @@ export async function POST() {
 async function initializeSqlite(): Promise<void> {
   console.log("Initializing database...");
 
-  // @owner No error handling around migration/import. Wrap in try/catch and ensure `sqlite.close()` in finally.
   await sqlite.open();
-  sqlite.initializeAllTables();
+  try {
+    sqlite.initializeAllTables();
 
-  const importer = new BulkImporter();
-  const { blocks, pageIdByBlockId, files, links } = await importer.run();
+    const importer = new BulkImporter();
+    const { blocks, pageIdByBlockId, files, links } = await importer.run();
 
-  const BATCH_SIZE = 1000;
-  await sqlite.batchInsertBlocks(blocks, BATCH_SIZE, { pageIdByBlockId });
-  await sqlite.batchInsertFiles(files, BATCH_SIZE);
-  await sqlite.batchInsertLinks(links);
-
-  await sqlite.close();
+    const BATCH_SIZE = 1000;
+    await sqlite.batchInsertBlocks(blocks, BATCH_SIZE, { pageIdByBlockId });
+    await sqlite.batchInsertFiles(files, BATCH_SIZE);
+    await sqlite.batchInsertLinks(links);
+  } finally {
+    await sqlite.close();
+  }
 
   console.log("Database initialized");
 

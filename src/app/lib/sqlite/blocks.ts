@@ -1,6 +1,6 @@
 import { Block } from "../markdown";
 import { chunk } from "../lodash";
-import { db, query } from ".";
+import { getDb, query } from ".";
 import {
   BlockInsertOptions,
   createPageBlockFromRows,
@@ -8,6 +8,7 @@ import {
 } from "./blockRecordMapper";
 
 export async function initializeBlocks() {
+  const db = getDb();
   db.exec("DROP TABLE IF EXISTS blocks");
   db.exec(
     `CREATE TABLE IF NOT EXISTS blocks (
@@ -100,6 +101,7 @@ export async function batchInsertBlocks(
 }
 
 async function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
+  const db = getDb();
   const insert = db.prepare(`
     REPLACE INTO blocks
       (id, page_id, parent_id, depth, order_index, content, content_markdown, properties)

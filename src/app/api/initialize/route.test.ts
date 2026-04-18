@@ -49,4 +49,12 @@ describe("api/initialize/route", () => {
     expect(batchInsertLinksMock).toHaveBeenCalledWith([]);
     expect(closeMock).toHaveBeenCalled();
   });
+
+  test("POST closes the database when importer fails", async () => {
+    runMock.mockRejectedValue(new Error("import failed"));
+
+    await expect(POST()).rejects.toThrow("import failed");
+    expect(openMock).toHaveBeenCalled();
+    expect(closeMock).toHaveBeenCalled();
+  });
 });
