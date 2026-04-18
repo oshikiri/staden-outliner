@@ -1,10 +1,6 @@
-import { getAllConfigs } from "@/app/lib/file/config";
+import { jsonResponse } from "../_shared/http";
+import { getConfigsPayload } from "./usecase";
 
 export async function GET() {
-  const configs = await getAllConfigs();
-  return new Response(JSON.stringify(configs), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return jsonResponse(await getConfigsPayload());
 }

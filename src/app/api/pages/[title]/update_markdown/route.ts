@@ -1,4 +1,5 @@
-import { exportOnePageToMarkdown } from "@/app/lib/exporter/incremental_exporter";
+import { jsonResponse } from "@/app/api/_shared/http";
+import { updateMarkdownPayload } from "./usecase";
 
 type Props = {
   params: Promise<{
@@ -8,12 +9,5 @@ type Props = {
 
 export async function POST(_req: Request, props: Props) {
   const { title } = await props.params;
-
-  await exportOnePageToMarkdown(title);
-
-  return new Response("{}", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return jsonResponse(await updateMarkdownPayload(title));
 }

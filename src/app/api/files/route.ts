@@ -1,14 +1,9 @@
-import { getPagesByPrefix } from "./../../lib/sqlite/pages";
+import { jsonResponse } from "../_shared/http";
+import { getFilesPayload } from "./usecase";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const prefix = url.searchParams.get("prefix") || "";
   // @owner Validate `prefix` length and characters to prevent expensive queries and injection attempts.
-  const files = await getPagesByPrefix(prefix);
-
-  return new Response(JSON.stringify(files), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return jsonResponse(await getFilesPayload(prefix));
 }

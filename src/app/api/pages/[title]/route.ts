@@ -1,7 +1,6 @@
-import { BlockDto, fromBlockDto } from "@/app/lib/markdown/blockDto";
-import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
-
-import { ResponseError, ResponseUpdated, ResponseSuccess } from "./responses";
+import { jsonResponse } from "@/app/api/_shared/http";
+import { BlockDto } from "@/app/lib/markdown/blockDto";
+import { getPagePayload, isPageRouteError, updatePagePayload } from "./usecase";
 
 type Props = {
   params: Promise<{
@@ -11,12 +10,10 @@ type Props = {
 
 export async function GET(_req: Request, props: Props) {
   const { title } = await props.params;
-  if (!title) {
-    return new ResponseError("Missing title").toResponse();
-  }
-
-  const page = await getPageByTitle(title);
-  return new ResponseSuccess(page).toResponse();
+  const payload = await getPagePayload(title);
+  return jsonResponse(payload, {
+    status: isPageRouteError(payload) ? 400 : 200,
+  });
 }
 
 /**
@@ -31,14 +28,15 @@ export async function GET(_req: Request, props: Props) {
  */
 export async function POST(req: Request, props: Props) {
   const { title } = await props.params;
-  if (!title) {
-    return new ResponseError("Missing title").toResponse();
-  }
-  const pagePayload: BlockDto = await req.json();
-  if (!pagePayload) {
-    return new ResponseError("Missing page content").toResponse();
+  let pagePayload: BlockDto | null = null;
+  try {
+    pagePayload = (await req.json()) as BlockDto;
+  } catch {
+    pagePayload = null;
   }
 
-  const pageUpdated = await updatePageByTitle(title, fromBlockDto(pagePayload));
-  return new ResponseUpdated(pageUpdated).toResponse();
+  const payload = await updatePagePayload(title, pagePayload);
+  return jsonResponse(payload, {
+    status: isPageRouteError(payload) ? 400 : 200,
+  });
 }
