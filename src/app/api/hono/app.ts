@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 
 import { getConfigsPayload } from "@/app/api/configs/usecase";
 import { getFilesPayload } from "@/app/api/files/usecase";
@@ -78,6 +79,16 @@ pagesRoutes.post("/:title/update_markdown", async (c) => {
 });
 
 const apiApp = new Hono<ApiEnv>().basePath("/api");
+apiApp.use(
+  "*",
+  cors({
+    origin: (origin) => origin,
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400,
+  }),
+);
+
 apiApp.onError((_error, c) => {
   return internalServerError(c);
 });

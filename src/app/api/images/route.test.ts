@@ -53,6 +53,9 @@ describe("api/images/route", () => {
     expect(readFileMock).toHaveBeenCalledWith("/staden/images/sample.png");
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("image/png");
+    expect(response.headers.get("Cross-Origin-Resource-Policy")).toBe(
+      "cross-origin",
+    );
     expect(Buffer.from(await response.arrayBuffer())).toEqual(imageBuffer);
   });
 });

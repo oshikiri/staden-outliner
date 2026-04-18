@@ -1,9 +1,7 @@
 "use client";
 
-const API_BASE_URL_ENV = "NEXT_PUBLIC_API_BASE_URL";
-
 export function getApiBaseUrl(): string | undefined {
-  const baseUrl = process.env[API_BASE_URL_ENV]?.trim();
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
   return baseUrl ? baseUrl : undefined;
 }
 

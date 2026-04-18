@@ -1,18 +1,23 @@
-import NextLink from "next/link";
-
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
+import { usePageNavigation } from "../navigation";
 
 export function PageRef({ pageref }: { pageref: PageRefEntity }) {
+  const { navigateToPage } = usePageNavigation();
+  const href = `/pages/${encodeURIComponent(pageref.title)}`;
   return (
     <span>
       <span className="opacity-50">[[</span>
-      <NextLink
+      <a
         className="text-link no-underline"
-        href={`/pages/${encodeURIComponent(pageref.title)}`}
-        onClick={(event) => event.stopPropagation()}
+        href={href}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          navigateToPage(href);
+        }}
       >
         {pageref.title}
-      </NextLink>
+      </a>
       <span className="opacity-50">]]</span>
     </span>
   );

@@ -1,9 +1,9 @@
 import { JSX, useEffect, useState } from "react";
-import NextLink from "next/link";
 
 import { StadenDate } from "@/app/lib/date";
 import type { File } from "@/app/lib/file";
 import { getFilesByPrefix } from "./api";
+import { usePageNavigation } from "../../navigation";
 
 // eslint-disable-next-line max-lines-per-function
 export function JournalCalender({ pathname }: { pathname: string }) {
@@ -142,6 +142,7 @@ function MoveButton({
   );
 }
 
+// eslint-disable-next-line max-lines-per-function
 function DayCell({
   exists,
   dayStr,
@@ -153,6 +154,8 @@ function DayCell({
   dayNum: number | null;
   currentPage: boolean | undefined;
 }) {
+  const { navigateToPage } = usePageNavigation();
+  const href = `/pages/${dayStr}`;
   return (
     <div
       className="
@@ -165,14 +168,18 @@ function DayCell({
       data-current={currentPage || undefined}
     >
       {exists ? (
-        <NextLink
-          href={`/pages/${dayStr}`}
+        <a
+          href={href}
           className="
             text-link no-underline
           "
+          onClick={(event) => {
+            event.preventDefault();
+            navigateToPage(href);
+          }}
         >
           {dayNum}
-        </NextLink>
+        </a>
       ) : (
         dayNum || ""
       )}

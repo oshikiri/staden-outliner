@@ -1,5 +1,4 @@
 import { JSX, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
 import { StadenDate } from "@/app/lib/date";
@@ -9,8 +8,16 @@ import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { getAllFiles, getAllConfigs } from "./api";
+import { usePageNavigation } from "../../navigation";
 
-export function SideBar({ pageTitle }: { pageTitle: string }) {
+// eslint-disable-next-line max-lines-per-function
+export function SideBar({
+  pageTitle,
+  pathname,
+}: {
+  pageTitle: string;
+  pathname: string;
+}) {
   return (
     <div
       className="
@@ -30,7 +37,7 @@ export function SideBar({ pageTitle }: { pageTitle: string }) {
       <SideBarElement title="📅 Journals">
         <>
           <RecentJournal />
-          <JournalCalender pathname={usePathname()} />
+          <JournalCalender pathname={pathname} />
         </>
       </SideBarElement>
       <SideBarElement title="⭐ Favorite Pages">
@@ -64,7 +71,7 @@ function SideBarElement({
 
 function SearchBox(): JSX.Element {
   const [files, setFiles] = useState<string[]>();
-  const router = useRouter();
+  const { navigateToPage } = usePageNavigation();
 
   useEffect(() => {
     getAllFiles()
@@ -80,7 +87,7 @@ function SearchBox(): JSX.Element {
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const title = (e.target as HTMLInputElement).value;
-      router.push(`/pages/${encodeURIComponent(title)}`);
+      navigateToPage(`/pages/${encodeURIComponent(title)}`);
     }
   };
 

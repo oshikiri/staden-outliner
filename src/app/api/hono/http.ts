@@ -51,6 +51,7 @@ export function binaryResponse(
   status: ContentfulStatusCode = 200,
 ): Response {
   c.header("Content-Type", contentType);
+  c.header("Cross-Origin-Resource-Policy", "cross-origin");
   const responseBody = body instanceof Uint8Array ? new Uint8Array(body) : body;
   return c.newResponse(responseBody, status);
 }

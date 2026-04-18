@@ -6,6 +6,7 @@ const eslintConfig = [
   {
     ignores: [
       "coverage/**",
+      "dist/**",
       "public/vega.js",
       "public/vega-lite.js",
       "public/vega-embed.js",

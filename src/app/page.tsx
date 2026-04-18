@@ -1,18 +1,19 @@
 "use client";
 
-import type { JSX } from "react";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { StadenDate } from "@/app/lib/date";
+import { HomeScreen } from "./home/HomeScreen";
 
-export default function Home(): JSX.Element | null {
+export default function Home() {
   const router = useRouter();
 
-  useEffect(() => {
-    const title = new StadenDate().format();
-    router.replace(`/pages/${encodeURIComponent(title)}`);
-  }, [router]);
+  const navigateToPage = useCallback(
+    (path: string) => {
+      router.replace(path);
+    },
+    [router],
+  );
 
-  return null;
+  return <HomeScreen navigateToPage={navigateToPage} />;
 }
