@@ -79,7 +79,6 @@ function Candidates({ query }: { query: string }): JSX.Element {
 async function getAllFiles(): Promise<File[]> {
   const response = await apiFetch("/api/files", {
     cache: "force-cache",
-    next: { revalidate: 30 },
   });
   if (!response.ok) {
     throw new Error(`Failed to load files: ${response.status}`);

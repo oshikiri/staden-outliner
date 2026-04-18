@@ -5,7 +5,6 @@ import { apiFetch } from "@/app/lib/client/api";
 export async function getAllConfigs(): Promise<Configs> {
   const response = await apiFetch("/api/configs", {
     cache: "force-cache",
-    next: { revalidate: 30 },
   });
   const json = await parseJsonResponse<Partial<Configs>>(response);
   return {
@@ -16,15 +15,12 @@ export async function getAllConfigs(): Promise<Configs> {
 export async function getAllFiles(): Promise<File[]> {
   const response = await apiFetch("/api/files", {
     cache: "force-cache",
-    next: { revalidate: 30 },
   });
   return await parseJsonResponse<File[]>(response);
 }
 
 export async function getFilesByPrefix(prefix: string): Promise<File[]> {
-  const response = await apiFetch(`/api/files?prefix=${prefix}`, {
-    next: { revalidate: 30 },
-  });
+  const response = await apiFetch(`/api/files?prefix=${prefix}`, {});
   return await parseJsonResponse<File[]>(response);
 }
 

@@ -52,7 +52,6 @@ async function getPageBacklinks(
   const encodedTitle = encodeURIComponent(pageTitle);
   const response = await apiFetch(`/api/pages/${encodedTitle}/backlinks`, {
     cache: "force-cache",
-    next: { revalidate: 30 },
   });
   if (!response.ok) {
     return null;
