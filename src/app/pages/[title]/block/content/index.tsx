@@ -65,7 +65,6 @@ export function Content({
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing, offset]);
 
   const onClickContent: MouseEventHandler = async (event) => {

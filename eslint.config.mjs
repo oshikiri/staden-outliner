@@ -1,20 +1,37 @@
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
-import { fixupConfigRules } from "@eslint/compat";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const tsParser = require("@typescript-eslint/parser");
+const tseslint = require("@typescript-eslint/eslint-plugin");
 
 const eslintConfig = [
   {
     ignores: [
+      "**/.next/**",
       "coverage/**",
       "dist/**",
+      "**/.vscode/**",
+      ".vscode/**",
       "public/vega.js",
       "public/vega-lite.js",
       "public/vega-embed.js",
     ],
   },
-  ...fixupConfigRules(nextCoreWebVitals),
-  ...fixupConfigRules(nextTypescript),
   {
+    files: ["**/*.{js,jsx,ts,tsx,mjs,cjs}"],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint,
+    },
     rules: {
       "@typescript-eslint/no-unused-vars": [
         "error",

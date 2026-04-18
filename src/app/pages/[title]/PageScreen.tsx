@@ -34,7 +34,6 @@ export function PageScreen({
       console.log("pageUpdate", nextBlock);
       setPage(nextBlock);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title]);
 
   if (!block) {

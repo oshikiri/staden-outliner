@@ -27,7 +27,6 @@ export class Token {
   }
   toText(): string {
     // @owner Uses `any` cast to access `textContent`; prefer a typed union or a virtual method on subclasses for safer access.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this as any).textContent || "";
   }
 }
@@ -247,7 +246,7 @@ export class Marker extends Token {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, max-lines-per-function
+// eslint-disable-next-line max-lines-per-function
 export function createToken(obj: any): Token {
   // @owner `obj` is `any`; add runtime validation or a type guard to prevent crashes from malformed input.
   const tokenType = obj.type;

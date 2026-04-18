@@ -31,7 +31,6 @@ export function initializeAllTables() {
 export async function query(
   sql: string,
   params: unknown[] = [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> {
   console.log(
     "sqlite.query:",

@@ -22,10 +22,9 @@ export async function getSourceLinks(
     FROM links
     JOIN blocks_p AS to_blocks ON links.to_id = to_blocks.id
     WHERE to_blocks.page_title = ?;
-  `,
+    `,
     [targetPageTitle],
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return links.map((link: any) => link.from_id);
 }
 

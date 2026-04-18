@@ -38,7 +38,6 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   return (
     <tr className="odd:bg-datatable-row-odd">
@@ -51,7 +50,6 @@ function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convert(key: string, value: any): JSX.Element {
   if (key.endsWith("_as_tokens")) {
     const tokens = JSON.parse(value);

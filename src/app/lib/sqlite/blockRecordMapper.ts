@@ -126,7 +126,6 @@ function getContentMarkdown(block: Block): string {
 }
 
 function createPropertyMap(properties: unknown[][]): object {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map: any = {};
   properties.forEach((pair: unknown[]) => {
     if (pair.length === 2) {
