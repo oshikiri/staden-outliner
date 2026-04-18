@@ -6,15 +6,40 @@ export type ApiEnv = {
 };
 
 export type ApiContext = Context<ApiEnv>;
+export type Validated<T> = T | Response;
+
+export function jsonResponse<T>(
+  c: ApiContext,
+  body: T,
+  status: ContentfulStatusCode = 200,
+): Response {
+  return c.json(body, status);
+}
+
+export function textResponse(
+  c: ApiContext,
+  body: string,
+  status: ContentfulStatusCode = 200,
+): Response {
+  return c.text(body, status);
+}
+
+export async function optionalJsonBody<T>(c: ApiContext): Promise<T | null> {
+  try {
+    return await c.req.json<T>();
+  } catch {
+    return null;
+  }
+}
 
 export function requiredQuery(
   c: ApiContext,
   name: string,
   message: string = `Missing ${name} parameter`,
-): string | Response {
+): Validated<string> {
   const value = c.req.query(name);
   if (!value) {
-    return c.text(message, 400);
+    return textResponse(c, message, 400);
   }
   return value;
 }
@@ -38,5 +63,5 @@ export function noContentResponse(
 }
 
 export function internalServerError(c: ApiContext): Response {
-  return c.text("Internal Server Error", 500);
+  return textResponse(c, "Internal Server Error", 500);
 }

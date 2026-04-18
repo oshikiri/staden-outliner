@@ -1,6 +1,5 @@
-import { jsonResponse } from "@/app/api/_shared/http";
-import { BlockDto } from "@/app/lib/markdown/blockDto";
-import { getPagePayload, isPageRouteError, updatePagePayload } from "./usecase";
+import { honoApiApp } from "@/app/api/hono/app";
+import { buildInternalApiRequest } from "@/app/api/hono/internalRequest";
 
 type Props = {
   params: Promise<{
@@ -8,12 +7,11 @@ type Props = {
   }>;
 };
 
-export async function GET(_req: Request, props: Props) {
+export async function GET(req: Request, props: Props) {
   const { title } = await props.params;
-  const payload = await getPagePayload(title);
-  return jsonResponse(payload, {
-    status: isPageRouteError(payload) ? 400 : 200,
-  });
+  const path = title ? `/api/pages/${encodeURIComponent(title)}` : "/api/pages";
+  const honoRequest = buildInternalApiRequest(path, req);
+  return honoApiApp.fetch(honoRequest);
 }
 
 /**
@@ -28,15 +26,7 @@ export async function GET(_req: Request, props: Props) {
  */
 export async function POST(req: Request, props: Props) {
   const { title } = await props.params;
-  let pagePayload: BlockDto | null = null;
-  try {
-    pagePayload = (await req.json()) as BlockDto;
-  } catch {
-    pagePayload = null;
-  }
-
-  const payload = await updatePagePayload(title, pagePayload);
-  return jsonResponse(payload, {
-    status: isPageRouteError(payload) ? 400 : 200,
-  });
+  const path = title ? `/api/pages/${encodeURIComponent(title)}` : "/api/pages";
+  const honoRequest = buildInternalApiRequest(path, req);
+  return honoApiApp.fetch(honoRequest);
 }

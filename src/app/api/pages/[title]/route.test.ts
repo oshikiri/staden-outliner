@@ -128,4 +128,27 @@ describe("api/pages/[title]/route", () => {
       ],
     });
   });
+
+  test("POST returns an error response when request json is invalid", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: "{",
+      }),
+      {
+        params: Promise.resolve({ title: "Page" }),
+      },
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      updateResults: {
+        status: "unchanged",
+        message: "Missing page content",
+      },
+    });
+  });
 });
