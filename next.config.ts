@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [];
+
+if (apiBaseUrl) {
+  remotePatterns.push(new URL("/api/images", apiBaseUrl));
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   async headers() {
@@ -29,6 +36,7 @@ const nextConfig: NextConfig = {
         pathname: "/api/images",
       },
     ],
+    remotePatterns,
   },
 };
 

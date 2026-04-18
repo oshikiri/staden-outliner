@@ -2,6 +2,7 @@ import { JSX, useEffect, useState } from "react";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
 import { BlockDto, fromBlockDto } from "@/app/lib/markdown/blockDto";
+import { apiFetch } from "@/app/lib/client/api";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
@@ -49,7 +50,7 @@ async function getPageBacklinks(
   pageTitle: string,
 ): Promise<BlockEntity[] | null> {
   const encodedTitle = encodeURIComponent(pageTitle);
-  const response = await fetch(`/api/pages/${encodedTitle}/backlinks`, {
+  const response = await apiFetch(`/api/pages/${encodedTitle}/backlinks`, {
     cache: "force-cache",
     next: { revalidate: 30 },
   });

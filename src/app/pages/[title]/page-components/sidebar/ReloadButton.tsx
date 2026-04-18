@@ -1,10 +1,11 @@
 import { JSX, useState } from "react";
+import { apiFetch } from "@/app/lib/client/api";
 
 export function ReloadButton(): JSX.Element {
   const [reloadStatus, setReloadStatus] = useState("reload completed");
   const onClick = () => {
     setReloadStatus("reloading");
-    fetch("/api/initialize", {
+    apiFetch("/api/initialize", {
       method: "POST",
     }).then((response) => {
       if (!response.ok) {

@@ -1,4 +1,5 @@
 import { JSX } from "react";
+import { apiFetch } from "@/app/lib/client/api";
 export function ReflectToMarkdown({
   pageTitle,
 }: {
@@ -6,7 +7,7 @@ export function ReflectToMarkdown({
 }): JSX.Element {
   const onClick = async () => {
     // @owner No error handling or user feedback on failure.
-    fetch(`/api/pages/${pageTitle}/update_markdown`, {
+    apiFetch(`/api/pages/${pageTitle}/update_markdown`, {
       method: "POST",
     });
   };

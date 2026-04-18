@@ -1,6 +1,7 @@
 import { JSX } from "react";
 
 import type { File } from "@/app/lib/file";
+import { apiFetch } from "@/app/lib/client/api";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({
@@ -76,7 +77,7 @@ function Candidates({ query }: { query: string }): JSX.Element {
 }
 
 async function getAllFiles(): Promise<File[]> {
-  const response = await fetch("/api/files", {
+  const response = await apiFetch("/api/files", {
     cache: "force-cache",
     next: { revalidate: 30 },
   });

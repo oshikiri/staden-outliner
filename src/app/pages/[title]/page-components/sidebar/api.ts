@@ -1,8 +1,9 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
+import { apiFetch } from "@/app/lib/client/api";
 
 export async function getAllConfigs(): Promise<Configs> {
-  const response = await fetch("/api/configs", {
+  const response = await apiFetch("/api/configs", {
     cache: "force-cache",
     next: { revalidate: 30 },
   });
@@ -13,7 +14,7 @@ export async function getAllConfigs(): Promise<Configs> {
 }
 
 export async function getAllFiles(): Promise<File[]> {
-  const response = await fetch("/api/files", {
+  const response = await apiFetch("/api/files", {
     cache: "force-cache",
     next: { revalidate: 30 },
   });
@@ -21,7 +22,7 @@ export async function getAllFiles(): Promise<File[]> {
 }
 
 export async function getFilesByPrefix(prefix: string): Promise<File[]> {
-  const response = await fetch(`/api/files?prefix=${prefix}`, {
+  const response = await apiFetch(`/api/files?prefix=${prefix}`, {
     next: { revalidate: 30 },
   });
   return await parseJsonResponse<File[]>(response);
