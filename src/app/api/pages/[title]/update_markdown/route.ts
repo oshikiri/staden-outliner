@@ -1,5 +1,5 @@
-import { jsonResponse } from "@/app/api/_shared/http";
-import { updateMarkdownPayload } from "./usecase";
+import { honoApiApp } from "@/app/api/hono/app";
+import { buildInternalApiRequest } from "@/app/api/hono/internalRequest";
 
 type Props = {
   params: Promise<{
@@ -7,7 +7,9 @@ type Props = {
   }>;
 };
 
-export async function POST(_req: Request, props: Props) {
+export async function POST(req: Request, props: Props) {
   const { title } = await props.params;
-  return jsonResponse(await updateMarkdownPayload(title));
+  const path = `/api/pages/${encodeURIComponent(title || "")}/update_markdown`;
+  const honoRequest = buildInternalApiRequest(path, { method: "POST" }, req);
+  return honoApiApp.fetch(honoRequest);
 }

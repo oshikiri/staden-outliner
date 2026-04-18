@@ -16,13 +16,39 @@ describe("api/pages/[title]/update_markdown/route", () => {
   test("POST exports the page markdown and returns an empty json object", async () => {
     const exportMock = jest.mocked(Exporter.exportOnePageToMarkdown);
 
-    const response = await POST(new Request("http://localhost"), {
-      params: Promise.resolve({ title: "Page" }),
-    });
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+      }),
+      {
+        params: Promise.resolve({ title: "Page" }),
+      },
+    );
 
     expect(exportMock).toHaveBeenCalledWith("Page");
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("application/json");
     await expect(response.json()).resolves.toEqual({});
+  });
+
+  test("POST returns 500 when export fails inside the Hono app", async () => {
+    const exportMock = jest.mocked(Exporter.exportOnePageToMarkdown);
+    exportMock.mockRejectedValue(new Error("export failed"));
+
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+      }),
+      {
+        params: Promise.resolve({ title: "Page" }),
+      },
+    );
+
+    expect(exportMock).toHaveBeenCalledWith("Page");
+    expect(response.status).toBe(500);
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/plain; charset=UTF-8",
+    );
+    await expect(response.text()).resolves.toBe("Internal Server Error");
   });
 });
