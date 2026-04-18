@@ -8,11 +8,13 @@
   },
   "scripts": {
     "dev": "next dev --turbo",
+    "dev:api": "tsx src/server/api-entry.ts",
     "format": "prettier --write . --list-different",
     "format:check": "prettier --check .",
     "verify": "npm run format:check && npm run lint && npm run build && npm run test:unit",
     "build": "next build",
     "start": "next start",
+    "start:api": "tsx src/server/api-entry.ts",
     "lint": "eslint .",
     "test-coverage": "jest --coverage",
     "test:e2e": "playwright test --config=playwright.config.ts",
@@ -24,7 +26,8 @@
     "hono": "4.12.10",
     "next": "16.2.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tsx": "4.21.0"
   },
   "devDependencies": {
     "@eslint/compat": "2.0.3",

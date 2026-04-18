@@ -1,7 +1,7 @@
 import { honoApiApp } from "./app";
 import { honoInitializeApp } from "./initializeApp";
 
-function resolveApiApp(req: Request) {
+export function resolveApiApp(req: Request) {
   const { pathname } = new URL(req.url);
   if (pathname === "/api/initialize") {
     return honoInitializeApp;
