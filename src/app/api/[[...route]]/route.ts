@@ -1,1 +1,1 @@
-export { GET, POST } from "@/app/api/hono/nextRoute";
+export { GET, POST } from "@/app/api/hono/apiRoute";

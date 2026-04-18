@@ -2,9 +2,9 @@ import { describe, expect, test } from "@jest/globals";
 
 import { honoApiApp } from "./app";
 import { honoInitializeApp } from "./initializeApp";
-import { resolveApiApp } from "./nextRoute";
+import { resolveApiApp } from "./apiRoute";
 
-describe("api/hono/nextRoute", () => {
+describe("api/hono/apiRoute", () => {
   test("resolves the initialize app for /api/initialize", () => {
     const request = new Request("http://localhost/api/initialize");
     expect(resolveApiApp(request)).toBe(honoInitializeApp);

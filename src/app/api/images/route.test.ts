@@ -15,7 +15,7 @@ jest.mock("@/app/lib/env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 
-import { GET } from "@/app/api/hono/nextRoute";
+import { GET } from "@/app/api/hono/apiRoute";
 
 describe("api/images/route", () => {
   beforeEach(() => {

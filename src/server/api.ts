@@ -6,7 +6,7 @@ import {
 } from "node:http";
 import { Readable } from "node:stream";
 
-import { resolveApiApp } from "@/app/api/hono/nextRoute";
+import { resolveApiApp } from "@/app/api/hono/apiRoute";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 3001;

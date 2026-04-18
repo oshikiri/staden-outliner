@@ -23,7 +23,7 @@ jest.mock("../../lib/importer/bulk_importer", () => ({
   })),
 }));
 
-import { POST } from "@/app/api/hono/nextRoute";
+import { POST } from "@/app/api/hono/apiRoute";
 
 describe("api/initialize/route", () => {
   beforeEach(() => {

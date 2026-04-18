@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
 import * as ConfigFile from "@/app/lib/file/config";
 
-import { GET } from "@/app/api/hono/nextRoute";
+import { GET } from "@/app/api/hono/apiRoute";
 
 jest.mock("@/app/lib/file/config", () => ({
   getAllConfigs: jest.fn(),

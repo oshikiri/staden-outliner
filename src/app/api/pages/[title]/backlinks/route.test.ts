@@ -4,7 +4,7 @@ import { Block } from "@/app/lib/markdown/block";
 import { Text } from "@/app/lib/markdown/token";
 import * as Sqlite from "@/app/lib/sqlite";
 
-import { GET } from "@/app/api/hono/nextRoute";
+import { GET } from "@/app/api/hono/apiRoute";
 
 jest.mock("@/app/lib/sqlite", () => ({
   getSourceLinks: jest.fn(),
