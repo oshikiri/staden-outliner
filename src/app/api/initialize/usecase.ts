@@ -1,4 +1,3 @@
-import { BulkImporter } from "../../lib/importer/bulk_importer";
 import * as sqlite from "../../lib/sqlite";
 
 export async function initializeDatabase(): Promise<void> {
@@ -8,6 +7,7 @@ export async function initializeDatabase(): Promise<void> {
   try {
     sqlite.initializeAllTables();
 
+    const { BulkImporter } = await import("../../lib/importer/bulk_importer");
     const importer = new BulkImporter();
     const { blocks, pageIdByBlockId, files, links } = await importer.run();
 

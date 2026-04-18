@@ -53,7 +53,10 @@ describe("api/initialize/route", () => {
   test("POST closes the database when importer fails", async () => {
     runMock.mockRejectedValue(new Error("import failed"));
 
-    await expect(POST()).rejects.toThrow("import failed");
+    const response = await POST();
+
+    expect(response.status).toBe(500);
+    await expect(response.text()).resolves.toBe("Internal Server Error");
     expect(openMock).toHaveBeenCalled();
     expect(closeMock).toHaveBeenCalled();
   });
