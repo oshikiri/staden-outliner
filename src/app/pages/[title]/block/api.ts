@@ -1,6 +1,10 @@
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
-import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { apiFetch } from "@/app/lib/client/api";
+import {
+  pageRoutePath,
+  readPageResponse,
+  serializePageRequest,
+} from "@/app/api/contracts";
 
 export async function postPage(
   page: BlockEntity | null,
@@ -9,13 +13,12 @@ export async function postPage(
     return null;
   }
   const pageTitle = page.getProperty("title") as string;
-  const encodedTitle = encodeURIComponent(pageTitle);
-  const response = await apiFetch(`/api/pages/${encodedTitle}`, {
+  const response = await apiFetch(pageRoutePath(pageTitle), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(toPageDto(page)),
+    body: serializePageRequest(page),
   });
-  return fromBlockDto(await response.json());
+  return readPageResponse(response);
 }

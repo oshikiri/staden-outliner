@@ -1,8 +1,11 @@
-import { toBlockDto, type BlockDto } from "@/app/lib/markdown/blockDto";
 import { Block } from "@/app/lib/markdown/block";
+import { type BacklinksRouteResponseBody } from "@/app/api/contracts";
+import { toBlockDto } from "@/app/lib/markdown/blockDto";
 import { getCurrentPage, getSourceLinks } from "@/app/lib/sqlite";
 
-export async function getBacklinkPayload(title: string): Promise<BlockDto[]> {
+export async function getBacklinkPayload(
+  title: string,
+): Promise<BacklinksRouteResponseBody> {
   const sourceIds = await getSourceLinks(title);
   const sourceBlocks = await Promise.all(sourceIds.map(resolveBacklink));
 

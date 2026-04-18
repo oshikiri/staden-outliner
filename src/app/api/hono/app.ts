@@ -4,14 +4,16 @@ import { cors } from "hono/cors";
 import { getConfigsPayload } from "@/app/api/configs/usecase";
 import { getFilesPayload } from "@/app/api/files/usecase";
 import { getImagePayload } from "@/app/api/images/usecase";
+import {
+  isPageRouteError,
+  type PageRouteRequestBody,
+} from "@/app/api/contracts";
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
 import { updateMarkdownPayload } from "@/app/api/pages/[title]/update_markdown/usecase";
 import {
   getPagePayload,
-  isPageRouteError,
   updatePagePayload,
 } from "@/app/api/pages/[title]/usecase";
-import type { BlockDto } from "@/app/lib/markdown/blockDto";
 
 import {
   ApiContext,
@@ -59,7 +61,7 @@ async function respondPageGet(c: ApiContext) {
 
 async function respondPagePost(c: ApiContext) {
   const title = c.req.param("title") ?? "";
-  const pagePayload = await optionalJsonBody<BlockDto>(c);
+  const pagePayload = await optionalJsonBody<PageRouteRequestBody>(c);
   const payload = await updatePagePayload(title, pagePayload);
   return jsonResponse(c, payload, isPageRouteError(payload) ? 400 : 200);
 }

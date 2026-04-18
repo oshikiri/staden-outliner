@@ -1,18 +1,16 @@
-import { BlockDto, fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
+import {
+  createPageRouteError,
+  type PageRouteError,
+  type PageRouteRequestBody,
+  type PageRouteResponseBody,
+  isPageRouteError as isPageRouteErrorContract,
+} from "@/app/api/contracts";
+import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
-
-type UpdateResults = {
-  status: "unchanged";
-  message: string;
-};
-
-export type PageRouteError = {
-  updateResults: UpdateResults;
-};
 
 export async function getPagePayload(
   title: string,
-): Promise<BlockDto | PageRouteError> {
+): Promise<PageRouteResponseBody> {
   if (!title) {
     return createPageRouteError("Missing title");
   }
@@ -23,8 +21,8 @@ export async function getPagePayload(
 
 export async function updatePagePayload(
   title: string,
-  pagePayload: BlockDto | null,
-): Promise<BlockDto | PageRouteError> {
+  pagePayload: PageRouteRequestBody | null,
+): Promise<PageRouteResponseBody> {
   if (!title) {
     return createPageRouteError("Missing title");
   }
@@ -47,16 +45,7 @@ export async function updatePagePayload(
 }
 
 export function isPageRouteError(
-  payload: BlockDto | PageRouteError,
+  payload: PageRouteResponseBody,
 ): payload is PageRouteError {
-  return "updateResults" in payload;
-}
-
-function createPageRouteError(message: string): PageRouteError {
-  return {
-    updateResults: {
-      status: "unchanged",
-      message,
-    },
-  };
+  return isPageRouteErrorContract(payload);
 }

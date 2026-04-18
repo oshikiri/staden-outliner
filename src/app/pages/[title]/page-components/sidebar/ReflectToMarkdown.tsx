@@ -1,15 +1,21 @@
 import { JSX } from "react";
 import { apiFetch } from "@/app/lib/client/api";
+import {
+  expectEmptyJsonResponse,
+  pageUpdateMarkdownRoutePath,
+} from "@/app/api/contracts";
 export function ReflectToMarkdown({
   pageTitle,
 }: {
   pageTitle: string;
 }): JSX.Element {
-  const onClick = async () => {
+  const onClick = () => {
     // @owner No error handling or user feedback on failure.
-    apiFetch(`/api/pages/${pageTitle}/update_markdown`, {
+    void apiFetch(pageUpdateMarkdownRoutePath(pageTitle), {
       method: "POST",
-    });
+    })
+      .then(expectEmptyJsonResponse)
+      .catch(() => undefined);
   };
 
   return (

@@ -1,42 +1,28 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
 import { apiFetch } from "@/app/lib/client/api";
+import {
+  configsRoutePath,
+  filesRoutePath,
+  readConfigsResponse,
+  readFilesResponse,
+} from "@/app/api/contracts";
 
 export async function getAllConfigs(): Promise<Configs> {
-  const response = await apiFetch("/api/configs", {
+  const response = await apiFetch(configsRoutePath, {
     cache: "force-cache",
   });
-  const json = await parseJsonResponse<Partial<Configs>>(response);
-  return {
-    favorites: Array.isArray(json.favorites) ? json.favorites : [],
-  };
+  return readConfigsResponse(response);
 }
 
 export async function getAllFiles(): Promise<File[]> {
-  const response = await apiFetch("/api/files", {
+  const response = await apiFetch(filesRoutePath(), {
     cache: "force-cache",
   });
-  return await parseJsonResponse<File[]>(response);
+  return readFilesResponse(response);
 }
 
 export async function getFilesByPrefix(prefix: string): Promise<File[]> {
-  const response = await apiFetch(`/api/files?prefix=${prefix}`, {});
-  return await parseJsonResponse<File[]>(response);
-}
-
-async function parseJsonResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
-
-  const text = await response.text();
-  if (text.trim() === "") {
-    throw new Error("Empty JSON response");
-  }
-
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new Error("Invalid JSON response");
-  }
+  const response = await apiFetch(filesRoutePath(prefix), {});
+  return readFilesResponse(response);
 }

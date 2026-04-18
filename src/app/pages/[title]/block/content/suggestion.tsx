@@ -1,7 +1,6 @@
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 
-import type { File } from "@/app/lib/file";
-import { apiFetch } from "@/app/lib/client/api";
+import { getAllFiles } from "@/app/pages/[title]/page-components/sidebar/api";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({
@@ -17,10 +16,16 @@ export function Suggestion({
   setup: () => void;
   teardown: (contentMarkdown: string) => void;
 }): JSX.Element {
+  useEffect(() => {
+    if (suggestionQuery == undefined) {
+      return;
+    }
+    setup();
+  }, [setup, suggestionQuery]);
+
   if (suggestionQuery == undefined) {
     return <></>;
   }
-  setup();
   return (
     <div>
       <input
@@ -47,24 +52,32 @@ export function Suggestion({
   );
 }
 
-let files: string[] = [];
-async function cacheFiles() {
-  getAllFiles()
-    .then((f) => {
-      files = f.map((file: { title: string }) => file.title);
-      localStorage.setItem("files", JSON.stringify(files));
-    })
-    .catch((error) => {
-      console.error("Failed to cache files", error);
-    });
-}
-if (typeof localStorage !== "undefined") {
-  cacheFiles();
+function useCachedFiles(): string[] {
+  const [files, setFiles] = useState<string[]>(() => {
+    if (typeof localStorage === "undefined") {
+      return [];
+    }
+    const cachedFiles = localStorage.getItem("files");
+    return cachedFiles ? JSON.parse(cachedFiles) : [];
+  });
+
+  useEffect(() => {
+    getAllFiles()
+      .then((f) => {
+        const nextFiles = f.map((file: { title: string }) => file.title);
+        setFiles(nextFiles);
+        localStorage.setItem("files", JSON.stringify(nextFiles));
+      })
+      .catch((error) => {
+        console.error("Failed to cache files", error);
+      });
+  }, []);
+
+  return files;
 }
 
 function Candidates({ query }: { query: string }): JSX.Element {
-  const cachedFiles = localStorage.getItem("files");
-  const values: string[] = cachedFiles ? JSON.parse(cachedFiles) : [];
+  const values = useCachedFiles();
   return (
     <datalist id="suggestions">
       {values
@@ -74,22 +87,4 @@ function Candidates({ query }: { query: string }): JSX.Element {
         ))}
     </datalist>
   );
-}
-
-async function getAllFiles(): Promise<File[]> {
-  const response = await apiFetch("/api/files", {
-    cache: "force-cache",
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to load files: ${response.status}`);
-  }
-  const text = await response.text();
-  if (text.trim() === "") {
-    throw new Error("Empty JSON response");
-  }
-  try {
-    return JSON.parse(text) as File[];
-  } catch {
-    throw new Error("Invalid JSON response");
-  }
 }

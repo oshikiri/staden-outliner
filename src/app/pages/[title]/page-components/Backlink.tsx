@@ -1,8 +1,11 @@
 import { JSX, useEffect, useState } from "react";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
-import { BlockDto, fromBlockDto } from "@/app/lib/markdown/blockDto";
 import { apiFetch } from "@/app/lib/client/api";
+import {
+  pageBacklinksRoutePath,
+  readBacklinksResponse,
+} from "@/app/api/contracts";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
@@ -49,15 +52,13 @@ export function BacklinksContainer({
 async function getPageBacklinks(
   pageTitle: string,
 ): Promise<BlockEntity[] | null> {
-  const encodedTitle = encodeURIComponent(pageTitle);
-  const response = await apiFetch(`/api/pages/${encodedTitle}/backlinks`, {
+  const response = await apiFetch(pageBacklinksRoutePath(pageTitle), {
     cache: "force-cache",
   });
   if (!response.ok) {
     return null;
   }
-  const json: BlockDto[] = await response.json();
-  return json.map((block) => fromBlockDto(block));
+  return readBacklinksResponse(response);
 }
 
 function BacklinkPage({
