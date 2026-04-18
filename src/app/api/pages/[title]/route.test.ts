@@ -4,7 +4,7 @@ import { Block } from "@/app/lib/markdown/block";
 import { Marker, Text } from "@/app/lib/markdown/token";
 import * as PageService from "@/app/lib/page/pageService";
 
-import { GET, POST } from "./route";
+import { GET, POST } from "@/app/api/hono/nextRoute";
 
 describe("api/pages/[title]/route", () => {
   beforeEach(() => {
@@ -12,9 +12,7 @@ describe("api/pages/[title]/route", () => {
   });
 
   test("GET returns an error response when title is missing", async () => {
-    const response = await GET(new Request("http://localhost"), {
-      params: Promise.resolve({ title: "" }),
-    });
+    const response = await GET(new Request("http://localhost/api/pages"));
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
@@ -33,9 +31,7 @@ describe("api/pages/[title]/route", () => {
 
     jest.spyOn(PageService, "getPageByTitle").mockResolvedValue(page);
 
-    const response = await GET(new Request("http://localhost"), {
-      params: Promise.resolve({ title: "Page" }),
-    });
+    const response = await GET(new Request("http://localhost/api/pages/Page"));
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
@@ -74,7 +70,7 @@ describe("api/pages/[title]/route", () => {
       .mockResolvedValue(updatedPage);
 
     const response = await POST(
-      new Request("http://localhost", {
+      new Request("http://localhost/api/pages/Page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,9 +93,6 @@ describe("api/pages/[title]/route", () => {
           ],
         }),
       }),
-      {
-        params: Promise.resolve({ title: "Page" }),
-      },
     );
 
     expect(updateSpy).toHaveBeenCalledWith("Page", expect.any(Block));
@@ -131,16 +124,13 @@ describe("api/pages/[title]/route", () => {
 
   test("POST returns an error response when request json is invalid", async () => {
     const response = await POST(
-      new Request("http://localhost", {
+      new Request("http://localhost/api/pages/Page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: "{",
       }),
-      {
-        params: Promise.resolve({ title: "Page" }),
-      },
     );
 
     expect(response.status).toBe(400);

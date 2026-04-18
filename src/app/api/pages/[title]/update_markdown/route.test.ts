@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
 import * as Exporter from "@/app/lib/exporter/incremental_exporter";
 
-import { POST } from "./route";
+import { POST } from "@/app/api/hono/nextRoute";
 
 jest.mock("@/app/lib/exporter/incremental_exporter", () => ({
   exportOnePageToMarkdown: jest.fn(),
@@ -17,12 +17,9 @@ describe("api/pages/[title]/update_markdown/route", () => {
     const exportMock = jest.mocked(Exporter.exportOnePageToMarkdown);
 
     const response = await POST(
-      new Request("http://localhost", {
+      new Request("http://localhost/api/pages/Page/update_markdown", {
         method: "POST",
       }),
-      {
-        params: Promise.resolve({ title: "Page" }),
-      },
     );
 
     expect(exportMock).toHaveBeenCalledWith("Page");
@@ -36,12 +33,9 @@ describe("api/pages/[title]/update_markdown/route", () => {
     exportMock.mockRejectedValue(new Error("export failed"));
 
     const response = await POST(
-      new Request("http://localhost", {
+      new Request("http://localhost/api/pages/Page/update_markdown", {
         method: "POST",
       }),
-      {
-        params: Promise.resolve({ title: "Page" }),
-      },
     );
 
     expect(exportMock).toHaveBeenCalledWith("Page");

@@ -4,7 +4,7 @@ import { Block } from "@/app/lib/markdown/block";
 import { Text } from "@/app/lib/markdown/token";
 import * as Sqlite from "@/app/lib/sqlite";
 
-import { GET } from "./route";
+import { GET } from "@/app/api/hono/nextRoute";
 
 jest.mock("@/app/lib/sqlite", () => ({
   getSourceLinks: jest.fn(),
@@ -31,9 +31,9 @@ describe("api/pages/[title]/backlinks/route", () => {
     getSourceLinksMock.mockResolvedValue(["source-1"]);
     getCurrentPageMock.mockResolvedValue(page);
 
-    const response = await GET(new Request("http://localhost"), {
-      params: Promise.resolve({ title: "Page" }),
-    });
+    const response = await GET(
+      new Request("http://localhost/api/pages/Page/backlinks"),
+    );
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual([

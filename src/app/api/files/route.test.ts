@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
 import * as PagesStore from "@/app/lib/sqlite/pages";
 
-import { GET } from "./route";
+import { GET } from "@/app/api/hono/nextRoute";
 
 jest.mock("@/app/lib/sqlite/pages", () => ({
   getPagesByPrefix: jest.fn(),

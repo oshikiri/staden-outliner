@@ -23,7 +23,7 @@ jest.mock("../../lib/importer/bulk_importer", () => ({
   })),
 }));
 
-import { POST } from "./route";
+import { POST } from "@/app/api/hono/nextRoute";
 
 describe("api/initialize/route", () => {
   beforeEach(() => {
@@ -36,7 +36,11 @@ describe("api/initialize/route", () => {
     });
   });
   test("POST initializes the database", async () => {
-    const response = await POST();
+    const response = await POST(
+      new Request("http://localhost/api/initialize", {
+        method: "POST",
+      }),
+    );
 
     expect(response.status).toBe(204);
     expect(openMock).toHaveBeenCalled();
@@ -53,7 +57,11 @@ describe("api/initialize/route", () => {
   test("POST closes the database when importer fails", async () => {
     runMock.mockRejectedValue(new Error("import failed"));
 
-    const response = await POST();
+    const response = await POST(
+      new Request("http://localhost/api/initialize", {
+        method: "POST",
+      }),
+    );
 
     expect(response.status).toBe(500);
     await expect(response.text()).resolves.toBe("Internal Server Error");

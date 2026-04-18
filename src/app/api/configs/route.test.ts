@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
 import * as ConfigFile from "@/app/lib/file/config";
 
-import { GET } from "./route";
+import { GET } from "@/app/api/hono/nextRoute";
 
 jest.mock("@/app/lib/file/config", () => ({
   getAllConfigs: jest.fn(),
@@ -19,7 +19,7 @@ describe("api/configs/route", () => {
       favorites: ["index", "daily"],
     });
 
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/configs"));
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("application/json");
