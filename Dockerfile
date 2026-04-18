@@ -5,9 +5,6 @@ FROM node:24-bookworm AS base
 USER root
 WORKDIR /app
 
-ENV NEXT_TELEMETRY_DISABLED=1 \
-    HOST=0.0.0.0
-
 # Install build/runtime dependencies required by better-sqlite3 and tooling
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -25,5 +22,5 @@ ENV NODE_ENV=development \
     STADEN_ROOT=/app/docs
 COPY --chown=node:node . .
 USER node
-EXPOSE 3000
-CMD ["bash", "/app/docker/dev-entrypoint.sh"]
+EXPOSE 3001 5173
+ENTRYPOINT ["bash", "/app/docker/dev-entrypoint.sh"]

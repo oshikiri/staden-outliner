@@ -8,4 +8,8 @@ if [ ! -d node_modules ] || [ ! -f "$STAMP_FILE" ] || [ package-lock.json -nt "$
   touch "$STAMP_FILE"
 fi
 
-exec npm run dev
+if [ "$#" -eq 0 ]; then
+  set -- npm run dev:web
+fi
+
+exec "$@"

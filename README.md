@@ -3,7 +3,7 @@
 <img src="./docs/icon.png" alt="staden icon" width="200" height="200" />
 
 - Supports Logseq-like markdown
-- Built with a popular stack (TypeScript/Next.js/SQLite)
+- Built with TypeScript, Vite, Hono, and SQLite
 - Limited features
 - Query tables using SQLite
 
@@ -32,32 +32,56 @@ export STADEN_ROOT=./docs
 ```
 ### Run the development server and view documents
 
-```bash
-npm run dev
-```
+Start the API server in one terminal:
 
 ```bash
-curl -X POST http://localhost:3000/api/initialize
+npm run dev:api
 ```
 
-After starting the server with these steps, you can view the documents at <http://localhost:3000/pages/index>.
+Start the web app in another terminal:
+
+```bash
+npm run dev:web
+```
+
+Then initialize the vault:
+
+```bash
+curl -X POST http://127.0.0.1:3001/api/initialize
+```
+
+After starting both processes, you can view the documents at <http://localhost:5173/>.
 
 ![Screenshot at /pages/index](./docs/index-screenshot.png)
 
 ### Run the development server using Docker
 
-For development, you can build and run the `dev` target defined in `docker-compose.yml`.
+For development, you can build and run the `api` and `web` services defined in `docker-compose.yml`.
 
 ```bash
-docker compose up --build app
+docker compose up --build
 ```
 
-Once the container is running, open <http://localhost:3000/> in your browser.
+Once the containers are running, open <http://localhost:5173/> in your browser.
+The API listens on <http://localhost:3001/>.
 When you are done, press `Ctrl+C` in the terminal or run `docker compose down` from a separate shell to stop the stack.
 
 ### Run in Production Mode
 
 ```bash
-npm run build
-npm run start
+npm run build:web
 ```
+
+Start the API server in one terminal:
+
+```bash
+npm run start:api
+```
+
+Start the web preview in another terminal:
+
+```bash
+npm run start:web
+```
+
+Then open <http://localhost:4173/> in your browser.
