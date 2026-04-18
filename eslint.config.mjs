@@ -7,7 +7,6 @@ const tseslint = require("@typescript-eslint/eslint-plugin");
 const eslintConfig = [
   {
     ignores: [
-      "**/.next/**",
       "coverage/**",
       "dist/**",
       "**/.vscode/**",
