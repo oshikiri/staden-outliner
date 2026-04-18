@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 import "./default-theme.css";
 
@@ -26,9 +25,9 @@ export default function RootLayout({
       >
         {children}
         {/* NOTE: we must load these Vega scripts in this order */}
-        <Script src="/vega.js" strategy="afterInteractive" />
-        <Script src="/vega-lite.js" strategy="afterInteractive" />
-        <Script src="/vega-embed.js" strategy="afterInteractive" />
+        <script src="/vega.js" defer />
+        <script src="/vega-lite.js" defer />
+        <script src="/vega-embed.js" defer />
       </body>
     </html>
   );
