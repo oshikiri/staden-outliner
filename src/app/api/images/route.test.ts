@@ -4,7 +4,9 @@ const readFileMock = jest.fn();
 const getStadenRootMock = jest.fn(() => "/staden");
 
 jest.mock("fs", () => ({
+  ...jest.requireActual("fs"),
   promises: {
+    ...jest.requireActual("fs").promises,
     readFile: readFileMock,
   },
 }));
@@ -24,7 +26,7 @@ describe("api/images/route", () => {
     const response = await GET(new Request("http://localhost/api/images"));
 
     expect(response.status).toBe(400);
-    expect(response.headers.get("Content-Type")).toBe(
+    expect(response.headers.get("Content-Type")?.toLowerCase()).toBe(
       "text/plain; charset=utf-8",
     );
     await expect(response.text()).resolves.toBe("Missing path parameter");

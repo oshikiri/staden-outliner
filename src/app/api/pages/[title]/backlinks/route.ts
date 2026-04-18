@@ -1,5 +1,5 @@
-import { jsonResponse } from "@/app/api/_shared/http";
-import { getBacklinkPayload } from "./usecase";
+import { honoApiApp } from "@/app/api/hono/app";
+import { buildInternalApiRequest } from "@/app/api/hono/internalRequest";
 
 type Props = {
   params: Promise<{
@@ -7,7 +7,12 @@ type Props = {
   }>;
 };
 
-export async function GET(_req: Request, props: Props) {
+export async function GET(req: Request, props: Props) {
   const { title } = await props.params;
-  return jsonResponse(await getBacklinkPayload(title || ""));
+  const honoRequest = buildInternalApiRequest(
+    `/api/pages/${encodeURIComponent(title || "")}/backlinks`,
+    {},
+    req,
+  );
+  return honoApiApp.fetch(honoRequest);
 }

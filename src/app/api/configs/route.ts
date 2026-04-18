@@ -1,6 +1,8 @@
-import { jsonResponse } from "../_shared/http";
-import { getConfigsPayload } from "./usecase";
+import { honoApiApp } from "../hono/app";
+import { buildInternalApiRequest } from "../hono/internalRequest";
 
-export async function GET() {
-  return jsonResponse(await getConfigsPayload());
+export async function GET(
+  req: Request = buildInternalApiRequest("/api/configs"),
+) {
+  return honoApiApp.fetch(req);
 }
