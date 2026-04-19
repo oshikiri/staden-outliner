@@ -4,7 +4,7 @@ import { Block } from "@/app/lib/markdown/block";
 import { Marker, Text } from "@/app/lib/markdown/token";
 import * as PageService from "@/app/lib/page/pageService";
 
-import { GET, POST } from "@/app/api/hono/apiRoute";
+import { honoApiApp } from "@/app/api/hono/app";
 
 describe("api/pages/[title]/route", () => {
   beforeEach(() => {
@@ -12,7 +12,9 @@ describe("api/pages/[title]/route", () => {
   });
 
   test("GET returns an error response when title is missing", async () => {
-    const response = await GET(new Request("http://localhost/api/pages"));
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/pages"),
+    );
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
@@ -31,7 +33,9 @@ describe("api/pages/[title]/route", () => {
 
     jest.spyOn(PageService, "getPageByTitle").mockResolvedValue(page);
 
-    const response = await GET(new Request("http://localhost/api/pages/Page"));
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/pages/Page"),
+    );
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
@@ -69,7 +73,7 @@ describe("api/pages/[title]/route", () => {
       .spyOn(PageService, "updatePageByTitle")
       .mockResolvedValue(updatedPage);
 
-    const response = await POST(
+    const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages/Page", {
         method: "POST",
         headers: {
@@ -123,7 +127,7 @@ describe("api/pages/[title]/route", () => {
   });
 
   test("POST returns an error response when request json is invalid", async () => {
-    const response = await POST(
+    const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages/Page", {
         method: "POST",
         headers: {

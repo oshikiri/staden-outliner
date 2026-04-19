@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as PagesStore from "@/app/lib/sqlite/pages";
 
-import { GET } from "@/app/api/hono/apiRoute";
+import { honoApiApp } from "@/app/api/hono/app";
 
 jest.mock("@/app/lib/sqlite/pages", () => ({
   getPagesByPrefix: jest.fn(),
@@ -19,7 +19,7 @@ describe("api/files/route", () => {
       { pageId: "1", title: "Page", path: "Page.md" },
     ]);
 
-    const response = await GET(
+    const response = await honoApiApp.fetch(
       new Request("http://localhost/api/files?prefix=Pa"),
     );
 

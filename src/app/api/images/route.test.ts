@@ -13,7 +13,7 @@ mock.module("@/app/lib/env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 
-import { GET } from "@/app/api/hono/apiRoute";
+import { honoApiApp } from "@/app/api/hono/app";
 
 describe("api/images/route", () => {
   beforeEach(() => {
@@ -21,7 +21,9 @@ describe("api/images/route", () => {
   });
 
   test("GET returns 400 when path is missing", async () => {
-    const response = await GET(new Request("http://localhost/api/images"));
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/images"),
+    );
 
     expect(response.status).toBe(400);
     expect(response.headers.get("Content-Type")?.toLowerCase()).toBe(
@@ -31,7 +33,7 @@ describe("api/images/route", () => {
   });
 
   test("GET rejects paths outside STADEN_ROOT", async () => {
-    const response = await GET(
+    const response = await honoApiApp.fetch(
       new Request("http://localhost/api/images?path=../secret.png"),
     );
 
@@ -43,7 +45,7 @@ describe("api/images/route", () => {
     const imageBuffer = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
     readFileMock.mockResolvedValue(imageBuffer);
 
-    const response = await GET(
+    const response = await honoApiApp.fetch(
       new Request("http://localhost/api/images?path=images/sample.png"),
     );
 

@@ -2,7 +2,7 @@ import { access, stat } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 import { join, normalize, resolve } from "node:path";
 
-import { resolveApiApp } from "@/app/api/hono/apiRoute";
+import { honoApiApp } from "@/app/api/hono/app";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 3000;
@@ -36,7 +36,7 @@ export function createWebServer(options: ServerOptions = {}) {
       const url = new URL(request.url);
 
       if (url.pathname.startsWith("/api/")) {
-        return resolveApiApp(request).fetch(request);
+        return honoApiApp.fetch(request);
       }
 
       if (request.method !== "GET" && request.method !== "HEAD") {

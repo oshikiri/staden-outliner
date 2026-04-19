@@ -20,6 +20,7 @@ import {
   ApiEnv,
   binaryResponse,
   internalServerError,
+  noContentResponse,
   jsonResponse,
   optionalJsonBody,
   requiredQuery,
@@ -93,6 +94,11 @@ apiApp.use(
 
 apiApp.onError((_error, c) => {
   return internalServerError(c);
+});
+apiApp.post("/initialize", async (c) => {
+  const { initializeDatabase } = await import("@/app/api/initialize/usecase");
+  await initializeDatabase();
+  return noContentResponse(c);
 });
 apiApp.route("/", configsRoutes);
 apiApp.route("/", filesRoutes);
