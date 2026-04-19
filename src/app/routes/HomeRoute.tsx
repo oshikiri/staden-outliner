@@ -1,17 +1,15 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { HomeScreen } from "@/app/home/HomeScreen";
+import { StadenDate } from "@/app/lib/date";
 
 export function HomeRoute() {
   const navigate = useNavigate();
 
-  const navigateToPage = useCallback(
-    (path: string) => {
-      navigate(path, { replace: true });
-    },
-    [navigate],
-  );
+  useEffect(() => {
+    const title = new StadenDate().format();
+    navigate(`/pages/${encodeURIComponent(title)}`, { replace: true });
+  }, [navigate]);
 
-  return <HomeScreen navigateToPage={navigateToPage} />;
+  return null;
 }

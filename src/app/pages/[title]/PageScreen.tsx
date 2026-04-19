@@ -36,17 +36,21 @@ export function PageScreen({
     });
   }, [title]);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "s" && e.ctrlKey) {
+        e.preventDefault();
+        document.getElementById("page-search")?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   if (!block) {
     return <></>;
   }
-
-  // @owner Assigning to `window.onkeydown` inside render can cause leaks and duplicate handlers. Use `useEffect` with `addEventListener` and cleanup.
-  window.onkeydown = (e: KeyboardEvent) => {
-    if (e.key === "s" && e.ctrlKey) {
-      e.preventDefault();
-      document.getElementById("page-search")?.focus();
-    }
-  };
 
   const titleFromProperty = (block.getProperty("title") as string) || title;
 
