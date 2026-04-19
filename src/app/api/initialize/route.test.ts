@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 const initializeAllTablesMock = jest.fn();
 const batchInsertBlocksMock = jest.fn();

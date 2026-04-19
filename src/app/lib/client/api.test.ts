@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, jest } from "@jest/globals";
+import { afterEach, describe, expect, test, jest } from "bun:test";
 
 import { apiFetch, apiUrl } from "./api";
 

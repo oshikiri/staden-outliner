@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import { Block } from "@/app/lib/markdown/block";
 import { Marker, Text } from "@/app/lib/markdown/token";

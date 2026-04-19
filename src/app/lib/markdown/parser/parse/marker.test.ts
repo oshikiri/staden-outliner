@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 import { ListStart, Text, Marker } from "./../../token";
 import { Parser } from "./../../parser";
 import { Block } from "../../block";

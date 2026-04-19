@@ -1,7 +1,7 @@
 import { IncomingMessage } from "node:http";
 import { Readable } from "node:stream";
 
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 import { toRequest } from "./api";
 

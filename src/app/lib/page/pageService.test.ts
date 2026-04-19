@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as FileStore from "../file";
 import * as IncrementalImporter from "../importer/incremental_importer";

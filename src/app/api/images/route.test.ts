@@ -1,17 +1,15 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const readFileMock = jest.fn();
 const getStadenRootMock = jest.fn(() => "/staden");
 
-jest.mock("fs", () => ({
-  ...jest.requireActual("fs"),
+mock.module("fs", () => ({
   promises: {
-    ...jest.requireActual("fs").promises,
     readFile: readFileMock,
   },
 }));
 
-jest.mock("@/app/lib/env/stadenRoot", () => ({
+mock.module("@/app/lib/env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 

@@ -1,5 +1,5 @@
 import { Link } from "../token";
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 describe("Link", () => {
   describe("toMarkdown", () => {

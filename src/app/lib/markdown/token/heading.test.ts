@@ -1,5 +1,5 @@
 import { Heading, Text } from "../token";
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 describe("Heading", () => {
   describe("toMarkdown", () => {

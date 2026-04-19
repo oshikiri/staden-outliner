@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as Exporter from "@/app/lib/exporter/incremental_exporter";
 
@@ -14,7 +14,7 @@ describe("api/pages/[title]/update_markdown/route", () => {
   });
 
   test("POST exports the page markdown and returns an empty json object", async () => {
-    const exportMock = jest.mocked(Exporter.exportOnePageToMarkdown);
+    const exportMock = Exporter.exportOnePageToMarkdown;
 
     const response = await POST(
       new Request("http://localhost/api/pages/Page/update_markdown", {
@@ -29,7 +29,7 @@ describe("api/pages/[title]/update_markdown/route", () => {
   });
 
   test("POST returns 500 when export fails inside the Hono app", async () => {
-    const exportMock = jest.mocked(Exporter.exportOnePageToMarkdown);
+    const exportMock = Exporter.exportOnePageToMarkdown;
     exportMock.mockRejectedValue(new Error("export failed"));
 
     const response = await POST(

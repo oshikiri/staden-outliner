@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 import { Block } from "../markdown/block";
 import { Marker, Text } from "../markdown/token";

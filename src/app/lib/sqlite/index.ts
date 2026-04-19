@@ -1,5 +1,4 @@
-import { createRequire } from "node:module";
-
+import { Database as BunDatabase } from "bun:sqlite";
 import { getStadenRoot } from "../env/stadenRoot";
 
 import { initializeLinks } from "./links";
@@ -9,8 +8,6 @@ import { initializePages } from "./pages";
 export * from "./pages";
 export * from "./blocks";
 export * from "./links";
-
-const nodeRequire = createRequire(`${process.cwd()}/package.json`);
 
 type SqliteStatement = {
   all: (...params: unknown[]) => any[];
@@ -91,14 +88,8 @@ export async function close() {
 
 export function getDb(): SqliteDatabase {
   if (!db) {
-    if (isBunRuntime()) {
-      throw new Error(
-        "SQLite database is not initialized. Call await open() before handling requests.",
-      );
-    }
-
     const stadenRoot = getStadenRoot();
-    const Database = loadNodeDatabaseConstructor();
+    const Database = loadDatabaseConstructor();
     db = new Database(`${stadenRoot}/vault.sqlite3`);
   }
 
@@ -111,33 +102,13 @@ export function __setDatabaseConstructorForTests(
   databaseConstructorForTests = constructor;
 }
 
-function isBunRuntime(): boolean {
-  return (
-    typeof (globalThis as { Bun?: unknown }).Bun !== "undefined" ||
-    Boolean(process.versions?.bun)
-  );
+export function __resetDbForTests(): void {
+  db = undefined;
 }
 
-function loadNodeDatabaseConstructor(): SqliteDatabaseConstructor {
+function loadDatabaseConstructor(): SqliteDatabaseConstructor {
   if (databaseConstructorForTests) {
     return databaseConstructorForTests;
   }
-
-  const databaseModule = nodeRequire("better-sqlite3") as
-    | SqliteDatabaseConstructor
-    | {
-        default: SqliteDatabaseConstructor;
-      };
-  return typeof databaseModule === "function"
-    ? databaseModule
-    : databaseModule.default;
-}
-
-async function loadDatabaseConstructor(): Promise<SqliteDatabaseConstructor> {
-  if (!isBunRuntime()) {
-    return loadNodeDatabaseConstructor();
-  }
-
-  const databaseModule = await import("bun:sqlite");
-  return databaseModule.Database as unknown as SqliteDatabaseConstructor;
+  return BunDatabase as unknown as SqliteDatabaseConstructor;
 }

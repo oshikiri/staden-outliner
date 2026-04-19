@@ -1,5 +1,5 @@
 import { PropertyPair, Text } from "../token";
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 describe("PropertyPair", () => {
   describe("toMarkdown", () => {

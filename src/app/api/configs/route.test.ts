@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as ConfigFile from "@/app/lib/file/config";
 
@@ -14,7 +14,7 @@ describe("api/configs/route", () => {
   });
 
   test("GET returns configs as json", async () => {
-    const getAllConfigsMock = jest.mocked(ConfigFile.getAllConfigs);
+    const getAllConfigsMock = ConfigFile.getAllConfigs;
     getAllConfigsMock.mockResolvedValue({
       favorites: ["index", "daily"],
     });

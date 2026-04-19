@@ -1,5 +1,5 @@
 import { InlineCode } from "../token";
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 describe("InlineCode", () => {
   describe("toMarkdown", () => {

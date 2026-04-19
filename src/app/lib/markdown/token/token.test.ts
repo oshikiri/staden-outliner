@@ -1,5 +1,5 @@
 import { Newline, Token } from "../token";
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "bun:test";
 
 describe("Token", () => {
   test("returns an empty string", () => {

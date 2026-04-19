@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as PagesStore from "@/app/lib/sqlite/pages";
 
@@ -14,7 +14,7 @@ describe("api/files/route", () => {
   });
 
   test("GET forwards the prefix query and returns files as json", async () => {
-    const getPagesByPrefixMock = jest.mocked(PagesStore.getPagesByPrefix);
+    const getPagesByPrefixMock = PagesStore.getPagesByPrefix;
     getPagesByPrefixMock.mockResolvedValue([
       { pageId: "1", title: "Page", path: "Page.md" },
     ]);

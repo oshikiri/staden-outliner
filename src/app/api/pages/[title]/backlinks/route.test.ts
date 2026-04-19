@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import { Block } from "@/app/lib/markdown/block";
 import { Text } from "@/app/lib/markdown/token";
@@ -26,8 +26,8 @@ describe("api/pages/[title]/backlinks/route", () => {
     parent.parent = page;
     source.parent = parent;
 
-    const getSourceLinksMock = jest.mocked(Sqlite.getSourceLinks);
-    const getCurrentPageMock = jest.mocked(Sqlite.getCurrentPage);
+    const getSourceLinksMock = Sqlite.getSourceLinks;
+    const getCurrentPageMock = Sqlite.getCurrentPage;
     getSourceLinksMock.mockResolvedValue(["source-1"]);
     getCurrentPageMock.mockResolvedValue(page);
 
