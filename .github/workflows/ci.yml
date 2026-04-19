@@ -40,7 +40,7 @@ jobs:
           path: eslint-report.json
 
       - name: Run type check
-        run: bunx tsc --noEmit
+        run: bun run typecheck
 
       - name: Run unit tests with coverage
         run: bun run test-coverage
