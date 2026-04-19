@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageScreen } from "@/app/pages/[title]/PageScreen";
 

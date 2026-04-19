@@ -2,10 +2,10 @@
 
 ## Run E2E tests
 ```bash
-npm run test:e2e
+bun run test:e2e
 ```
 
 ## Run E2E tests with UI
 ```bash
-npm run test:e2e -- --ui
+bun run test:e2e -- --ui
 ```
