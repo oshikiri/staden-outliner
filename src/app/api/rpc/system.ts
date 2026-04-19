@@ -1,25 +1,28 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
-
-import { parseResponse } from "hono/client";
+import type { InferResponseType } from "hono/client";
 
 import { client, forceCacheRequest } from "./client";
 
+type ConfigsResponse = InferResponseType<typeof client.api.configs.$get>;
+type FilesResponse = InferResponseType<typeof client.api.files.$get>;
+
 export const systemRpc = {
   async configs(): Promise<Configs> {
-    return parseResponse(
-      await client.api.configs.$get(undefined, forceCacheRequest),
+    const response = await client.api.configs.$get(
+      undefined,
+      forceCacheRequest,
     );
+    return response.json() as Promise<ConfigsResponse>;
   },
   async files(prefix?: string): Promise<File[]> {
-    return parseResponse(
-      await client.api.files.$get(
-        {
-          query: prefix ? { prefix } : {},
-        },
-        forceCacheRequest,
-      ),
+    const response = await client.api.files.$get(
+      {
+        query: prefix ? { prefix } : {},
+      },
+      forceCacheRequest,
     );
+    return response.json() as Promise<FilesResponse>;
   },
   async initialize(): Promise<void> {
     const response = await client.api.initialize.$post();

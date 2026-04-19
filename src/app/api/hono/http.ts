@@ -7,19 +7,19 @@ export type ApiEnv = {
 
 export type ApiContext = Context<ApiEnv>;
 
-export function jsonResponse<T>(
+export function jsonResponse<T, U extends ContentfulStatusCode>(
   c: ApiContext,
   body: T,
-  status: ContentfulStatusCode = 200,
-): Response {
+  status: U = 200 as U,
+) {
   return c.json(body, status);
 }
 
-export function textResponse(
+export function textResponse<T extends string, U extends ContentfulStatusCode>(
   c: ApiContext,
-  body: string,
-  status: ContentfulStatusCode = 200,
-): Response {
+  body: T,
+  status: U = 200 as U,
+) {
   return c.text(body, status);
 }
 

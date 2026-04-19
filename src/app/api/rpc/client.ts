@@ -1,17 +1,8 @@
-import { hc, type ApplyGlobalResponse } from "hono/client";
+import { hc } from "hono/client";
 
 import type { AppType } from "../hono/app";
 
-type AppTypeWithGlobalResponse = ApplyGlobalResponse<
-  AppType,
-  {
-    500: {
-      text: string;
-    };
-  }
->;
-
-export const client = hc<AppTypeWithGlobalResponse>("/");
+export const client = hc<AppType>("/");
 
 export const forceCacheRequest = {
   init: {

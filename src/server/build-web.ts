@@ -30,7 +30,10 @@ async function main() {
     recursive: true,
   });
   await writeEmbeddedAssetsFile({
-    indexHtml: buildIndexHtml(),
+    indexHtml: {
+      body: buildIndexHtml(),
+      contentType: "text/html; charset=utf-8",
+    },
     assets: {
       ...assets,
       "/assets/main.css": {
@@ -111,7 +114,7 @@ async function buildStaticAssets(): Promise<
 }
 
 async function writeEmbeddedAssetsFile(assets: {
-  indexHtml: string;
+  indexHtml: { body: string; contentType: string };
   assets: Record<string, { body: string; contentType: string }>;
 }): Promise<void> {
   await writeFile(

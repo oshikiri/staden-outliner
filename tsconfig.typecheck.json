@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "e2e/**",
+    "test/**",
+    "src/app/api/rpc/**",
+    "src/server/generated-web-assets.ts"
+  ]
+}

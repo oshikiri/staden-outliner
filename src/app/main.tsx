@@ -14,7 +14,7 @@ void main();
 async function main() {
   await ensureVegaScripts();
 
-  createRoot(root).render(
+  createRoot(root as HTMLElement).render(
     <StrictMode>
       <App />
     </StrictMode>,
