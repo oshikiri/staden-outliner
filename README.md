@@ -47,17 +47,6 @@ After starting the server, you can view the documents at <http://localhost:3000/
 
 ![Screenshot at /pages/index](./docs/index-screenshot.png)
 
-### Run the development server using Docker
-
-For development, you can build and run the Bun service defined in `docker-compose.yml`.
-
-```bash
-docker compose up --build
-```
-
-Once the container is running, open <http://localhost:3000/> in your browser.
-When you are done, press `Ctrl+C` in the terminal or run `docker compose down` from a separate shell to stop the stack.
-
 ### Run in Production Mode
 
 ```bash
