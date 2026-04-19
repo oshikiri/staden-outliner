@@ -85,3 +85,26 @@ npm run start:web
 ```
 
 Then open <http://localhost:4173/> in your browser.
+
+### Build a standalone API binary with Bun
+
+This builds only the API server into a single executable.
+The web app remains a separate Vite build.
+You need Bun on the machine that produces the binary.
+
+Build the binary:
+
+```bash
+npm run build:api:binary
+```
+
+Run the binary with the vault path set:
+
+```bash
+export STADEN_ROOT=./docs
+./dist/staden-api
+```
+
+You can still override `HOST` and `PORT` when starting the binary.
+The binary itself does not require Node.js, npm scripts, or `tsx` at runtime.
+The build command loads `tsconfig.json` and `package.json` so Bun can resolve the existing path aliases.

@@ -7,51 +7,42 @@ import {
   test,
 } from "@jest/globals";
 
-const functionMock = jest.fn();
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
 }));
 const execMock = jest.fn();
 const closeMock = jest.fn();
 const databaseConstructorMock = jest.fn(() => ({
-  function: functionMock,
   prepare: prepareMock,
   exec: execMock,
   close: closeMock,
+  transaction: jest.fn((callback) => callback),
 }));
 const getStadenRootMock = jest.fn(() => "/tmp/staden");
-
-jest.mock("better-sqlite3", () => ({
-  __esModule: true,
-  default: databaseConstructorMock,
-}));
 
 jest.mock("../env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 
-import { close, getDb, open } from "./index";
+import { __setDatabaseConstructorForTests, close, getDb, open } from "./index";
 
 describe("sqlite lifecycle", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __setDatabaseConstructorForTests(databaseConstructorMock);
   });
 
   afterEach(async () => {
+    __setDatabaseConstructorForTests(undefined);
     await close();
   });
 
-  test("getDb reuses a single connection and registers functions once", () => {
+  test("getDb reuses a single connection", () => {
     const first = getDb();
     const second = getDb();
 
     expect(first).toBe(second);
     expect(databaseConstructorMock).toHaveBeenCalledTimes(1);
-    expect(functionMock).toHaveBeenCalledTimes(1);
-    expect(functionMock).toHaveBeenCalledWith(
-      "regex_capture",
-      expect.any(Function),
-    );
   });
 
   test("open reuses the existing connection", async () => {
@@ -72,6 +63,5 @@ describe("sqlite lifecycle", () => {
     expect(closeMock).toHaveBeenCalledTimes(1);
     expect(first).not.toBe(second);
     expect(databaseConstructorMock).toHaveBeenCalledTimes(2);
-    expect(functionMock).toHaveBeenCalledTimes(2);
   });
 });

@@ -76,7 +76,7 @@ export async function putFile(file: File) {
   const insert = db.prepare(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );
-  insert.run([file.pageId, file.title, file.path]);
+  insert.run(file.pageId, file.title, file.path);
   return file;
 }
 
@@ -87,7 +87,7 @@ async function insertFiles(files: File[]) {
   );
   const insertMany = db.transaction((files: File[]) => {
     for (const file of files) {
-      insert.run([file.pageId, file.title, file.path]);
+      insert.run(file.pageId, file.title, file.path);
     }
   });
   insertMany(files);

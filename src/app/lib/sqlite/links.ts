@@ -30,7 +30,7 @@ export async function getSourceLinks(
 
 export async function deleteLinksByFromId(fromId: string) {
   const db = getDb();
-  db.prepare("DELETE FROM links WHERE from_id = ?").run([fromId]);
+  db.prepare("DELETE FROM links WHERE from_id = ?").run(fromId);
 }
 
 export async function batchInsertLinks(links: [string, string][]) {
@@ -44,7 +44,7 @@ export async function batchInsertLinks(links: [string, string][]) {
   );
   const insertMany = db.transaction((links: [string, string][]) => {
     for (const [from, to] of links) {
-      insert.run([from, to]);
+      insert.run(from, to);
     }
   });
   insertMany(links);

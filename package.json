@@ -9,11 +9,13 @@
   "scripts": {
     "dev:api": "npm run serve:api",
     "dev:web": "npm run serve:web",
+    "build:api:binary": "bun build --compile --compile-autoload-tsconfig --compile-autoload-package-json src/server/api-entry.ts --outfile dist/staden-api",
     "format": "prettier --write . --list-different",
     "format:check": "prettier --check .",
     "verify": "npm run format:check && npm run lint && npm run build:web && npm run test:unit",
     "build:web": "vite build",
     "start:api": "npm run serve:api",
+    "start:api:binary": "./dist/staden-api",
     "start:web": "npm run serve:web:preview",
     "serve:api": "tsx src/server/api-entry.ts",
     "serve:web": "vite --host 0.0.0.0",

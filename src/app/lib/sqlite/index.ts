@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import { createRequire } from "node:module";
 
 import { getStadenRoot } from "../env/stadenRoot";
 
@@ -10,8 +10,31 @@ export * from "./pages";
 export * from "./blocks";
 export * from "./links";
 
-let db: Database.Database | undefined;
-let hasRegisteredFunctions = false;
+const nodeRequire = createRequire(`${process.cwd()}/package.json`);
+
+type SqliteStatement = {
+  all: (...params: unknown[]) => any[];
+  get: (...params: unknown[]) => unknown;
+  run: (...params: unknown[]) => { lastInsertRowid: number; changes: number };
+};
+
+type SqliteDatabase = {
+  prepare: (sql: string) => SqliteStatement;
+  exec: (sql: string) => unknown;
+  transaction: <T extends (...args: any[]) => any>(
+    callback: T,
+  ) => T & {
+    deferred: T;
+    immediate: T;
+    exclusive: T;
+  };
+  close: () => void;
+};
+
+type SqliteDatabaseConstructor = new (filename: string) => SqliteDatabase;
+
+let db: SqliteDatabase | undefined;
+let databaseConstructorForTests: SqliteDatabaseConstructor | undefined;
 
 export function initializeAllTables() {
   const database = getDb();
@@ -52,8 +75,8 @@ export async function open() {
   }
 
   const stadenRoot = getStadenRoot();
+  const Database = await loadDatabaseConstructor();
   db = new Database(`${stadenRoot}/vault.sqlite3`);
-  registerFunctions(db);
   return db;
 }
 
@@ -64,36 +87,57 @@ export async function close() {
 
   db.close();
   db = undefined;
-  hasRegisteredFunctions = false;
 }
 
-export function getDb(): Database.Database {
+export function getDb(): SqliteDatabase {
   if (!db) {
+    if (isBunRuntime()) {
+      throw new Error(
+        "SQLite database is not initialized. Call await open() before handling requests.",
+      );
+    }
+
     const stadenRoot = getStadenRoot();
+    const Database = loadNodeDatabaseConstructor();
     db = new Database(`${stadenRoot}/vault.sqlite3`);
   }
 
-  registerFunctions(db);
   return db;
 }
 
-function registerFunctions(database: Database.Database): void {
-  if (hasRegisteredFunctions) {
-    return;
+export function __setDatabaseConstructorForTests(
+  constructor: SqliteDatabaseConstructor | undefined,
+): void {
+  databaseConstructorForTests = constructor;
+}
+
+function isBunRuntime(): boolean {
+  return (
+    typeof (globalThis as { Bun?: unknown }).Bun !== "undefined" ||
+    Boolean(process.versions?.bun)
+  );
+}
+
+function loadNodeDatabaseConstructor(): SqliteDatabaseConstructor {
+  if (databaseConstructorForTests) {
+    return databaseConstructorForTests;
   }
 
-  database.function("regex_capture", (str: string, regex: string) => {
-    const re = new RegExp(regex);
-    const match = str.match(re);
-    const result = [];
-    for (let i = 1; i < (match?.length || 0); i++) {
-      if (match?.[i] === undefined) {
-        result.push(null);
-      } else {
-        result.push(match[i]);
-      }
-    }
-    return JSON.stringify(result);
-  });
-  hasRegisteredFunctions = true;
+  const databaseModule = nodeRequire("better-sqlite3") as
+    | SqliteDatabaseConstructor
+    | {
+        default: SqliteDatabaseConstructor;
+      };
+  return typeof databaseModule === "function"
+    ? databaseModule
+    : databaseModule.default;
+}
+
+async function loadDatabaseConstructor(): Promise<SqliteDatabaseConstructor> {
+  if (!isBunRuntime()) {
+    return loadNodeDatabaseConstructor();
+  }
+
+  const databaseModule = await import("bun:sqlite");
+  return databaseModule.Database as unknown as SqliteDatabaseConstructor;
 }
