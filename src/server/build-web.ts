@@ -1,5 +1,6 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, rm, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { constants as fsConstants } from "node:fs";
 
 import tailwindcss from "@tailwindcss/postcss";
 import postcss from "postcss";
@@ -26,9 +27,7 @@ async function main() {
   const assets = await buildStaticAssets();
   const mainCss = await buildCssContents();
   await writeFile(buildCss(), mainCss);
-  await cp(join(process.cwd(), "public"), join(distDir, "public"), {
-    recursive: true,
-  });
+  await copyOptionalPublicAssets();
   await writeEmbeddedAssetsFile({
     indexHtml: {
       body: buildIndexHtml(),
@@ -92,25 +91,62 @@ async function buildStaticAssets(): Promise<
   Record<string, { body: string; contentType: string }>
 > {
   const mainJs = await Bun.file(join(assetsDir, "main.js")).text();
-
-  return {
+  const assets: Record<string, { body: string; contentType: string }> = {
     "/assets/main.js": {
       contentType: "application/javascript; charset=utf-8",
       body: mainJs,
     },
-    "/public/vega.js": {
-      contentType: "application/javascript; charset=utf-8",
-      body: await Bun.file(join(process.cwd(), "public/vega.js")).text(),
-    },
-    "/public/vega-lite.js": {
-      contentType: "application/javascript; charset=utf-8",
-      body: await Bun.file(join(process.cwd(), "public/vega-lite.js")).text(),
-    },
-    "/public/vega-embed.js": {
-      contentType: "application/javascript; charset=utf-8",
-      body: await Bun.file(join(process.cwd(), "public/vega-embed.js")).text(),
-    },
   };
+
+  for (const [routePath, filePath] of [
+    ["/public/vega.js", join(process.cwd(), "public/vega.js")],
+    ["/public/vega-lite.js", join(process.cwd(), "public/vega-lite.js")],
+    ["/public/vega-embed.js", join(process.cwd(), "public/vega-embed.js")],
+  ] as const) {
+    const body = await readOptionalText(filePath);
+    if (!body) {
+      continue;
+    }
+
+    assets[routePath] = {
+      contentType: "application/javascript; charset=utf-8",
+      body,
+    };
+  }
+
+  return assets;
+}
+
+async function copyOptionalPublicAssets(): Promise<void> {
+  const publicDir = join(process.cwd(), "public");
+  try {
+    await access(publicDir, fsConstants.F_OK);
+    if (!(await stat(publicDir)).isDirectory()) {
+      return;
+    }
+    await cp(publicDir, join(distDir, "public"), {
+      recursive: true,
+    });
+  } catch (error) {
+    const cause = error as { code?: string };
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      cause.code === "ENOENT"
+    ) {
+      return;
+    }
+    throw error;
+  }
+}
+
+async function readOptionalText(path: string): Promise<string | undefined> {
+  try {
+    return await Bun.file(path).text();
+  } catch {
+    return undefined;
+  }
 }
 
 async function writeEmbeddedAssetsFile(assets: {

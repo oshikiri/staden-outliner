@@ -12,7 +12,12 @@ if (!root) {
 void main();
 
 async function main() {
-  await ensureVegaScripts();
+  await ensureVegaScripts().catch((error) => {
+    console.warn(
+      "Vega scripts are unavailable; graph rendering is disabled.",
+      error,
+    );
+  });
 
   createRoot(root as HTMLElement).render(
     <StrictMode>
