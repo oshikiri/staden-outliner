@@ -1,6 +1,12 @@
 import type { Block as BlockEntity } from "@/app/lib/markdown/block";
+import type { BlockDto } from "@/app/lib/markdown/blockDto";
 import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
-import type { InferResponseType } from "hono/client";
+import {
+  DetailedError,
+  parseResponse,
+  type InferRequestType,
+  type InferResponseType,
+} from "hono/client";
 import { isPageRouteError } from "../contracts";
 
 import { client, forceCacheRequest } from "./client";
@@ -9,18 +15,12 @@ function encodeTitle(title: string): string {
   return encodeURIComponent(title);
 }
 
-function pageTitleParam(title: string): { title: string } {
-  return { title: encodeTitle(title) };
-}
-
 type PageRouteClient = (typeof client.api.pages)[":title"];
+type ParsedResponse = Parameters<typeof parseResponse>[0];
+type PageGetRequest = InferRequestType<PageRouteClient["$get"]>;
+type PageUpdateRequest = InferRequestType<PageRouteClient["$post"]>;
 type PageGetSuccessResponse = InferResponseType<PageRouteClient["$get"], 200>;
 type PageGetErrorResponse = InferResponseType<PageRouteClient["$get"], 400>;
-type PageUpdateSuccessResponse = InferResponseType<
-  PageRouteClient["$post"],
-  200
->;
-type PageUpdateErrorResponse = InferResponseType<PageRouteClient["$post"], 400>;
 type PageBacklinksSuccessResponse = InferResponseType<
   PageRouteClient["backlinks"]["$get"],
   200
@@ -29,50 +29,46 @@ type PageUpdateMarkdownResponse = InferResponseType<
   PageRouteClient["update_markdown"]["$post"]
 >;
 
-async function readPageRpcResponse(response: Response): Promise<BlockEntity> {
-  const json = (await response.json()) as
-    | PageGetSuccessResponse
-    | PageGetErrorResponse;
-  if (response.status === 400) {
-    if (isPageRouteError(json)) {
-      throw new Error(json.updateResults.message);
-    }
-    throw new Error(`Request failed: ${response.status}`);
-  }
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
-  if (isPageRouteError(json)) {
-    throw new Error(json.updateResults.message);
-  }
-  return fromBlockDto(json);
+function pageParam(title: string): PageGetRequest["param"] {
+  return {
+    title: encodeTitle(title),
+  };
 }
 
-async function readPageUpdateResponse(
-  response: Response,
-): Promise<BlockEntity> {
-  const json = (await response.json()) as
-    | PageUpdateSuccessResponse
-    | PageUpdateErrorResponse;
-  if (response.status === 400) {
-    if (isPageRouteError(json)) {
-      throw new Error(json.updateResults.message);
+function readPageError(error: unknown): Error {
+  if (error instanceof DetailedError) {
+    const detail = error.detail as { data?: unknown } | undefined;
+    const data = detail?.data as PageGetErrorResponse | undefined;
+    if (data && isPageRouteError(data)) {
+      return new Error(data.updateResults.message);
     }
-    throw new Error(`Request failed: ${response.status}`);
+    if (typeof error.statusCode === "number") {
+      return new Error(`Request failed: ${error.statusCode}`);
+    }
   }
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+  if (error instanceof Error) {
+    return error;
   }
-  if (isPageRouteError(json)) {
-    throw new Error(json.updateResults.message);
+  return new Error("Request failed");
+}
+
+async function readPageRpcResponse(
+  response: Promise<Response>,
+): Promise<BlockEntity> {
+  try {
+    const json = (await parseResponse(
+      response as unknown as ParsedResponse,
+    )) as PageGetSuccessResponse;
+    return fromBlockDto(json as BlockDto);
+  } catch (error) {
+    throw readPageError(error);
   }
-  return fromBlockDto(json);
 }
 
 export const pageRpc = {
   async get(title: string): Promise<BlockEntity> {
-    const response = await client.api.pages[":title"].$get({
-      param: pageTitleParam(title),
+    const response = client.api.pages[":title"].$get({
+      param: pageParam(title),
     });
     return readPageRpcResponse(response);
   },
@@ -81,29 +77,31 @@ export const pageRpc = {
       return null;
     }
     const pageTitle = page.getProperty("title") as string;
-    const response = await client.api.pages[":title"].$post({
-      param: pageTitleParam(pageTitle),
+    const request: PageUpdateRequest = {
+      param: pageParam(pageTitle),
       json: toPageDto(page),
-    });
-    return readPageUpdateResponse(response);
+    };
+    const response = client.api.pages[":title"].$post(request);
+    return readPageRpcResponse(response);
   },
   async backlinks(title: string): Promise<BlockEntity[]> {
-    const response = await client.api.pages[":title"].backlinks.$get(
+    const response = client.api.pages[":title"].backlinks.$get(
       {
-        param: pageTitleParam(title),
+        param: pageParam(title),
       },
       forceCacheRequest,
     );
-    if (!response.ok) {
-      throw new Error(`Request failed: ${response.status}`);
-    }
-    const json = (await response.json()) as PageBacklinksSuccessResponse;
+    const json = (await parseResponse(
+      response as unknown as ParsedResponse,
+    )) as PageBacklinksSuccessResponse;
     return json.map((block) => fromBlockDto(block));
   },
   async reflectMarkdown(title: string): Promise<PageUpdateMarkdownResponse> {
-    const response = await client.api.pages[":title"].update_markdown.$post({
-      param: pageTitleParam(title),
+    const response = client.api.pages[":title"].update_markdown.$post({
+      param: pageParam(title),
     });
-    return response.json() as Promise<PageUpdateMarkdownResponse>;
+    return parseResponse(
+      response as unknown as ParsedResponse,
+    ) as Promise<PageUpdateMarkdownResponse>;
   },
 };
