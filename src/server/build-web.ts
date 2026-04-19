@@ -7,29 +7,49 @@ import postcss from "postcss";
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
 const cssEntry = join(process.cwd(), "src/app/default-theme.css");
+const embeddedAssetsEntry = join(
+  process.cwd(),
+  "src/server/generated-web-assets.ts",
+);
 
 async function main() {
   await rm(distDir, { recursive: true, force: true });
   await mkdir(assetsDir, { recursive: true });
 
-  const result = await Bun.build({
-    entrypoints: [join(process.cwd(), "src/app/main.tsx")],
-    outdir: assetsDir,
-    target: "browser",
-    minify: true,
-  });
+  const result = await buildBrowserBundle();
 
   if (!result.success) {
     process.exitCode = 1;
     return;
   }
 
-  await writeFile(buildCss(), await buildCssContents());
+  const assets = await buildStaticAssets();
+  const mainCss = await buildCssContents();
+  await writeFile(buildCss(), mainCss);
   await cp(join(process.cwd(), "public"), join(distDir, "public"), {
     recursive: true,
   });
+  await writeEmbeddedAssetsFile({
+    indexHtml: buildIndexHtml(),
+    assets: {
+      ...assets,
+      "/assets/main.css": {
+        contentType: "text/css; charset=utf-8",
+        body: mainCss,
+      },
+    },
+  });
 
   await writeFile(join(distDir, "index.html"), buildIndexHtml());
+}
+
+async function buildBrowserBundle() {
+  return Bun.build({
+    entrypoints: [join(process.cwd(), "src/app/main.tsx")],
+    outdir: assetsDir,
+    target: "browser",
+    minify: true,
+  });
 }
 
 function buildIndexHtml(): string {
@@ -63,6 +83,42 @@ async function buildCssContents(): Promise<string> {
     },
   );
   return result.css;
+}
+
+async function buildStaticAssets(): Promise<
+  Record<string, { body: string; contentType: string }>
+> {
+  const mainJs = await Bun.file(join(assetsDir, "main.js")).text();
+
+  return {
+    "/assets/main.js": {
+      contentType: "application/javascript; charset=utf-8",
+      body: mainJs,
+    },
+    "/public/vega.js": {
+      contentType: "application/javascript; charset=utf-8",
+      body: await Bun.file(join(process.cwd(), "public/vega.js")).text(),
+    },
+    "/public/vega-lite.js": {
+      contentType: "application/javascript; charset=utf-8",
+      body: await Bun.file(join(process.cwd(), "public/vega-lite.js")).text(),
+    },
+    "/public/vega-embed.js": {
+      contentType: "application/javascript; charset=utf-8",
+      body: await Bun.file(join(process.cwd(), "public/vega-embed.js")).text(),
+    },
+  };
+}
+
+async function writeEmbeddedAssetsFile(assets: {
+  indexHtml: string;
+  assets: Record<string, { body: string; contentType: string }>;
+}): Promise<void> {
+  await writeFile(
+    embeddedAssetsEntry,
+    `export const embeddedWebAssets = ${JSON.stringify(assets, null, 2)} as const;
+`,
+  );
 }
 
 void main().catch((error) => {

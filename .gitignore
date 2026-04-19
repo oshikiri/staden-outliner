@@ -62,6 +62,7 @@ coverage/
 
 # Staden metadata
 .issues/
+src/server/generated-web-assets.ts
 
 # VS Code
 .vscode/
