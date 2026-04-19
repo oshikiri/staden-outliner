@@ -1,9 +1,5 @@
 import { JSX } from "react";
-import { apiFetch } from "@/app/lib/client/api";
-import {
-  expectEmptyJsonResponse,
-  pageUpdateMarkdownRoutePath,
-} from "@/app/api/contracts";
+import { pageRpc } from "@/app/api/rpc/page";
 export function ReflectToMarkdown({
   pageTitle,
 }: {
@@ -11,11 +7,7 @@ export function ReflectToMarkdown({
 }): JSX.Element {
   const onClick = () => {
     // @owner No error handling or user feedback on failure.
-    void apiFetch(pageUpdateMarkdownRoutePath(pageTitle), {
-      method: "POST",
-    })
-      .then(expectEmptyJsonResponse)
-      .catch(() => undefined);
+    void pageRpc.reflectMarkdown(pageTitle).catch(() => undefined);
   };
 
   return (

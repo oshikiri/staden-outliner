@@ -1,11 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
-import { apiFetch } from "@/app/lib/client/api";
-import {
-  pageBacklinksRoutePath,
-  readBacklinksResponse,
-} from "@/app/api/contracts";
+import { pageRpc } from "@/app/api/rpc/page";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
@@ -52,13 +48,7 @@ export function BacklinksContainer({
 async function getPageBacklinks(
   pageTitle: string,
 ): Promise<BlockEntity[] | null> {
-  const response = await apiFetch(pageBacklinksRoutePath(pageTitle), {
-    cache: "force-cache",
-  });
-  if (!response.ok) {
-    return null;
-  }
-  return readBacklinksResponse(response);
+  return pageRpc.backlinks(pageTitle).catch(() => null);
 }
 
 function BacklinkPage({

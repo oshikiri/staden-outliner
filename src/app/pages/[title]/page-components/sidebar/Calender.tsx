@@ -2,7 +2,7 @@ import { JSX, useEffect, useState } from "react";
 
 import { StadenDate } from "@/app/lib/date";
 import type { File } from "@/app/lib/file";
-import { getFilesByPrefix } from "./api";
+import { systemRpc } from "@/app/api/rpc/system";
 import { usePageNavigation } from "../../navigation";
 
 // eslint-disable-next-line max-lines-per-function
@@ -18,9 +18,9 @@ export function JournalCalender({ pathname }: { pathname: string }) {
   );
 
   useEffect(() => {
-    getFilesByPrefix(month).then((files) =>
-      setDays(files.map((file: File) => file.title)),
-    );
+    systemRpc
+      .files(month)
+      .then((files) => setDays(files.map((file: File) => file.title)));
   }, [month]);
 
   const dayExists = new Map<string, boolean>();

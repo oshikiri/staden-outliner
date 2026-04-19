@@ -1,18 +1,12 @@
 import { JSX, useState } from "react";
-import { apiFetch } from "@/app/lib/client/api";
-import {
-  expectNoContentResponse,
-  initializeRoutePath,
-} from "@/app/api/contracts";
+import { systemRpc } from "@/app/api/rpc/system";
 
 export function ReloadButton(): JSX.Element {
   const [reloadStatus, setReloadStatus] = useState("reload completed");
   const onClick = () => {
     setReloadStatus("reloading");
-    apiFetch(initializeRoutePath, {
-      method: "POST",
-    })
-      .then(expectNoContentResponse)
+    systemRpc
+      .initialize()
       .then(() => {
         setReloadStatus("reload completed");
       })

@@ -4,7 +4,7 @@ import {
   applyContentMarkdown,
   Block as BlockEntity,
 } from "@/app/lib/markdown/block";
-import { postPage } from "../../api";
+import { pageRpc } from "@/app/api/rpc/page";
 import { extractTextContent } from "../dom";
 import * as caret from "./caret";
 import * as dom from "./dom";
@@ -77,7 +77,7 @@ export class ContentKeyboardEventHandler {
       textBefore,
       textAfter,
     );
-    postPage(pageUpdated).then((pageUpdated) => {
+    pageRpc.update(pageUpdated).then((pageUpdated) => {
       this.setPage(pageUpdated);
       this.setEditingBlockId?.(blockAfter?.id || null);
       this.setOffset?.(null);
@@ -89,7 +89,7 @@ export class ContentKeyboardEventHandler {
     const currentTextContent = extractTextContent(this.contentRef.current);
     applyContentMarkdown(this.block, currentTextContent);
     updatePageByIndent(this.page, this.block.id, event.shiftKey);
-    postPage(this.page).then((pageUpdated) => {
+    pageRpc.update(this.page).then((pageUpdated) => {
       this.setPage(pageUpdated);
       this.setEditingBlockId?.(this.block.id || null);
       this.setOffset?.(null);

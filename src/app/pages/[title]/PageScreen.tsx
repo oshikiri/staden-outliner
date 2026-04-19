@@ -8,7 +8,7 @@ import { BacklinksContainer } from "./page-components/Backlink";
 import { SideBar } from "./page-components/sidebar";
 import { PageNavigationProvider } from "./navigation";
 import { useStore } from "./state";
-import { getPageByTitle } from "./api";
+import { pageRpc } from "@/app/api/rpc/page";
 
 // eslint-disable-next-line max-lines-per-function
 export function PageScreen({
@@ -30,7 +30,7 @@ export function PageScreen({
   }, [title]);
 
   useEffect(() => {
-    getPageByTitle(title).then((nextBlock) => {
+    pageRpc.get(title).then((nextBlock) => {
       console.log("pageUpdate", nextBlock);
       setPage(nextBlock);
     });

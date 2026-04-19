@@ -106,3 +106,4 @@ apiApp.route("/", imagesRoutes);
 apiApp.route("/pages", pagesRoutes);
 
 export const honoApiApp = apiApp;
+export type AppType = typeof honoApiApp;

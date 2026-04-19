@@ -13,8 +13,8 @@ import {
   Block as BlockEntity,
   getContentMarkdown,
 } from "@/app/lib/markdown/block";
+import { pageRpc } from "@/app/api/rpc/page";
 import { Token } from "../../token";
-import { postPage } from "../api";
 import { useStore } from "../../state";
 
 import { Suggestion } from "./suggestion";
@@ -114,7 +114,7 @@ export function Content({
       }
 
       applyContentMarkdown(blockOnPage, contentMarkdown);
-      postPage(page).then((page) => setPage(page));
+      pageRpc.update(page).then((page) => setPage(page));
       setEditingBlockId?.(null);
     });
   };

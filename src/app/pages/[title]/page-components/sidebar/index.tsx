@@ -2,12 +2,12 @@ import { JSX, useEffect, useState } from "react";
 
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
 import { StadenDate } from "@/app/lib/date";
+import { systemRpc } from "@/app/api/rpc/system";
 import { PageRef } from "../../token";
 import { JournalCalender } from "./Calender";
 import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
-import { getAllFiles, getAllConfigs } from "./api";
 import { usePageNavigation } from "../../navigation";
 
 // eslint-disable-next-line max-lines-per-function
@@ -74,7 +74,8 @@ function SearchBox(): JSX.Element {
   const { navigateToPage } = usePageNavigation();
 
   useEffect(() => {
-    getAllFiles()
+    systemRpc
+      .files()
       .then((files) => {
         const titles = files.map((file: { title: string }) => file.title);
         setFiles(new Array(...new Set(titles)).sort());
@@ -113,7 +114,8 @@ function Favorites() {
   const [favorites, setFavorites] = useState<string[]>();
 
   useEffect(() => {
-    getAllConfigs()
+    systemRpc
+      .configs()
       .then((configs) => setFavorites(configs.favorites))
       .catch((error) => {
         console.error("Failed to load favorites", error);

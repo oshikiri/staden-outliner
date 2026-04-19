@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from "react";
 
-import { getAllFiles } from "@/app/pages/[title]/page-components/sidebar/api";
+import { systemRpc } from "@/app/api/rpc/system";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({
@@ -62,7 +62,8 @@ function useCachedFiles(): string[] {
   });
 
   useEffect(() => {
-    getAllFiles()
+    systemRpc
+      .files()
       .then((f) => {
         const nextFiles = f.map((file: { title: string }) => file.title);
         setFiles(nextFiles);

@@ -5,8 +5,8 @@ import {
   Block as BlockEntity,
   getContentMarkdown,
 } from "@/app/lib/markdown/block";
+import { pageRpc } from "@/app/api/rpc/page";
 import { flipCollapsed } from "@/app/lib/markdown/utils";
-import { postPage } from "./api";
 import { useStore } from "../state";
 
 export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
@@ -28,7 +28,7 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
     console.log("Bullet onClick", { contentMarkdown });
     applyContentMarkdown(target, flipCollapsed(contentMarkdown));
 
-    postPage(page).then(setPage);
+    pageRpc.update(page).then(setPage);
   };
   return (
     <div
