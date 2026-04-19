@@ -20,3 +20,10 @@ export async function readJsonResponse<T>(response: Response): Promise<T> {
   ensureOkResponse(response);
   return response.json() as Promise<T>;
 }
+
+export async function readNoContentResponse(response: Response): Promise<void> {
+  ensureOkResponse(response);
+  if (response.status !== 204) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+}

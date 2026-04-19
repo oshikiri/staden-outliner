@@ -9,6 +9,14 @@ import {
 } from "../contracts";
 import { client, forceCacheRequest, readJsonResponse } from "./client";
 
+function encodeTitle(title: string): string {
+  return encodeURIComponent(title);
+}
+
+function pageTitleParam(title: string): { title: string } {
+  return { title: encodeTitle(title) };
+}
+
 async function readPageRpcResponse(response: Response): Promise<BlockEntity> {
   const json = (await response.json()) as PageRouteResponseBody;
   if (!response.ok) {
@@ -26,9 +34,7 @@ async function readPageRpcResponse(response: Response): Promise<BlockEntity> {
 export const pageRpc = {
   async get(title: string): Promise<BlockEntity> {
     const response = await client.api.pages[":title"].$get({
-      param: {
-        title: encodeURIComponent(title),
-      },
+      param: pageTitleParam(title),
     });
     return readPageRpcResponse(response);
   },
@@ -38,9 +44,7 @@ export const pageRpc = {
     }
     const pageTitle = page.getProperty("title") as string;
     const response = await client.api.pages[":title"].$post({
-      param: {
-        title: encodeURIComponent(pageTitle),
-      },
+      param: pageTitleParam(pageTitle),
       json: toPageDto(page),
     });
     return readPageRpcResponse(response);
@@ -48,9 +52,7 @@ export const pageRpc = {
   async backlinks(title: string): Promise<BlockEntity[]> {
     const response = await client.api.pages[":title"].backlinks.$get(
       {
-        param: {
-          title: encodeURIComponent(title),
-        },
+        param: pageTitleParam(title),
       },
       forceCacheRequest,
     );
@@ -61,9 +63,7 @@ export const pageRpc = {
     title: string,
   ): Promise<UpdateMarkdownRouteResponseBody> {
     const response = await client.api.pages[":title"].update_markdown.$post({
-      param: {
-        title: encodeURIComponent(title),
-      },
+      param: pageTitleParam(title),
     });
     return readJsonResponse<UpdateMarkdownRouteResponseBody>(response);
   },

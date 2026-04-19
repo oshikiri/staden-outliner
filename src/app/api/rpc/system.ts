@@ -1,7 +1,12 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
 
-import { forceCacheRequest, readJsonResponse, client } from "./client";
+import {
+  client,
+  forceCacheRequest,
+  readJsonResponse,
+  readNoContentResponse,
+} from "./client";
 
 export const systemRpc = {
   async configs(): Promise<Configs> {
@@ -20,9 +25,6 @@ export const systemRpc = {
     );
   },
   async initialize(): Promise<void> {
-    const response = await client.api.initialize.$post();
-    if (response.status !== 204) {
-      throw new Error(`Request failed: ${response.status}`);
-    }
+    await readNoContentResponse(await client.api.initialize.$post());
   },
 };
