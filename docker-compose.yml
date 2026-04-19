@@ -3,7 +3,7 @@ services:
     build:
       context: .
       target: dev
-    command: npm run dev:api
+    command: bun run dev:api
     ports:
       - "127.0.0.1:3001:3001"
     environment:
@@ -20,7 +20,7 @@ services:
     build:
       context: .
       target: dev
-    command: npm run dev:web
+    command: bun run dev:web
     depends_on:
       - api
     ports:

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.6
 
-FROM node:24-bookworm AS base
+FROM oven/bun:1.3.12-bookworm AS base
 
 USER root
 WORKDIR /app
@@ -14,13 +14,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 FROM deps AS dev
 ENV NODE_ENV=development \
     STADEN_ROOT=/app/docs
-COPY --chown=node:node . .
-USER node
+COPY --chown=bun:bun . .
+USER bun
 EXPOSE 3001 5173
 ENTRYPOINT ["bash", "/app/docker/dev-entrypoint.sh"]

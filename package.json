@@ -7,16 +7,16 @@
     "node": "24.x"
   },
   "scripts": {
-    "dev:api": "npm run serve:api",
-    "dev:web": "npm run serve:web",
+    "dev:api": "bun run serve:api",
+    "dev:web": "bun run serve:web",
     "build:api:binary": "bun build --compile --compile-autoload-tsconfig --compile-autoload-package-json src/server/api-entry.ts --outfile dist/staden-api",
     "format": "prettier --write . --list-different",
     "format:check": "prettier --check .",
-    "verify": "npm run format:check && npm run lint && npm run build:web && npm run test:unit",
+    "verify": "bun run format:check && bun run lint && bun run build:web && bun run test:unit",
     "build:web": "vite build",
-    "start:api": "npm run serve:api",
+    "start:api": "bun run serve:api",
     "start:api:binary": "./dist/staden-api",
-    "start:web": "npm run serve:web:preview",
+    "start:web": "bun run serve:web:preview",
     "serve:api": "tsx src/server/api-entry.ts",
     "serve:web": "vite --host 0.0.0.0",
     "serve:web:preview": "vite preview --host 0.0.0.0",
@@ -24,7 +24,7 @@
     "test-coverage": "jest --coverage",
     "test:e2e": "playwright test --config=playwright.config.ts",
     "test:unit": "jest",
-    "test": "npm run test:unit && npm run test:e2e"
+    "test": "bun run test:unit && bun run test:e2e"
   },
   "dependencies": {
     "@vitejs/plugin-react": "6.0.1",

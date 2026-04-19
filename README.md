@@ -22,8 +22,7 @@
 ## Getting Started
 
 Requirements:
-- npm
-- Node.js
+- Bun
 - SQLite
 
 ```bash
@@ -35,13 +34,13 @@ export STADEN_ROOT=./docs
 Start the API server in one terminal:
 
 ```bash
-npm run dev:api
+bun run dev:api
 ```
 
 Start the web app in another terminal:
 
 ```bash
-npm run dev:web
+bun run dev:web
 ```
 
 Then initialize the vault:
@@ -69,19 +68,19 @@ When you are done, press `Ctrl+C` in the terminal or run `docker compose down` f
 ### Run in Production Mode
 
 ```bash
-npm run build:web
+bun run build:web
 ```
 
 Start the API server in one terminal:
 
 ```bash
-npm run start:api
+bun run start:api
 ```
 
 Start the web preview in another terminal:
 
 ```bash
-npm run start:web
+bun run start:web
 ```
 
 Then open <http://localhost:4173/> in your browser.
@@ -95,7 +94,7 @@ You need Bun on the machine that produces the binary.
 Build the binary:
 
 ```bash
-npm run build:api:binary
+bun run build:api:binary
 ```
 
 Run the binary with the vault path set:
@@ -106,5 +105,5 @@ export STADEN_ROOT=./docs
 ```
 
 You can still override `HOST` and `PORT` when starting the binary.
-The binary itself does not require Node.js, npm scripts, or `tsx` at runtime.
+The binary itself does not require Node.js, Bun scripts, or `tsx` at runtime.
 The build command loads `tsconfig.json` and `package.json` so Bun can resolve the existing path aliases.
