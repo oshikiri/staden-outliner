@@ -25,7 +25,7 @@ import {
   open,
 } from "./index";
 
-describe("sqlite lifecycle", () => {
+describe.serial("sqlite lifecycle", () => {
   beforeEach(async () => {
     __resetDbForTests();
     await close();
