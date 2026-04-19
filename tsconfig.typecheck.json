@@ -8,6 +8,7 @@
     "e2e/**",
     "test/**",
     "src/app/api/rpc/**",
+    "src/server/web-binary-entry.ts",
     "src/server/generated-web-assets.ts"
   ]
 }
