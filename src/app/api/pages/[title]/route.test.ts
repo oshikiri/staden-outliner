@@ -11,18 +11,12 @@ describe("api/pages/[title]/route", () => {
     jest.restoreAllMocks();
   });
 
-  test("GET returns an error response when title is missing", async () => {
+  test("GET returns 404 when title is missing", async () => {
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages"),
     );
 
-    expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({
-      updateResults: {
-        status: "unchanged",
-        message: "Missing title",
-      },
-    });
+    expect(response.status).toBe(404);
   });
 
   test("GET returns page data as BlockDto", async () => {
@@ -126,23 +120,16 @@ describe("api/pages/[title]/route", () => {
     });
   });
 
-  test("POST returns an error response when request json is invalid", async () => {
+  test("POST returns 404 when title is missing", async () => {
     const response = await honoApiApp.fetch(
-      new Request("http://localhost/api/pages/Page", {
+      new Request("http://localhost/api/pages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: "{",
       }),
     );
 
-    expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({
-      updateResults: {
-        status: "unchanged",
-        message: "Missing page content",
-      },
-    });
+    expect(response.status).toBe(404);
   });
 });

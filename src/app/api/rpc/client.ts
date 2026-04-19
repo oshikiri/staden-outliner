@@ -1,29 +1,20 @@
-import { hc } from "hono/client";
+import { hc, type ApplyGlobalResponse } from "hono/client";
 
 import type { AppType } from "../hono/app";
 
-export const client = hc<AppType>("/");
+type AppTypeWithGlobalResponse = ApplyGlobalResponse<
+  AppType,
+  {
+    500: {
+      text: string;
+    };
+  }
+>;
+
+export const client = hc<AppTypeWithGlobalResponse>("/");
 
 export const forceCacheRequest = {
   init: {
     cache: "force-cache" as const,
   },
 };
-
-export function ensureOkResponse(response: Response): void {
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
-}
-
-export async function readJsonResponse<T>(response: Response): Promise<T> {
-  ensureOkResponse(response);
-  return response.json() as Promise<T>;
-}
-
-export async function readNoContentResponse(response: Response): Promise<void> {
-  ensureOkResponse(response);
-  if (response.status !== 204) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
-}

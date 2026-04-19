@@ -6,7 +6,6 @@ export type ApiEnv = {
 };
 
 export type ApiContext = Context<ApiEnv>;
-export type Validated<T> = T | Response;
 
 export function jsonResponse<T>(
   c: ApiContext,
@@ -22,26 +21,6 @@ export function textResponse(
   status: ContentfulStatusCode = 200,
 ): Response {
   return c.text(body, status);
-}
-
-export async function optionalJsonBody<T>(c: ApiContext): Promise<T | null> {
-  try {
-    return await c.req.json<T>();
-  } catch {
-    return null;
-  }
-}
-
-export function requiredQuery(
-  c: ApiContext,
-  name: string,
-  message: string = `Missing ${name} parameter`,
-): Validated<string> {
-  const value = c.req.query(name);
-  if (!value) {
-    return textResponse(c, message, 400);
-  }
-  return value;
 }
 
 export function binaryResponse(

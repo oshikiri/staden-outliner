@@ -1,21 +1,18 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
 
-import {
-  client,
-  forceCacheRequest,
-  readJsonResponse,
-  readNoContentResponse,
-} from "./client";
+import { parseResponse } from "hono/client";
+
+import { client, forceCacheRequest } from "./client";
 
 export const systemRpc = {
   async configs(): Promise<Configs> {
-    return readJsonResponse<Configs>(
+    return parseResponse(
       await client.api.configs.$get(undefined, forceCacheRequest),
     );
   },
   async files(prefix?: string): Promise<File[]> {
-    return readJsonResponse<File[]>(
+    return parseResponse(
       await client.api.files.$get(
         {
           query: prefix ? { prefix } : {},
@@ -25,6 +22,9 @@ export const systemRpc = {
     );
   },
   async initialize(): Promise<void> {
-    await readNoContentResponse(await client.api.initialize.$post());
+    const response = await client.api.initialize.$post();
+    if (response.status !== 204) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
   },
 };
