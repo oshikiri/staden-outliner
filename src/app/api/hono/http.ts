@@ -6,6 +6,9 @@ export type ApiEnv = {
 };
 
 export type ApiContext = Context<ApiEnv>;
+export type GlobalErrorResponse = {
+  message: string;
+};
 
 export function jsonResponse<T, U extends ContentfulStatusCode>(
   c: ApiContext,
@@ -43,5 +46,5 @@ export function noContentResponse(
 }
 
 export function internalServerError(c: ApiContext): Response {
-  return textResponse(c, "Internal Server Error", 500);
+  return jsonResponse(c, { message: "Internal Server Error" }, 500);
 }

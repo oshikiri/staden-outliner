@@ -42,6 +42,12 @@ function readPageError(error: unknown): Error {
     if (data && isPageRouteError(data)) {
       return new Error(data.updateResults.message);
     }
+    if (data && typeof data === "object" && "message" in data) {
+      const message = (data as { message?: unknown }).message;
+      if (typeof message === "string") {
+        return new Error(message);
+      }
+    }
     if (typeof error.statusCode === "number") {
       return new Error(`Request failed: ${error.statusCode}`);
     }

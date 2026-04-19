@@ -10,8 +10,8 @@ import { client, forceCacheRequest } from "./client";
 
 type ParsedResponse = Parameters<typeof parseResponse>[0];
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
-type ConfigsResponse = InferResponseType<typeof client.api.configs.$get>;
-type FilesResponse = InferResponseType<typeof client.api.files.$get>;
+type ConfigsResponse = InferResponseType<typeof client.api.configs.$get, 200>;
+type FilesResponse = InferResponseType<typeof client.api.files.$get, 200>;
 
 export const systemRpc = {
   async configs(): Promise<Configs> {

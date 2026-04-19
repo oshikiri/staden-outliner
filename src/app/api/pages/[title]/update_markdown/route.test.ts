@@ -40,9 +40,9 @@ describe("api/pages/[title]/update_markdown/route", () => {
 
     expect(exportMock).toHaveBeenCalledWith("Page");
     expect(response.status).toBe(500);
-    expect(response.headers.get("Content-Type")).toBe(
-      "text/plain; charset=UTF-8",
-    );
-    await expect(response.text()).resolves.toBe("Internal Server Error");
+    expect(response.headers.get("Content-Type")).toBe("application/json");
+    await expect(response.json()).resolves.toEqual({
+      message: "Internal Server Error",
+    });
   });
 });

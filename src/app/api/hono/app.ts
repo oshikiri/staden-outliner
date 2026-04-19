@@ -21,12 +21,14 @@ import {
 import {
   ApiContext,
   ApiEnv,
+  type GlobalErrorResponse,
   binaryResponse,
   internalServerError,
   noContentResponse,
   jsonResponse,
   textResponse,
 } from "./http";
+import type { ApplyGlobalResponse } from "hono/client";
 
 const configsRoutes = new Hono<ApiEnv>().get("/configs", async (c) => {
   return jsonResponse(c, await getConfigsPayload());
@@ -158,4 +160,11 @@ export const honoApiApp = new Hono<ApiEnv>()
   .route("/", imagesRoutes)
   .route("/pages", pagesRoutes);
 
-export type AppType = typeof honoApiApp;
+export type AppType = ApplyGlobalResponse<
+  typeof honoApiApp,
+  {
+    500: {
+      json: GlobalErrorResponse;
+    };
+  }
+>;
