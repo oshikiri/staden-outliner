@@ -5,8 +5,8 @@ import { createApiServer } from "./api";
 async function main() {
   await open();
   createApiServer({
-    host: process.env.HOST,
-    port: process.env.PORT ? Number(process.env.PORT) : undefined,
+    host: Bun.env.HOST,
+    port: Bun.env.PORT ? Number(Bun.env.PORT) : undefined,
   });
 }
 
