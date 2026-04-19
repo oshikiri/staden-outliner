@@ -9,7 +9,7 @@ if [ ! -d node_modules ] || [ ! -f "$STAMP_FILE" ] || [ bun.lock -nt "$STAMP_FIL
 fi
 
 if [ "$#" -eq 0 ]; then
-  set -- bun run dev:web
+  set -- bun run dev
 fi
 
 exec "$@"

@@ -26,7 +26,7 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/global-setup"),
 
   webServer: {
-    command: "npm run dev",
+    command: "bun run dev",
     env: {
       STADEN_ROOT: "./e2e/",
     },
