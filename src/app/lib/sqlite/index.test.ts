@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
@@ -17,42 +17,39 @@ jest.mock("../env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 
-import {
-  __resetDbForTests,
-  __setDatabaseConstructorForTests,
-  close,
-  getDb,
-  open,
-} from "./index";
+let importCounter = 0;
+
+async function loadSqliteModule() {
+  const module = await import(`./index.ts?test=${importCounter++}`);
+  module.__setDatabaseConstructorForTests(databaseConstructorMock);
+  return module;
+}
 
 describe.serial("sqlite lifecycle", () => {
   beforeEach(async () => {
-    __resetDbForTests();
-    await close();
     jest.clearAllMocks();
-    __setDatabaseConstructorForTests(databaseConstructorMock);
-  });
-
-  afterEach(async () => {
-    __setDatabaseConstructorForTests(undefined);
-    await close();
-    __resetDbForTests();
   });
 
   test("getDb reuses a single connection", async () => {
-    await close();
-    const first = getDb();
-    const second = getDb();
+    const sqlite = await loadSqliteModule();
+    sqlite.__resetDbForTests();
+    await sqlite.close();
+    const first = sqlite.getDb();
+    const second = sqlite.getDb();
 
     expect(first).toBe(second);
     expect(databaseConstructorMock).toHaveBeenCalledTimes(1);
+    await sqlite.close();
   });
 
   test("open reuses the existing connection", async () => {
-    await close();
-    const first = await open();
-    const second = await open();
+    const sqlite = await loadSqliteModule();
+    sqlite.__resetDbForTests();
+    await sqlite.close();
+    const first = await sqlite.open();
+    const second = await sqlite.open();
 
     expect(first).toBe(second);
+    await sqlite.close();
   });
 });
