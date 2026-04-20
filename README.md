@@ -56,22 +56,9 @@ bun run build
 Start the compiled binary:
 
 ```bash
-bun run start:binary
-```
-
-Then open <http://localhost:3000/> in your browser.
-
-### Build a standalone binary
-
-This builds the web assets and compiles the Bun server into a single executable.
-
-```bash
 bun run build
-```
-
-Run the binary with the vault path set:
-
-```bash
 export STADEN_ROOT=./docs
 ./dist/staden-outliner
 ```
+
+Then open <http://localhost:3000/> in your browser.

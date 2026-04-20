@@ -14,7 +14,6 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "verify": "bun run format:check && bun run lint && bun run typecheck && bun run build:web && bun run test:unit",
-    "start:binary": "./dist/staden-outliner",
     "serve:web": "bun src/server/web-entry.ts",
     "lint": "eslint src eslint.config.mjs",
     "test-coverage": "bun test src --preload ./test/setup.ts --coverage",
