@@ -11,23 +11,11 @@ const DIST_DIR = join(process.cwd(), "dist");
 type ServerOptions = {
   host?: string;
   port?: number;
-  assets?: EmbeddedWebAssets;
-};
-
-export type EmbeddedWebAssets = {
-  indexHtml: EmbeddedAsset;
-  assets: Record<string, EmbeddedAsset>;
-};
-
-type EmbeddedAsset = {
-  body: string;
-  contentType: string;
 };
 
 export function createWebServer(options: ServerOptions = {}) {
   const host = options.host ?? DEFAULT_HOST;
   const port = options.port ?? DEFAULT_PORT;
-  const embeddedAssets = options.assets;
 
   const server = Bun.serve({
     hostname: host,
@@ -48,10 +36,6 @@ export function createWebServer(options: ServerOptions = {}) {
         });
       }
 
-      if (embeddedAssets) {
-        return serveEmbeddedStaticOrIndex(url.pathname, embeddedAssets);
-      }
-
       return serveStaticOrIndex(url.pathname);
     },
   });
@@ -70,31 +54,6 @@ async function serveStaticOrIndex(pathname: string): Promise<Response> {
   }
 
   return new Response(Bun.file(join(DIST_DIR, "index.html")));
-}
-
-function serveEmbeddedStaticOrIndex(
-  pathname: string,
-  assets: EmbeddedWebAssets,
-): Response {
-  const normalizedPath = pathname === "/" ? "/index.html" : pathname;
-  const asset =
-    normalizedPath === "/index.html"
-      ? assets.indexHtml
-      : assets.assets[normalizedPath];
-
-  if (!asset) {
-    return new Response(assets.indexHtml.body, {
-      headers: {
-        "Content-Type": assets.indexHtml.contentType,
-      },
-    });
-  }
-
-  return new Response(asset.body, {
-    headers: {
-      "Content-Type": asset.contentType,
-    },
-  });
 }
 
 function getSafeDistPath(pathname: string): string | undefined {

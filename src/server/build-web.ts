@@ -8,10 +8,6 @@ import postcss from "postcss";
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
 const cssEntry = join(process.cwd(), "src/app/default-theme.css");
-const embeddedAssetsEntry = join(
-  process.cwd(),
-  "src/server/generated-web-assets.ts",
-);
 
 async function main() {
   await rm(distDir, { recursive: true, force: true });
@@ -24,23 +20,9 @@ async function main() {
     return;
   }
 
-  const assets = await buildStaticAssets();
   const mainCss = await buildCssContents();
   await writeFile(buildCss(), mainCss);
   await copyOptionalPublicAssets();
-  await writeEmbeddedAssetsFile({
-    indexHtml: {
-      body: buildIndexHtml(),
-      contentType: "text/html; charset=utf-8",
-    },
-    assets: {
-      ...assets,
-      "/assets/main.css": {
-        contentType: "text/css; charset=utf-8",
-        body: mainCss,
-      },
-    },
-  });
 
   await writeFile(join(distDir, "index.html"), buildIndexHtml());
 }
@@ -87,36 +69,6 @@ async function buildCssContents(): Promise<string> {
   return result.css;
 }
 
-async function buildStaticAssets(): Promise<
-  Record<string, { body: string; contentType: string }>
-> {
-  const mainJs = await Bun.file(join(assetsDir, "main.js")).text();
-  const assets: Record<string, { body: string; contentType: string }> = {
-    "/assets/main.js": {
-      contentType: "application/javascript; charset=utf-8",
-      body: mainJs,
-    },
-  };
-
-  for (const [routePath, filePath] of [
-    ["/public/vega.js", join(process.cwd(), "public/vega.js")],
-    ["/public/vega-lite.js", join(process.cwd(), "public/vega-lite.js")],
-    ["/public/vega-embed.js", join(process.cwd(), "public/vega-embed.js")],
-  ] as const) {
-    const body = await readOptionalText(filePath);
-    if (!body) {
-      continue;
-    }
-
-    assets[routePath] = {
-      contentType: "application/javascript; charset=utf-8",
-      body,
-    };
-  }
-
-  return assets;
-}
-
 async function copyOptionalPublicAssets(): Promise<void> {
   const publicDir = join(process.cwd(), "public");
   try {
@@ -139,25 +91,6 @@ async function copyOptionalPublicAssets(): Promise<void> {
     }
     throw error;
   }
-}
-
-async function readOptionalText(path: string): Promise<string | undefined> {
-  try {
-    return await Bun.file(path).text();
-  } catch {
-    return undefined;
-  }
-}
-
-async function writeEmbeddedAssetsFile(assets: {
-  indexHtml: { body: string; contentType: string };
-  assets: Record<string, { body: string; contentType: string }>;
-}): Promise<void> {
-  await writeFile(
-    embeddedAssetsEntry,
-    `export const embeddedWebAssets = ${JSON.stringify(assets, null, 2)} as const;
-`,
-  );
 }
 
 void main().catch((error) => {
