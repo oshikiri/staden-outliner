@@ -22,6 +22,52 @@ export type BlockDto = {
   children: BlockDto[];
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isBlockPropertyDto(value: unknown): value is BlockPropertyDto {
+  return (
+    Array.isArray(value) && value.length === 2 && typeof value[0] === "string"
+  );
+}
+
+function isTokenDto(value: unknown): value is TokenDto {
+  return isRecord(value) && typeof value.type === "number";
+}
+
+export function isBlockDto(value: unknown): value is BlockDto {
+  if (!isRecord(value)) {
+    return false;
+  }
+  if (typeof value.depth !== "number") {
+    return false;
+  }
+  if (!Array.isArray(value.content) || !value.content.every(isTokenDto)) {
+    return false;
+  }
+  if (!Array.isArray(value.children) || !value.children.every(isBlockDto)) {
+    return false;
+  }
+  if (value.id !== undefined && typeof value.id !== "string") {
+    return false;
+  }
+  if (value.parentId !== undefined && typeof value.parentId !== "string") {
+    return false;
+  }
+  if (value.pageId !== undefined && typeof value.pageId !== "string") {
+    return false;
+  }
+  if (
+    value.properties !== undefined &&
+    (!Array.isArray(value.properties) ||
+      !value.properties.every(isBlockPropertyDto))
+  ) {
+    return false;
+  }
+  return true;
+}
+
 type BlockDtoContext = {
   pageId: string;
   parentId?: string;

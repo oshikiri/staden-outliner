@@ -6,6 +6,7 @@ import { validator } from "hono/validator";
 import { getConfigsPayload } from "@/app/api/configs/usecase";
 import { getFilesPayload } from "@/app/api/files/usecase";
 import { getImagePayload } from "@/app/api/images/usecase";
+import { isBlockDto } from "@/app/lib/markdown/blockDto";
 import {
   createPageRouteError,
   isPageRouteError,
@@ -79,52 +80,6 @@ const pageTitleValidator = validator("param", (value, c) => {
   }
   return { title };
 });
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isBlockPropertyDto(value: unknown): value is [string, unknown] {
-  return (
-    Array.isArray(value) && value.length === 2 && typeof value[0] === "string"
-  );
-}
-
-function isTokenDto(value: unknown): value is { type: number } {
-  return isRecord(value) && typeof value.type === "number";
-}
-
-function isBlockDto(value: unknown): value is PageRouteRequestBody {
-  if (!isRecord(value)) {
-    return false;
-  }
-  if (typeof value.depth !== "number") {
-    return false;
-  }
-  if (!Array.isArray(value.content) || !value.content.every(isTokenDto)) {
-    return false;
-  }
-  if (!Array.isArray(value.children) || !value.children.every(isBlockDto)) {
-    return false;
-  }
-  if (value.id !== undefined && typeof value.id !== "string") {
-    return false;
-  }
-  if (value.parentId !== undefined && typeof value.parentId !== "string") {
-    return false;
-  }
-  if (value.pageId !== undefined && typeof value.pageId !== "string") {
-    return false;
-  }
-  if (
-    value.properties !== undefined &&
-    (!Array.isArray(value.properties) ||
-      !value.properties.every(isBlockPropertyDto))
-  ) {
-    return false;
-  }
-  return true;
-}
 
 const pagePayloadValidator = validator(
   "json",

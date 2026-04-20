@@ -1,7 +1,13 @@
 import { describe, expect, test } from "bun:test";
 
 import { Block } from "./block";
-import { BlockDto, fromBlockDto, toBlockDto, toPageDto } from "./blockDto";
+import {
+  BlockDto,
+  fromBlockDto,
+  isBlockDto,
+  toBlockDto,
+  toPageDto,
+} from "./blockDto";
 import { Marker, Text } from "./token";
 
 describe("blockDto", () => {
@@ -84,5 +90,38 @@ describe("blockDto", () => {
     expect(block.children[0].parent).toBe(block);
     expect(block.children[0].content[0]).toStrictEqual(new Text("child"));
     expect(block.children[0].getProperty("note")).toBe("child");
+  });
+
+  test("isBlockDto accepts valid nested block payloads", () => {
+    const dto: BlockDto = {
+      id: "page-1",
+      pageId: "page-1",
+      depth: 0,
+      content: [{ type: 16, status: "TODO" }],
+      properties: [["title", "Page"]],
+      children: [
+        {
+          id: "child-1",
+          pageId: "page-1",
+          parentId: "page-1",
+          depth: 1,
+          content: [{ type: 4, textContent: "child" }],
+          properties: [["note", "child"]],
+          children: [],
+        },
+      ],
+    };
+
+    expect(isBlockDto(dto)).toBe(true);
+  });
+
+  test("isBlockDto rejects malformed token payloads", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{}],
+        children: [],
+      }),
+    ).toBe(false);
   });
 });
