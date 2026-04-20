@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
-import * as PagesStore from "@/app/lib/sqlite/pages";
+const getPagesByPrefixMock = jest.fn();
+
+mock.module("@/app/lib/sqlite/pages", () => ({
+  getPagesByPrefix: getPagesByPrefixMock,
+}));
 
 import { honoApiApp } from "@/app/api/hono/app";
-
-jest.mock("@/app/lib/sqlite/pages", () => ({
-  getPagesByPrefix: jest.fn(),
-}));
 
 describe("api/files/route", () => {
   beforeEach(() => {
@@ -14,7 +14,6 @@ describe("api/files/route", () => {
   });
 
   test("GET forwards the prefix query and returns files as json", async () => {
-    const getPagesByPrefixMock = PagesStore.getPagesByPrefix;
     getPagesByPrefixMock.mockResolvedValue([
       { pageId: "1", title: "Page", path: "Page.md" },
     ]);

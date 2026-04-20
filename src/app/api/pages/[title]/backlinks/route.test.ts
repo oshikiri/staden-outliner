@@ -1,15 +1,16 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 import { Block } from "@/app/lib/markdown/block";
 import { Text } from "@/app/lib/markdown/token";
-import * as Sqlite from "@/app/lib/sqlite";
+const getSourceLinksMock = jest.fn();
+const getCurrentPageMock = jest.fn();
+
+mock.module("@/app/lib/sqlite", () => ({
+  getSourceLinks: getSourceLinksMock,
+  getCurrentPage: getCurrentPageMock,
+}));
 
 import { honoApiApp } from "@/app/api/hono/app";
-
-jest.mock("@/app/lib/sqlite", () => ({
-  getSourceLinks: jest.fn(),
-  getCurrentPage: jest.fn(),
-}));
 
 describe("api/pages/[title]/backlinks/route", () => {
   beforeEach(() => {
@@ -26,8 +27,6 @@ describe("api/pages/[title]/backlinks/route", () => {
     parent.parent = page;
     source.parent = parent;
 
-    const getSourceLinksMock = Sqlite.getSourceLinks;
-    const getCurrentPageMock = Sqlite.getCurrentPage;
     getSourceLinksMock.mockResolvedValue(["source-1"]);
     getCurrentPageMock.mockResolvedValue(page);
 

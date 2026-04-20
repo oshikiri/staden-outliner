@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
-import * as ConfigFile from "@/app/lib/file/config";
+const getAllConfigsMock = jest.fn();
+
+mock.module("@/app/lib/file/config", () => ({
+  getAllConfigs: getAllConfigsMock,
+}));
 
 import { honoApiApp } from "@/app/api/hono/app";
-
-jest.mock("@/app/lib/file/config", () => ({
-  getAllConfigs: jest.fn(),
-}));
 
 describe("api/configs/route", () => {
   beforeEach(() => {
@@ -14,7 +14,6 @@ describe("api/configs/route", () => {
   });
 
   test("GET returns configs as json", async () => {
-    const getAllConfigsMock = ConfigFile.getAllConfigs;
     getAllConfigsMock.mockResolvedValue({
       favorites: ["index", "daily"],
     });

@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const queryMock = jest.fn();
 
-jest.mock("./index", () => ({
+mock.module("./index", () => ({
   getDb: jest.fn(),
   query: queryMock,
 }));

@@ -28,7 +28,7 @@ describe("recentPagesStorage", () => {
   });
 
   afterEach(() => {
-    delete (globalThis as typeof globalThis & { window?: Window }).window;
+    Reflect.deleteProperty(globalThis, "window");
   });
 
   test("loads an empty list when storage is empty", () => {

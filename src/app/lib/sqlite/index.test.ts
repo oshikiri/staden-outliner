@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
@@ -13,7 +13,7 @@ const databaseConstructorMock = jest.fn(() => ({
 }));
 const getStadenRootMock = jest.fn(() => "/tmp/staden");
 
-jest.mock("../env/stadenRoot", () => ({
+mock.module("../env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 

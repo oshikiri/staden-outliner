@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const initializeAllTablesMock = jest.fn();
 const batchInsertBlocksMock = jest.fn();
@@ -8,7 +8,7 @@ const openMock = jest.fn();
 const closeMock = jest.fn();
 const runMock = jest.fn();
 
-jest.mock("../../lib/sqlite", () => ({
+mock.module("../../lib/sqlite", () => ({
   open: openMock,
   close: closeMock,
   initializeAllTables: initializeAllTablesMock,
@@ -17,7 +17,7 @@ jest.mock("../../lib/sqlite", () => ({
   batchInsertLinks: batchInsertLinksMock,
 }));
 
-jest.mock("../../lib/importer/bulk_importer", () => ({
+mock.module("../../lib/importer/bulk_importer", () => ({
   BulkImporter: jest.fn().mockImplementation(() => ({
     run: runMock,
   })),
