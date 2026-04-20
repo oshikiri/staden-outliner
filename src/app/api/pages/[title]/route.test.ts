@@ -120,6 +120,32 @@ describe("api/pages/[title]/route", () => {
     });
   });
 
+  test("POST returns 400 when page payload has invalid token shape", async () => {
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/pages/Page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: "page-1",
+          pageId: "page-1",
+          depth: 0,
+          content: [{}],
+          children: [],
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      updateResults: {
+        status: "unchanged",
+        message: "Missing page content",
+      },
+    });
+  });
+
   test("POST returns 404 when title is missing", async () => {
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages", {
