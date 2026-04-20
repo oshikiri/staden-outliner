@@ -93,7 +93,7 @@ export async function fillPathToFile(file: File): Promise<void> {
   const relative = path.relative(stadenRoot, candidatePath);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
     throw new Error(
-      `Invalid page title; resolved path escapes STADEN_ROOT: ${file.title}`,
+      `Invalid page title; resolved path escapes the vault root: ${file.title}`,
     );
   }
 

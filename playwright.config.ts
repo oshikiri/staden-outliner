@@ -26,10 +26,7 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/global-setup"),
 
   webServer: {
-    command: "bun run dev",
-    env: {
-      STADEN_ROOT: "./e2e/",
-    },
+    command: "bun run dev -- --root ./e2e/",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },

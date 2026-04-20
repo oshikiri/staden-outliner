@@ -25,16 +25,12 @@ Requirements:
 - Bun
 - SQLite
 
-```bash
-# Set root directory
-export STADEN_ROOT=./docs
-```
 ### Run the development server and view documents
 
-Start the Bun server:
+Start the Bun server with the vault root as the first argument:
 
 ```bash
-bun run dev
+bun run dev -- ./docs
 ```
 
 Then initialize the vault:
@@ -53,12 +49,11 @@ After starting the server, you can view the documents at <http://localhost:3000/
 bun run build
 ```
 
-Start the compiled binary:
+Start the compiled binary with the vault root as the first argument:
 
 ```bash
 bun run build
-export STADEN_ROOT=./docs
-./dist/staden-outliner
+./dist/staden-outliner ./docs
 ```
 
 Then open <http://localhost:3000/> in your browser.

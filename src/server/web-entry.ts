@@ -1,4 +1,7 @@
+import { readStadenRoot, setStadenRoot } from "@/app/lib/env/stadenRoot";
 import { createWebServer } from "./web";
+
+setStadenRoot(readStadenRoot(process.argv.slice(2)));
 
 createWebServer({
   host: Bun.env.HOST,

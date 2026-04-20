@@ -30,4 +30,4 @@
 	- Blocks are retrieved in bulk by page_id and stored in memory, then reconstructed into a hierarchical structure in JavaScript based on the parent_id.
 	- This approach has the following limitation:
 		- The number of blocks within a page is typically small (< 100)
-	- Access is limited to files under `STADEN_ROOT`. Any operation that resolves outside `STADEN_ROOT` is prohibited.
+	- Access is limited to files under the vault root. Any operation that resolves outside the vault root is prohibited.

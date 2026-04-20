@@ -32,7 +32,7 @@ describe("api/images/route", () => {
     await expect(response.text()).resolves.toBe("Missing path parameter");
   });
 
-  test("GET rejects paths outside STADEN_ROOT", async () => {
+  test("GET rejects paths outside the vault root", async () => {
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/images?path=../secret.png"),
     );
