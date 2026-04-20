@@ -34,10 +34,21 @@ const configsRoutes = new Hono<ApiEnv>().get("/configs", async (c) => {
   return jsonResponse(c, await getConfigsPayload());
 });
 
-const filesRoutes = new Hono<ApiEnv>().get("/files", async (c) => {
-  const prefix = c.req.query("prefix") ?? "";
-  return jsonResponse(c, await getFilesPayload(prefix));
+const filesQueryValidator = validator("query", (value) => {
+  const prefix = value.prefix;
+  return {
+    prefix: typeof prefix === "string" ? prefix : "",
+  };
 });
+
+const filesRoutes = new Hono<ApiEnv>().get(
+  "/files",
+  filesQueryValidator,
+  async (c) => {
+    const { prefix } = c.req.valid("query");
+    return jsonResponse(c, await getFilesPayload(prefix));
+  },
+);
 
 const imagePathValidator = validator("query", (value, c) => {
   const path = value.path;

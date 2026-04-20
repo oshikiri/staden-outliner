@@ -1,36 +1,32 @@
 import type { Configs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
-import {
-  parseResponse,
-  type InferRequestType,
-  type InferResponseType,
-} from "hono/client";
+import { parseResponse, type InferRequestType } from "hono/client";
 
 import { client, forceCacheRequest } from "./client";
 
 type ParsedResponse = Parameters<typeof parseResponse>[0];
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
-type ConfigsResponse = InferResponseType<typeof client.api.configs.$get, 200>;
-type FilesResponse = InferResponseType<typeof client.api.files.$get, 200>;
+
+async function parseJsonResponse(response: ParsedResponse) {
+  return parseResponse(response);
+}
 
 export const systemRpc = {
   async configs(): Promise<Configs> {
     const response = client.api.configs.$get(undefined, forceCacheRequest);
-    return parseResponse(
-      response as unknown as ParsedResponse,
-    ) as Promise<ConfigsResponse>;
+    return parseJsonResponse(response);
   },
   async files(prefix?: string): Promise<File[]> {
     const request: FilesRequest = {
-      query: prefix ? { prefix } : {},
+      query: {
+        prefix: prefix ?? "",
+      },
     };
     const response = client.api.files.$get(request, forceCacheRequest);
-    return parseResponse(
-      response as unknown as ParsedResponse,
-    ) as Promise<FilesResponse>;
+    return parseJsonResponse(response);
   },
   async initialize(): Promise<void> {
     const response = client.api.initialize.$post();
-    await parseResponse(response as unknown as ParsedResponse);
+    await parseJsonResponse(response);
   },
 };

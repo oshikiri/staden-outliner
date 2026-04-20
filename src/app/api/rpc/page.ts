@@ -59,12 +59,10 @@ function readPageError(error: unknown): Error {
 }
 
 async function readPageRpcResponse(
-  response: Promise<Response>,
+  response: ParsedResponse,
 ): Promise<BlockEntity> {
   try {
-    const json = (await parseResponse(
-      response as unknown as ParsedResponse,
-    )) as PageGetSuccessResponse;
+    const json = (await parseResponse(response)) as PageGetSuccessResponse;
     return fromBlockDto(json as BlockDto);
   } catch (error) {
     throw readPageError(error);
@@ -98,7 +96,7 @@ export const pageRpc = {
       forceCacheRequest,
     );
     const json = (await parseResponse(
-      response as unknown as ParsedResponse,
+      response,
     )) as PageBacklinksSuccessResponse;
     return json.map((block) => fromBlockDto(block));
   },
@@ -106,8 +104,6 @@ export const pageRpc = {
     const response = client.api.pages[":title"].update_markdown.$post({
       param: pageParam(title),
     });
-    return parseResponse(
-      response as unknown as ParsedResponse,
-    ) as Promise<PageUpdateMarkdownResponse>;
+    return parseResponse(response);
   },
 };

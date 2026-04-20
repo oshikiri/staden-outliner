@@ -29,4 +29,16 @@ describe("api/files/route", () => {
       { pageId: "1", title: "Page", path: "Page.md" },
     ]);
   });
+
+  test("GET defaults prefix to an empty string", async () => {
+    getPagesByPrefixMock.mockResolvedValue([]);
+
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/files"),
+    );
+
+    expect(getPagesByPrefixMock).toHaveBeenCalledWith("");
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual([]);
+  });
 });
