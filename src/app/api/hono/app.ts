@@ -185,7 +185,8 @@ export const honoApiApp = new Hono<ApiEnv>()
     if (_error instanceof HTTPException) {
       if (
         _error.status === 400 &&
-        _error.message === "Malformed JSON in request body"
+        c.req.method === "POST" &&
+        /^\/api\/pages\/[^/]+$/.test(c.req.path)
       ) {
         return jsonResponse(
           c,
