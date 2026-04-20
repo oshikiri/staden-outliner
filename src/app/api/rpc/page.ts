@@ -2,7 +2,10 @@ import type { Block as BlockEntity } from "@/app/lib/markdown/block";
 import type { BlockDto } from "@/app/lib/markdown/blockDto";
 import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { type InferRequestType, type InferResponseType } from "hono/client";
-import { isPageRouteError, type PageRouteError } from "../contracts";
+import {
+  isPageRouteError,
+  type PageRouteError,
+} from "../pages/[title]/contracts";
 
 import { client, forceCacheRequest } from "./client";
 

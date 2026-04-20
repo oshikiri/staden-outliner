@@ -10,7 +10,7 @@ import {
   createPageRouteError,
   isPageRouteError,
   type PageRouteRequestBody,
-} from "@/app/api/contracts";
+} from "@/app/api/pages/[title]/contracts";
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
 import { updateMarkdownPayload } from "@/app/api/pages/[title]/update_markdown/usecase";
 import {

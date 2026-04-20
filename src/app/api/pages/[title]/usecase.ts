@@ -4,7 +4,7 @@ import {
   type PageRouteRequestBody,
   type PageRouteResponseBody,
   isPageRouteError as isPageRouteErrorContract,
-} from "@/app/api/contracts";
+} from "./contracts";
 import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
 
