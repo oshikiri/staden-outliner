@@ -27,11 +27,13 @@ Requirements:
 
 ### Run the development server and view documents
 
-Start the Bun server with the vault root as the first argument:
+Start the Bun dev server with the vault root as the first argument:
 
 ```bash
 bun run dev -- ./docs
 ```
+
+The dev server rebuilds the web assets when files under `src/` or `public/` change.
 
 Then initialize the vault:
 

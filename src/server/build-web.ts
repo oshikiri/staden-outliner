@@ -9,15 +9,14 @@ const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
 const cssEntry = join(process.cwd(), "src/app/default-theme.css");
 
-async function main() {
+export async function buildWeb(): Promise<boolean> {
   await rm(distDir, { recursive: true, force: true });
   await mkdir(assetsDir, { recursive: true });
 
   const result = await buildBrowserBundle();
 
   if (!result.success) {
-    process.exitCode = 1;
-    return;
+    return false;
   }
 
   const mainCss = await buildCssContents();
@@ -25,6 +24,14 @@ async function main() {
   await copyOptionalPublicAssets();
 
   await writeFile(join(distDir, "index.html"), buildIndexHtml());
+  return true;
+}
+
+async function main() {
+  const success = await buildWeb();
+  if (!success) {
+    process.exitCode = 1;
+  }
 }
 
 async function buildBrowserBundle() {
@@ -93,7 +100,9 @@ async function copyOptionalPublicAssets(): Promise<void> {
   }
 }
 
-void main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (import.meta.main) {
+  void main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
