@@ -52,7 +52,6 @@ bun run build
 Start the compiled binary with the vault root as the first argument:
 
 ```bash
-bun run build
 ./dist/staden-outliner ./docs
 ```
 
