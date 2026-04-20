@@ -1,0 +1,4 @@
+[install]
+# Avoid immediately adopting freshly published packages.
+# 604800 seconds = 7 days.
+minimumReleaseAge = 604800
