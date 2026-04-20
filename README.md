@@ -54,7 +54,7 @@ bun run build
 Start the compiled binary with the vault root as the first argument:
 
 ```bash
-./dist/staden-outliner ./docs
+./dist/staden ./docs
 ```
 
 Then open <http://localhost:3000/> in your browser.
