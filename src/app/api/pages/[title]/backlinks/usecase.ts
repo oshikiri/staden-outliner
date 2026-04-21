@@ -20,18 +20,21 @@ async function resolveBacklink(
     throw new Error(`Page block id is missing for source: ${sourceId}`);
   }
   const sourceBlock = pageBlock.getBlockById(sourceId);
+  if (!sourceBlock) {
+    throw new Error(`Source block is missing for source: ${sourceId}`);
+  }
 
-  let currentBlock: Block | undefined = sourceBlock?.parent || undefined;
+  let currentBlock: Block | undefined = sourceBlock.parent;
   let ancestors = currentBlock?.getContentMarkdownHead();
   currentBlock = currentBlock?.parent;
   while (currentBlock && currentBlock != pageBlock) {
     ancestors = currentBlock.getContentMarkdownHead() + " > " + ancestors;
     currentBlock = currentBlock.parent;
   }
-  if (!sourceBlock?.properties) {
-    sourceBlock!.properties = [];
+  if (!sourceBlock.properties) {
+    sourceBlock.properties = [];
   }
-  sourceBlock?.properties?.push(["ancestors", ancestors]);
+  sourceBlock.properties.push(["ancestors", ancestors]);
 
-  return { block: sourceBlock!, pageId: pageBlock.id };
+  return { block: sourceBlock, pageId: pageBlock.id };
 }

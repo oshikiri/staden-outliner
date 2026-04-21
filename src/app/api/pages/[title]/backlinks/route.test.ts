@@ -47,4 +47,22 @@ describe("api/pages/[title]/backlinks/route", () => {
       },
     ]);
   });
+
+  test("GET returns 500 when the backlink source block is missing", async () => {
+    const page = new Block([new Text("Page")], 0, []).withId("page-1");
+    page.properties = [["title", "Page"]];
+
+    getSourceLinksMock.mockResolvedValue(["source-1"]);
+    getCurrentPageMock.mockResolvedValue(page);
+
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/pages/Page/backlinks"),
+    );
+
+    expect(response.status).toBe(500);
+    expect(response.headers.get("Content-Type")).toBe("application/json");
+    await expect(response.json()).resolves.toEqual({
+      message: "Internal Server Error",
+    });
+  });
 });
