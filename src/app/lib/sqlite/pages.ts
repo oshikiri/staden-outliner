@@ -21,8 +21,7 @@ export async function getPageById(pageId: string): Promise<File | undefined> {
   if (result.length == 0) {
     return undefined;
   }
-  const page = result[0];
-  return { pageId: page.id, title: page.title, path: page.path } as File;
+  return toFile(result[0]);
 }
 
 export async function getPageByTitle(title: string): Promise<File | undefined> {
@@ -33,8 +32,7 @@ export async function getPageByTitle(title: string): Promise<File | undefined> {
     return undefined;
   }
 
-  const page = result[0];
-  return { pageId: page.id, title: page.title, path: page.path } as File;
+  return toFile(result[0]);
 }
 
 export async function getPagesByTitles(titles: string[]): Promise<File[]> {
@@ -47,18 +45,13 @@ export async function getPagesByTitles(titles: string[]): Promise<File[]> {
     `SELECT * FROM pages WHERE title IN (${placeholders});`,
     titles,
   );
-  return result.map(
-    (page) =>
-      ({
-        pageId: page.id,
-        title: page.title,
-        path: page.path,
-      }) as File,
-  );
+  return result.map(toFile);
 }
 
 export async function getPagesByPrefix(prefix: string): Promise<File[]> {
-  return query(`SELECT * FROM pages where title like ?;`, [`${prefix}%`]);
+  return (
+    await query(`SELECT * FROM pages where title like ?;`, [`${prefix}%`])
+  ).map(toFile);
 }
 
 export async function batchInsertFiles(files: File[], BATCH_SIZE: number) {
@@ -92,4 +85,18 @@ async function insertFiles(files: File[]) {
     }
   });
   insertMany(files);
+}
+
+type PageRow = {
+  id: string;
+  title: string;
+  path: string;
+};
+
+function toFile(page: PageRow): File {
+  return {
+    pageId: page.id,
+    title: page.title,
+    path: page.path,
+  };
 }

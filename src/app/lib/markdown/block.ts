@@ -2,11 +2,12 @@ import { createToken, Token, TokenType, PropertyPair, Marker } from "./token";
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 import { logDebug, logWarn } from "../logger";
+import type { BlockPropertyDto } from "./blockDto";
 
 export class Block {
   public id?: string;
 
-  public properties?: unknown[][];
+  public properties?: BlockPropertyDto[];
   public parent?: Block;
 
   constructor(
@@ -20,7 +21,7 @@ export class Block {
     return this;
   }
 
-  withProperties(properties: unknown[][]): Block {
+  withProperties(properties: BlockPropertyDto[]): Block {
     this.properties = properties;
     return this;
   }

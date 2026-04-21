@@ -215,11 +215,9 @@ export function fromBlockDto(dto: BlockDto): Block {
 }
 
 function cloneProperties(
-  properties?: BlockPropertyDto[] | unknown[][],
+  properties?: BlockPropertyDto[],
 ): BlockPropertyDto[] | undefined {
-  return properties?.map((property) => {
-    return [property[0] as string, property[1]];
-  });
+  return properties?.map(([key, value]) => [key, value]);
 }
 
 function toTokenDto(token: object): TokenDto {

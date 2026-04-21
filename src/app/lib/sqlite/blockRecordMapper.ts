@@ -1,5 +1,7 @@
 import { Block } from "../markdown";
+import { getContentMarkdown } from "../markdown/block";
 import { createToken } from "../markdown/token";
+import { type BlockPropertyDto } from "../markdown/blockDto";
 
 export type BlockRecord = {
   id: string;
@@ -116,23 +118,8 @@ function getOrderIndex(block: Block): number {
   return block.parent.children.indexOf(block);
 }
 
-function getContentMarkdown(block: Block): string {
-  return block.content
-    .map((token) => {
-      return token.toMarkdown();
-    })
-    .join("")
-    .trimEnd();
-}
-
-function createPropertyMap(properties: unknown[][]): object {
-  const map: any = {};
-  properties.forEach((pair: unknown[]) => {
-    if (pair.length === 2) {
-      const key = pair[0] as string;
-      const value = pair[1] as string;
-      map[key] = value;
-    }
-  });
-  return map;
+function createPropertyMap(
+  properties: readonly BlockPropertyDto[],
+): Record<string, unknown> {
+  return Object.fromEntries(properties);
 }
