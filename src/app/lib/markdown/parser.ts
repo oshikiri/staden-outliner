@@ -21,10 +21,7 @@ export class Parser {
     if (stack.length === 1) {
       return stack[0];
     }
-    // @owner Serializing the entire stack in the error message can be expensive; include a concise summary instead.
-    throw new Error(
-      `Invalid stack length = ${stack.length}\n${JSON.stringify(stack)}`,
-    );
+    throw new Error(`Invalid parser stack length: ${stack.length}`);
   }
 
   scanAllTokens(): Block[] {
@@ -192,23 +189,14 @@ export class Parser {
   }
 
   consumePropertyPair(i: number): number {
-    if (this.stack.length === 1) {
-      this.stack.push(new Block([new ListStart(1)], 1, []));
-    }
     const tail = this.stack.pop();
     if (!tail) {
-      // @owner This fallback constructs a malformed structure instead of recovering gracefully; consider skipping invalid pairs.
-      this.stack.push(new Block([], 0, [new Block([new Text("::")], 1, [])]));
-      i++;
-      return i;
+      throw new Error("Invalid property pair: missing target block");
     }
 
     const key = tail.content.pop();
     if (!key || !(key instanceof Text)) {
-      tail.content.push(new Text("::"));
-      this.stack.push(tail);
-      i++;
-      return i;
+      throw new Error("Invalid property pair: missing key");
     }
 
     i++; // consume PropertyPairSeparator

@@ -98,11 +98,9 @@ describe("Parser", () => {
     test("if stack is empty", () => {
       const tokens = [new PropertyPairSeparator()];
       const parser = new Parser(tokens);
-      const i = parser.consumePropertyPair(0);
-      expect(i).toBe(1);
-      expect(parser.stack).toEqual([
-        new Block([], 0, [new Block([new Text("::")], 1, [])]),
-      ]);
+      expect(() => parser.consumePropertyPair(0)).toThrow(
+        "Invalid property pair: missing target block",
+      );
     });
   });
 

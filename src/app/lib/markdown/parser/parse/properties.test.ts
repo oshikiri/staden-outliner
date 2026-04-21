@@ -11,13 +11,10 @@ import {
 import { Parser } from "../../parser";
 
 describe("properties", () => {
-  test("it", () => {
+  test("it throws on bare property separator", () => {
     const tokens: Token[] = [new PropertyPairSeparator()];
     const parser = new Parser(tokens);
-    const rootListitem = parser.parse();
-    expect(rootListitem).toEqual(
-      new Block([], 0, [new Block([new Text("::")], 1, [])]),
-    );
+    expect(() => parser.parse()).toThrow("Invalid property pair: missing key");
   });
 
   test("collapsed:: true", () => {
