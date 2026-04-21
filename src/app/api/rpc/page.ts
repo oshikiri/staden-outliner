@@ -5,28 +5,16 @@ import {
   isBlockDto,
   toPageDto,
 } from "@/app/lib/markdown/blockDto";
-import { type InferRequestType, type InferResponseType } from "hono/client";
+import { type InferResponseType } from "hono/client";
 
 import { client, forceCacheRequest } from "./client";
 import { expectStatus, isArrayOf, readJsonResponse } from "./response";
 
-function encodeTitle(title: string): string {
-  return encodeURIComponent(title);
-}
-
 type PageRouteClient = (typeof client.api.pages)[":title"];
-type PageGetRequest = InferRequestType<PageRouteClient["$get"]>;
-type PageUpdateRequest = InferRequestType<PageRouteClient["$post"]>;
 type PageBacklinksResponse = InferResponseType<
   PageRouteClient["backlinks"]["$get"],
   200
 >;
-
-function pageParam(title: string): PageGetRequest["param"] {
-  return {
-    title: encodeTitle(title),
-  };
-}
 
 function isBlockDtoArray(value: unknown): value is PageBacklinksResponse {
   return isArrayOf(value, isBlockDto);
@@ -35,7 +23,9 @@ function isBlockDtoArray(value: unknown): value is PageBacklinksResponse {
 export const pageRpc = {
   async get(title: string): Promise<BlockEntity> {
     const response = await client.api.pages[":title"].$get({
-      param: pageParam(title),
+      param: {
+        title: encodeURIComponent(title),
+      },
     });
     const json = await readJsonResponse<BlockDto>(response, 200, isBlockDto);
     return fromBlockDto(json);
@@ -45,8 +35,10 @@ export const pageRpc = {
       return null;
     }
     const pageTitle = page.getProperty("title") as string;
-    const request: PageUpdateRequest = {
-      param: pageParam(pageTitle),
+    const request = {
+      param: {
+        title: encodeURIComponent(pageTitle),
+      },
       json: toPageDto(page),
     };
     const response = await client.api.pages[":title"].$post(request);
@@ -56,7 +48,9 @@ export const pageRpc = {
   async backlinks(title: string): Promise<BlockEntity[]> {
     const response = await client.api.pages[":title"].backlinks.$get(
       {
-        param: pageParam(title),
+        param: {
+          title: encodeURIComponent(title),
+        },
       },
       forceCacheRequest,
     );
@@ -69,7 +63,9 @@ export const pageRpc = {
   },
   async reflectMarkdown(title: string): Promise<void> {
     const response = await client.api.pages[":title"].update_markdown.$post({
-      param: pageParam(title),
+      param: {
+        title: encodeURIComponent(title),
+      },
     });
     await expectStatus(response, 204);
   },

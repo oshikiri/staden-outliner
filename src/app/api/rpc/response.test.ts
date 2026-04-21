@@ -55,6 +55,19 @@ describe("api/rpc/response", () => {
     );
   });
 
+  test("readJsonResponse includes content type when json has no message", async () => {
+    const response = new Response(JSON.stringify({}), {
+      status: 502,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    await expect(readJsonResponse(response)).rejects.toThrow(
+      "Request failed: 502 (application/json)",
+    );
+  });
+
   test("readJsonResponse rejects unexpected response shapes", async () => {
     const response = new Response(JSON.stringify({ ok: true }), {
       status: 200,
@@ -85,5 +98,18 @@ describe("api/rpc/response", () => {
     });
 
     await expect(expectStatus(response, 204)).rejects.toThrow("Bad Gateway");
+  });
+
+  test("expectStatus includes content type when body is empty", async () => {
+    const response = new Response(null, {
+      status: 404,
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    });
+
+    await expect(expectStatus(response, 200)).rejects.toThrow(
+      "Request failed: 404 (text/plain)",
+    );
   });
 });

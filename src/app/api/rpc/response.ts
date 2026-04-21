@@ -6,7 +6,18 @@ type PageRouteErrorLike = {
 
 type JsonValidator<T> = (value: unknown) => value is T;
 
-function readErrorMessage(data: unknown, statusCode: number): string {
+function createFallbackMessage(
+  statusCode: number,
+  contentType: string,
+): string {
+  return `Request failed: ${statusCode} (${contentType || "unknown"})`;
+}
+
+function readErrorMessage(
+  data: unknown,
+  statusCode: number,
+  contentType: string,
+): string {
   if (data && typeof data === "object") {
     const pageRouteError = data as PageRouteErrorLike;
     const pageRouteMessage = pageRouteError.updateResults?.message;
@@ -22,18 +33,21 @@ function readErrorMessage(data: unknown, statusCode: number): string {
     }
   }
 
-  return `Request failed: ${statusCode}`;
+  return createFallbackMessage(statusCode, contentType);
 }
 
 async function toRequestError(response: Response): Promise<Error> {
   const contentType = response.headers.get("Content-Type") ?? "";
+  const fallback = new Error(
+    createFallbackMessage(response.status, contentType),
+  );
 
   if (contentType.includes("application/json")) {
     try {
       const data = await response.json();
-      return new Error(readErrorMessage(data, response.status));
+      return new Error(readErrorMessage(data, response.status, contentType));
     } catch {
-      return new Error(`Request failed: ${response.status}`);
+      return fallback;
     }
   }
 
@@ -43,10 +57,10 @@ async function toRequestError(response: Response): Promise<Error> {
       return new Error(text);
     }
   } catch {
-    return new Error(`Request failed: ${response.status}`);
+    return fallback;
   }
 
-  return new Error(`Request failed: ${response.status}`);
+  return fallback;
 }
 
 export function isArrayOf<T>(
