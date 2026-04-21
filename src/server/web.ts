@@ -3,6 +3,7 @@ import { constants as fsConstants } from "node:fs";
 import { join, normalize, resolve } from "node:path";
 
 import { honoApiApp } from "@/app/api/hono/app";
+import { logInfo } from "@/app/lib/logger";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 3000;
@@ -40,7 +41,7 @@ export function createWebServer(options: ServerOptions = {}) {
     },
   });
 
-  console.log(`Bun web server listening on http://${host}:${port}`);
+  logInfo(`Bun web server listening on http://${host}:${port}`);
   return server;
 }
 

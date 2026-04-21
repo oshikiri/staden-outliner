@@ -1,3 +1,5 @@
+import { logError } from "@/app/lib/logger";
+
 export function extractTextContent(content: HTMLDivElement | null): string {
   if (!content) {
     return "";
@@ -33,7 +35,7 @@ export function setCursor(currentNode: ChildNode, offset: number | null): void {
 
   const node = getTextNodeInside(currentNode);
   if (!node) {
-    console.error("No text node found");
+    logError("No text node found");
     return;
   }
 
@@ -41,8 +43,6 @@ export function setCursor(currentNode: ChildNode, offset: number | null): void {
   if (offset > nodeTextLength) {
     offset = nodeTextLength;
   }
-
-  console.log("setCursor", node);
 
   const range = document.createRange();
   range.setStart(node, offset);

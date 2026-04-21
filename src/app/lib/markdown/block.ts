@@ -1,6 +1,7 @@
 import { createToken, Token, TokenType, PropertyPair, Marker } from "./token";
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
+import { logDebug, logWarn } from "../logger";
 
 export class Block {
   public id?: string;
@@ -44,12 +45,14 @@ export class Block {
     // case 2: current has no children
     //   Go up the tree until we find a parent that has a next sibling
     let current: Block = create(this);
-    // @owner Verbose console logging in core traversal can degrade performance and spam logs; remove or guard under debug flag.
-    console.log(current);
+    logDebug("getNext current", {
+      id: current.id,
+      depth: current.depth,
+    });
     while (current.parent) {
       const [parent, currentIdx] = current.getParentAndIdx();
       if (!parent || currentIdx === -1) {
-        console.debug("no parent at getNextBlock");
+        logDebug("no parent at getNextBlock");
         return null;
       }
       if (currentIdx < parent.children.length - 1) {
@@ -57,7 +60,7 @@ export class Block {
       }
       current = parent;
     }
-    console.debug("no parent at getNextBlock");
+    logDebug("no parent at getNextBlock");
     return null;
   }
 
@@ -69,7 +72,7 @@ export class Block {
   getPrevious(): Block | undefined {
     const [parent, idx] = this.getParentAndIdx();
     if (!parent) {
-      console.warn("no parent at getPrevBlock");
+      logWarn("no parent at getPrevBlock");
       return undefined;
     }
     if (idx === 0) {
@@ -96,8 +99,7 @@ export class Block {
 
   getParentAndIdx(): [Block | null, number] {
     if (!this.parent?.children) {
-      // @owner Avoid logging on hot paths; consider returning `[-1]` and letting callers handle quietly.
-      console.log("Block has no parent or the parent has no children.");
+      logDebug("Block has no parent or the parent has no children.");
       return [null, -1];
     }
 
@@ -129,12 +131,12 @@ export class Block {
   increaseLevel(): void {
     const [parent, currentIdx] = this.getParentAndIdx();
     if (!parent || currentIdx === -1) {
-      console.log("Block has no parent:", this);
+      logWarn("Block has no parent:", this.id);
       return;
     }
 
     if (currentIdx === 0) {
-      console.log("Cannot indent block that is the first child of its parent.");
+      logWarn("Cannot indent block that is the first child of its parent.");
       return;
     }
 
@@ -151,13 +153,13 @@ export class Block {
   decreaseLevel(): void {
     const [parent, currentIdx] = this.getParentAndIdx();
     if (!parent || currentIdx === -1) {
-      console.log("Block has no parent:", this);
+      logWarn("Block has no parent:", this.id);
       return;
     }
 
     const [grandParent, parentIdx] = parent.getParentAndIdx();
     if (!grandParent || parentIdx === -1) {
-      console.log("Parent has no parent:", parent);
+      logWarn("Parent has no parent:", parent.id);
       return;
     }
 

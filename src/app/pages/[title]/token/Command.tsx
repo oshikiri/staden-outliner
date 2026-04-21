@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { Token } from ".";
 import { Command as CommandEntity } from "@/app/lib/markdown/token";
+import { logWarn } from "@/app/lib/logger";
 
 export function Command({
   token,
@@ -17,6 +18,6 @@ export function Command({
     );
   }
   // Return nothing if the name is unknown
-  console.warn(`Unknown command name: ${token.name}`);
+  logWarn(`Unknown command name: ${token.name}`);
   return null;
 }

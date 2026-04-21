@@ -5,6 +5,7 @@ import {
   Block as BlockEntity,
 } from "@/app/lib/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
+import { logDebug, logError, logWarn } from "@/app/lib/logger";
 import { extractTextContent } from "../dom";
 import * as caret from "./caret";
 import * as dom from "./dom";
@@ -64,11 +65,10 @@ export class ContentKeyboardEventHandler {
 
     this.setEditingBlockId?.(null);
     this.setOffset?.(null);
-    // @owner Remove verbose console logs in production; consider a debug flag or logger with levels.
-    console.log("Enter", {
-      block: this.block,
-      textBefore,
-      textAfter,
+    logDebug("Enter", {
+      blockId: this.block.id,
+      textBeforeLength: textBefore.length,
+      textAfterLength: textAfter.length,
       offset: [range.startOffset, range.endOffset],
     });
     const [pageUpdated, blockAfter] = updateMarkdownByEnter(
@@ -171,7 +171,7 @@ export class ContentKeyboardEventHandler {
     const rangeset = range.getNewlineRangeset(contentMarkdownBefore);
     const cursorRange = rangeset.getRange(startOffset);
     if (!cursorRange) {
-      console.error("Cursor range not found");
+      logError("Cursor range not found");
       return;
     }
 
@@ -199,29 +199,27 @@ export class ContentKeyboardEventHandler {
     navigator.clipboard.read().then((clipboardItems) => {
       const clipboardItem = clipboardItems[0];
       this.handlePasteItem(clipboardItem).catch((error) =>
-        console.error("Failed to paste item:", error),
+        logError("Failed to paste item:", error),
       );
     });
   }
 
   private async handlePasteItem(clipboardItem: ClipboardItem) {
     const types = clipboardItem.types;
-    // @owner Consider limiting clipboard logging; may expose sensitive clipboard content in logs.
-    console.log("Pasting item with types:", types);
+    logDebug("Pasting item with types:", types);
     if (types.includes("text/plain")) {
       const blob = await clipboardItem.getType("text/plain");
       const text = await blob.text();
-      // @owner Avoid logging pasted text; sensitive data may be exposed.
-      console.log("Pasted text:", text);
+      logDebug("Pasted text length:", text.length);
 
       const { beforeCursor, afterCursor } = dom.getTextsAroundCursor();
       this.setContentMarkdown(beforeCursor + text + afterCursor);
       this.setOffset?.(beforeCursor.length);
     } else if (types.includes("image/png")) {
       const blob = await clipboardItem.getType("image/png");
-      console.log("Pasted image blob:", blob);
+      logDebug("Pasted image blob", { size: blob.size, type: blob.type });
     } else {
-      console.warn("Clipboard item type not supported:", types);
+      logWarn("Clipboard item type not supported:", types);
     }
   }
 }
@@ -261,7 +259,7 @@ function updateMarkdownByEnter(
 
   const [parent, idx] = blockBefore.getParentAndIdx();
   if (!parent) {
-    console.error("Block has no parent");
+    logError("Block has no parent");
     return [page, undefined];
   }
 
@@ -283,7 +281,7 @@ async function updatePageByIndent(
 ) {
   const block = page.getBlockById(blockId || "");
   if (!block) {
-    console.error("Block not found");
+    logError("Block not found");
     return;
   }
   if (shift) {

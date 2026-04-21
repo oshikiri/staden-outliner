@@ -4,6 +4,7 @@ import { constants as fsConstants } from "node:fs";
 
 import tailwindcss from "@tailwindcss/postcss";
 import postcss from "postcss";
+import { logError } from "@/app/lib/logger";
 
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
@@ -102,7 +103,7 @@ async function copyOptionalPublicAssets(): Promise<void> {
 
 if (import.meta.main) {
   void main().catch((error) => {
-    console.error(error);
+    logError(error);
     process.exit(1);
   });
 }

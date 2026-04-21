@@ -2,6 +2,7 @@ import { getPageBlockById, putFile } from "../sqlite";
 import { getPageByTitle } from "../sqlite/pages";
 import { Block } from "../markdown/block";
 import { updateFile, fillPathToFile } from "../file";
+import { logInfo } from "../logger";
 
 export async function exportOnePageToMarkdown(
   pageTitle: string,
@@ -21,8 +22,7 @@ export async function exportOnePageToMarkdown(
     .map((block) => convertToMarkdownRecursive(block))
     .join("\n");
 
-  // @owner Avoid logging full page content; may leak sensitive data and flood logs.
-  console.log(`Exporting to ${pageTitle}:\n${contentMarkdown}`);
+  logInfo("Exporting page", pageTitle);
 
   await updateFile(file, contentMarkdown + "\n");
 

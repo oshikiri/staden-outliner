@@ -1,6 +1,7 @@
 import { JSX } from "react";
 
 import * as entity from "@/app/lib/markdown/token";
+import { logWarn } from "@/app/lib/logger";
 
 import { BlockRef } from "./BlockRef";
 import { CodeBlock } from "./CodeBlock";
@@ -62,6 +63,6 @@ export function Token({ token }: { token: entity.Token }): JSX.Element | null {
   } else if (token instanceof entity.Newline) {
     return <br />;
   }
-  console.warn("Unknown token type:", token);
+  logWarn("Unknown token type:", token?.constructor?.name ?? typeof token);
   return null;
 }

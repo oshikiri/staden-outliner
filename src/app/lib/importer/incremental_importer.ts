@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { File, create as createFile } from "../file";
 import { Block } from "../markdown/block";
 import { getPageRefTitles } from "@/app/lib/markdown/utils";
+import { logDebug } from "../logger";
 
 import {
   batchInsertLinks,
@@ -34,8 +35,7 @@ async function refreshLinksFromBlock(block: Block): Promise<void> {
   ]);
 
   if (links.length > 0) {
-    // @owner Remove verbose logging of link tuples in production to avoid leaking IDs and flooding logs.
-    console.log("batchInsertLinks", links);
+    logDebug("batchInsertLinks", { count: links.length });
     await batchInsertLinks(links);
   }
 }

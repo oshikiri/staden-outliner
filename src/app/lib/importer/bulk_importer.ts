@@ -5,6 +5,7 @@ import { Block, Token } from "../markdown";
 import { getPageRefTitles } from "../markdown/utils";
 import { File, extractTitle, listAllFilePaths } from "../file";
 import { getStadenRoot } from "../env/stadenRoot";
+import { logInfo } from "../logger";
 
 export class BulkImporter {
   stadenRoot: string;
@@ -39,7 +40,7 @@ export class BulkImporter {
       await this.importBlockToDB(rootBlock, file.pageId || "", undefined);
     }
 
-    console.log("Import complete");
+    logInfo("Import complete");
 
     return {
       blocks: Array.from(this.idToBlocks.values()),

@@ -1,6 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 
 import { systemRpc } from "@/app/api/rpc/system";
+import { logError } from "@/app/lib/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({
@@ -70,7 +71,7 @@ function useCachedFiles(): string[] {
         localStorage.setItem("files", JSON.stringify(nextFiles));
       })
       .catch((error) => {
-        console.error("Failed to cache files", error);
+        logError("Failed to cache files", error);
       });
   }, []);
 

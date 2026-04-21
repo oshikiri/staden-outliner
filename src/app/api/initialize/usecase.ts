@@ -1,7 +1,8 @@
 import * as sqlite from "../../lib/sqlite";
+import { logInfo } from "../../lib/logger";
 
 export async function initializeDatabase(): Promise<void> {
-  console.log("Initializing database...");
+  logInfo("Initializing database...");
 
   await sqlite.open();
   try {
@@ -19,5 +20,5 @@ export async function initializeDatabase(): Promise<void> {
     await sqlite.close();
   }
 
-  console.log("Database initialized");
+  logInfo("Database initialized");
 }

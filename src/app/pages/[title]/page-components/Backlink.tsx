@@ -5,6 +5,7 @@ import { pageRpc } from "@/app/api/rpc/page";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
+import { logDebug } from "@/app/lib/logger";
 
 export function BacklinksContainer({
   pageTitle,
@@ -20,7 +21,7 @@ export function BacklinksContainer({
       if (!backlinks) {
         return;
       }
-      console.log("getPageBacklinks", backlinks);
+      logDebug("getPageBacklinks", { count: backlinks.length });
       setBacklinks(backlinks);
     });
   }, [pageTitle]);

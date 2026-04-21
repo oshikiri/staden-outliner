@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
+import { logWarn } from "./lib/logger";
 
 const root = document.getElementById("root");
 
@@ -13,7 +14,7 @@ void main();
 
 async function main() {
   await ensureVegaScripts().catch((error) => {
-    console.warn(
+    logWarn(
       "Vega scripts are unavailable; graph rendering is disabled.",
       error,
     );

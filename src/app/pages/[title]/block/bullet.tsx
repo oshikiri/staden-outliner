@@ -8,6 +8,7 @@ import {
 import { pageRpc } from "@/app/api/rpc/page";
 import { flipCollapsed } from "@/app/lib/markdown/utils";
 import { useStore } from "../state";
+import { logError, logDebug } from "@/app/lib/logger";
 
 export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
   const page = useStore((state) => state.page) || new BlockEntity([], 0, []);
@@ -20,12 +21,11 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
     event?.preventDefault();
     const target = page.getBlockById(block.id || "");
     if (!target) {
-      console.error("Block not found");
+      logError("Block not found");
       return;
     }
-    // @owner Avoid logging content; may leak private data to console.
     const contentMarkdown = getContentMarkdown(target);
-    console.log("Bullet onClick", { contentMarkdown });
+    logDebug("Bullet onClick", { blockId: target.id });
     applyContentMarkdown(target, flipCollapsed(contentMarkdown));
 
     pageRpc.update(page).then(setPage);

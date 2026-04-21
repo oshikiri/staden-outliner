@@ -1,5 +1,6 @@
 import { readStadenRoot, setStadenRoot } from "@/app/lib/env/stadenRoot";
 import { open } from "@/app/lib/sqlite";
+import { logError } from "@/app/lib/logger";
 
 import { createWebServer } from "./web";
 
@@ -13,6 +14,6 @@ async function main() {
 }
 
 void main().catch((error) => {
-  console.error(error);
+  logError(error);
   process.exit(1);
 });

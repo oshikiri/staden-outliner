@@ -9,6 +9,7 @@ import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
+import { logError } from "@/app/lib/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function SideBar({
@@ -81,7 +82,7 @@ function SearchBox(): JSX.Element {
         setFiles(new Array(...new Set(titles)).sort());
       })
       .catch((error) => {
-        console.error("Failed to load sidebar files", error);
+        logError("Failed to load sidebar files", error);
       });
   }, []);
 
@@ -118,7 +119,7 @@ function Favorites() {
       .configs()
       .then((configs) => setFavorites(configs.favorites))
       .catch((error) => {
-        console.error("Failed to load favorites", error);
+        logError("Failed to load favorites", error);
       });
   }, []);
 

@@ -6,6 +6,7 @@ import {
   createPageBlockFromRows,
   toBlockInsertRecord,
 } from "./blockRecordMapper";
+import { logInfo } from "../logger";
 
 export async function initializeBlocks() {
   const db = getDb();
@@ -92,7 +93,7 @@ export async function batchInsertBlocks(
 ) {
   let i = 0;
   for (const batch of chunk(Array.from(blocks), BATCH_SIZE)) {
-    console.log(
+    logInfo(
       `Importing batch ${i + 1} of ${Math.ceil(blocks.length / BATCH_SIZE)}`,
     );
     i++;

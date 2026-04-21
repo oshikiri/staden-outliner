@@ -9,6 +9,7 @@ import {
   getBlockById as getBlockByIdDb,
   query as sqliteQuery,
 } from "@/app/lib/sqlite";
+import { logDebug } from "../logger";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);
@@ -86,7 +87,10 @@ async function resolveCommandQuery(
   if (vlJsonCodeBlock instanceof CodeBlock && vlJsonCodeBlock.lang === "json") {
     command.vlJsonStr = vlJsonCodeBlock.textContent;
     command.resolvedDataForVlJson = rows;
-    console.log({ vlJsonStr: command.vlJsonStr, rows });
+    logDebug("Resolved CommandQuery JSON", {
+      blockId,
+      rowCount: rows.length,
+    });
   }
 
   return command;

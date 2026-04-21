@@ -1,5 +1,6 @@
 import { Database as BunDatabase } from "bun:sqlite";
 import { getStadenRoot } from "../env/stadenRoot";
+import { logDebug, logError } from "../logger";
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
@@ -52,16 +53,16 @@ export async function query(
   sql: string,
   params: unknown[] = [],
 ): Promise<any[]> {
-  console.log(
+  logDebug(
     "sqlite.query:",
     sql.replace(/[\n\r]\s*/g, " ").replace(/^\s*/g, " "),
-    params,
+    { paramCount: params.length },
   );
   try {
     const database = getDb();
     return database.prepare(sql).all(...params);
   } catch (e) {
-    console.error("Error executing query:", e);
+    logError("Error executing query:", e);
     throw e;
   }
 }

@@ -9,6 +9,7 @@ import { SideBar } from "./page-components/sidebar";
 import { PageNavigationProvider } from "./navigation";
 import { useStore } from "./state";
 import { pageRpc } from "@/app/api/rpc/page";
+import { logDebug } from "@/app/lib/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function PageScreen({
@@ -31,7 +32,7 @@ export function PageScreen({
 
   useEffect(() => {
     pageRpc.get(title).then((nextBlock) => {
-      console.log("pageUpdate", nextBlock);
+      logDebug("pageUpdate", nextBlock?.id);
       setPage(nextBlock);
     });
   }, [title]);

@@ -25,6 +25,7 @@ import {
   extractTextContent,
   setCursor,
 } from "./dom";
+import { logDebug, logError } from "@/app/lib/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function Content({
@@ -104,12 +105,12 @@ export function Content({
       }
 
       const contentMarkdown = extractTextContent(currentElement);
-      console.log("onBlurContent", { contentMarkdown });
+      logDebug("onBlurContent", { length: contentMarkdown.length });
 
       const blockId = block.id || "";
       const blockOnPage = page.getBlockById(blockId);
       if (!blockOnPage) {
-        console.error(`Block not found: id=${blockId}`);
+        logError(`Block not found: id=${blockId}`);
         return;
       }
 
@@ -155,15 +156,11 @@ export function Content({
         contentMarkdown={contentRef.current?.textContent || ""}
         setup={() => {
           setEditingBlockId(null);
-          // @owner Debug log left in UI code; remove or guard.
-          console.log(offset);
+          logDebug("Suggestion setup", { offset });
         }}
         teardown={(contentMarkdown: string) => {
-          // @owner Avoid logging content payloads; may leak sensitive data.
-          console.log("teardown", contentMarkdown);
+          logDebug("teardown", { length: contentMarkdown.length });
           setContentMarkdown(contentMarkdown);
-          // @owner Remove debug logs or guard under a debug flag.
-          console.log("teardown", contentMarkdown.length);
           setOffset(contentMarkdown.length - 1 || 0);
           setEditingBlockId(block.id || null);
         }}

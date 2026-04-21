@@ -1,6 +1,7 @@
 import { File } from "../file";
 import { getDb, query } from ".";
 import { chunk } from "../lodash";
+import { logInfo } from "../logger";
 
 export async function initializePages() {
   const db = getDb();
@@ -63,7 +64,7 @@ export async function getPagesByPrefix(prefix: string): Promise<File[]> {
 export async function batchInsertFiles(files: File[], BATCH_SIZE: number) {
   let i = 0;
   for (const batch of chunk(files, BATCH_SIZE)) {
-    console.log(
+    logInfo(
       `Importing files batch ${i + 1} of ${Math.ceil(files.length / BATCH_SIZE)}`,
     );
     i++;
