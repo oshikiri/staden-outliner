@@ -3,8 +3,8 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
 
-import { getConfigsPayload } from "@/app/api/configs/usecase";
-import { getFilesPayload } from "@/app/api/files/usecase";
+import { getAllConfigs } from "@/app/lib/file/config";
+import { exportOnePageToMarkdown } from "@/app/lib/exporter/incremental_exporter";
 import { getImagePayload } from "@/app/api/images/usecase";
 import { isBlockDto } from "@/app/lib/markdown/blockDto";
 import {
@@ -13,26 +13,20 @@ import {
   type PageRouteRequestBody,
 } from "@/app/api/pages/[title]/contracts";
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
-import { updateMarkdownPayload } from "@/app/api/pages/[title]/update_markdown/usecase";
-import {
-  getPagePayload,
-  updatePagePayload,
-} from "@/app/api/pages/[title]/usecase";
+import { getPagePayload } from "@/app/api/pages/[title]/usecase";
+import { getPagesByPrefix } from "@/app/lib/sqlite/pages";
+import { updatePagePayload } from "@/app/api/pages/[title]/usecase";
 
 import {
-  ApiContext,
-  ApiEnv,
   type GlobalErrorResponse,
   binaryResponse,
   internalServerError,
   noContentResponse,
-  jsonResponse,
-  textResponse,
 } from "./http";
 import type { ApplyGlobalResponse } from "hono/client";
 
-const configsRoutes = new Hono<ApiEnv>().get("/configs", async (c) => {
-  return jsonResponse(c, await getConfigsPayload());
+const configsRoutes = new Hono().get("/configs", async (c) => {
+  return c.json(await getAllConfigs());
 });
 
 const filesQueryValidator = validator("query", (value) => {
@@ -42,14 +36,10 @@ const filesQueryValidator = validator("query", (value) => {
   };
 });
 
-const filesRoutes = new Hono<ApiEnv>().get(
-  "/files",
-  filesQueryValidator,
-  async (c) => {
-    const { prefix } = c.req.valid("query");
-    return jsonResponse(c, await getFilesPayload(prefix));
-  },
-);
+const filesRoutes = new Hono().get("/files", filesQueryValidator, async (c) => {
+  const { prefix } = c.req.valid("query");
+  return c.json(await getPagesByPrefix(prefix));
+});
 
 const imagePathValidator = validator("query", (value, c) => {
   const path = value.path;
@@ -59,14 +49,14 @@ const imagePathValidator = validator("query", (value, c) => {
   return { path };
 });
 
-const imagesRoutes = new Hono<ApiEnv>().get(
+const imagesRoutes = new Hono().get(
   "/images",
   imagePathValidator,
   async (c) => {
     const { path } = c.req.valid("query");
     const payload = await getImagePayload(path);
     if (!payload.ok) {
-      return textResponse(c, payload.message, payload.status);
+      return c.text(payload.message, payload.status);
     }
 
     return binaryResponse(c, payload.body, payload.contentType);
@@ -76,7 +66,7 @@ const imagesRoutes = new Hono<ApiEnv>().get(
 const pageTitleValidator = validator("param", (value, c) => {
   const title = value.title;
   if (typeof title !== "string" || title.length === 0) {
-    return jsonResponse(c, createPageRouteError("Missing title"), 400);
+    return c.json(createPageRouteError("Missing title"), 400);
   }
   return { title };
 });
@@ -85,47 +75,35 @@ const pagePayloadValidator = validator(
   "json",
   (value, c): PageRouteRequestBody | Response => {
     if (!isBlockDto(value)) {
-      return jsonResponse(c, createPageRouteError("Missing page content"), 400);
+      return c.json(createPageRouteError("Missing page content"), 400);
     }
 
     return value;
   },
 );
 
-async function respondPageGet(c: ApiContext, title: string) {
-  const payload = await getPagePayload(title);
-  return jsonResponse(c, payload, isPageRouteError(payload) ? 400 : 200);
-}
-
-async function respondPagePost(
-  c: ApiContext,
-  title: string,
-  pagePayload: PageRouteRequestBody | null,
-) {
-  const payload = await updatePagePayload(title, pagePayload);
-  return jsonResponse(c, payload, isPageRouteError(payload) ? 400 : 200);
-}
-
-const pagesRoutes = new Hono<ApiEnv>()
+const pagesRoutes = new Hono()
   .get("/:title", pageTitleValidator, async (c) => {
     const { title } = c.req.valid("param");
-    return respondPageGet(c, title);
+    const payload = await getPagePayload(title);
+    return c.json(payload, isPageRouteError(payload) ? 400 : 200);
   })
   .post("/:title", pageTitleValidator, pagePayloadValidator, async (c) => {
     const { title } = c.req.valid("param");
-    return respondPagePost(c, title, c.req.valid("json"));
+    const payload = await updatePagePayload(title, c.req.valid("json"));
+    return c.json(payload, isPageRouteError(payload) ? 400 : 200);
   })
   .get("/:title/backlinks", pageTitleValidator, async (c) => {
     const { title } = c.req.valid("param");
-    return jsonResponse(c, await getBacklinkPayload(title));
+    return c.json(await getBacklinkPayload(title));
   })
   .post("/:title/update_markdown", pageTitleValidator, async (c) => {
     const { title } = c.req.valid("param");
-    await updateMarkdownPayload(title);
+    await exportOnePageToMarkdown(title);
     return noContentResponse(c);
   });
 
-export const honoApiApp = new Hono<ApiEnv>()
+export const honoApiApp = new Hono()
   .basePath("/api")
   .use(
     "*",
@@ -143,11 +121,7 @@ export const honoApiApp = new Hono<ApiEnv>()
         c.req.method === "POST" &&
         /^\/api\/pages\/[^/]+$/.test(c.req.path)
       ) {
-        return jsonResponse(
-          c,
-          createPageRouteError("Missing page content"),
-          400,
-        );
+        return c.json(createPageRouteError("Missing page content"), 400);
       }
       return _error.getResponse();
     }

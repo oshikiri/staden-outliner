@@ -1,33 +1,12 @@
-import type { Context } from "hono";
 import type { ContentfulStatusCode, StatusCode } from "hono/utils/http-status";
+import type { Context } from "hono";
 
-export type ApiEnv = {
-  Variables: Record<never, never>;
-};
-
-export type ApiContext = Context<ApiEnv>;
 export type GlobalErrorResponse = {
   message: string;
 };
 
-export function jsonResponse<T, U extends ContentfulStatusCode>(
-  c: ApiContext,
-  body: T,
-  status: U = 200 as U,
-) {
-  return c.json(body, status);
-}
-
-export function textResponse<T extends string, U extends ContentfulStatusCode>(
-  c: ApiContext,
-  body: T,
-  status: U = 200 as U,
-) {
-  return c.text(body, status);
-}
-
 export function binaryResponse(
-  c: ApiContext,
+  c: Context,
   body: ArrayBuffer | Uint8Array,
   contentType: string,
   status: ContentfulStatusCode = 200,
@@ -39,12 +18,12 @@ export function binaryResponse(
 }
 
 export function noContentResponse(
-  c: ApiContext,
+  c: Context,
   status: StatusCode = 204,
 ): Response {
   return c.body(null, status);
 }
 
-export function internalServerError(c: ApiContext): Response {
-  return jsonResponse(c, { message: "Internal Server Error" }, 500);
+export function internalServerError(c: Context): Response {
+  return c.json({ message: "Internal Server Error" }, 500);
 }
