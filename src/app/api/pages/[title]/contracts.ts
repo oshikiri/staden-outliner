@@ -10,7 +10,7 @@ export type PageRouteError = {
 export type PageRouteRequestBody = BlockDto;
 export type PageRouteResponseBody = BlockDto | PageRouteError;
 export type BacklinksRouteResponseBody = BlockDto[];
-export type UpdateMarkdownRouteResponseBody = Record<string, never>;
+export type UpdateMarkdownRouteResponseBody = void;
 
 export function createPageRouteError(message: string): PageRouteError {
   return {

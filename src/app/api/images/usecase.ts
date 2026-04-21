@@ -11,11 +11,34 @@ type ImageSuccess = {
 
 type ImageFailure = {
   ok: false;
-  status: 400;
+  status: 400 | 404;
   message: string;
 };
 
 export type ImagePayload = ImageSuccess | ImageFailure;
+
+async function readImageBuffer(
+  imagePath: string,
+): Promise<Uint8Array | ImageFailure> {
+  try {
+    return new Uint8Array(await fs.readFile(imagePath));
+  } catch (error) {
+    const imageError = error as { code?: unknown };
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      imageError.code === "ENOENT"
+    ) {
+      return {
+        ok: false,
+        status: 404,
+        message: "Image not found",
+      };
+    }
+    throw error;
+  }
+}
 
 export async function getImagePayload(
   queryPath: string,
@@ -40,10 +63,14 @@ export async function getImagePayload(
     };
   }
 
-  const imageBuffer = await fs.readFile(imagePath);
+  const imageBuffer = await readImageBuffer(imagePath);
+  if (!(imageBuffer instanceof Uint8Array)) {
+    return imageBuffer;
+  }
+
   return {
     ok: true,
-    body: new Uint8Array(imageBuffer),
+    body: imageBuffer,
     contentType: getMimeTypeFromPath(queryPath),
   };
 }

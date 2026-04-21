@@ -21,4 +21,14 @@ describe("api/rpc/page", () => {
       "Unexpected response shape: 200",
     );
   });
+
+  test("reflectMarkdown requires no content", async () => {
+    jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(null, {
+        status: 204,
+      }),
+    );
+
+    await expect(pageRpc.reflectMarkdown("Page")).resolves.toBeUndefined();
+  });
 });

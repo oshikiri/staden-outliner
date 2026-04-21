@@ -6,10 +6,9 @@ import {
   toPageDto,
 } from "@/app/lib/markdown/blockDto";
 import { type InferRequestType, type InferResponseType } from "hono/client";
-import { type UpdateMarkdownRouteResponseBody } from "../pages/[title]/contracts";
 
 import { client, forceCacheRequest } from "./client";
-import { isArrayOf, isEmptyObject, readJsonResponse } from "./response";
+import { expectStatus, isArrayOf, readJsonResponse } from "./response";
 
 function encodeTitle(title: string): string {
   return encodeURIComponent(title);
@@ -22,7 +21,6 @@ type PageBacklinksResponse = InferResponseType<
   PageRouteClient["backlinks"]["$get"],
   200
 >;
-type PageUpdateMarkdownResponse = UpdateMarkdownRouteResponseBody;
 
 function pageParam(title: string): PageGetRequest["param"] {
   return {
@@ -69,14 +67,10 @@ export const pageRpc = {
     );
     return json.map((block) => fromBlockDto(block));
   },
-  async reflectMarkdown(title: string): Promise<PageUpdateMarkdownResponse> {
+  async reflectMarkdown(title: string): Promise<void> {
     const response = await client.api.pages[":title"].update_markdown.$post({
       param: pageParam(title),
     });
-    return readJsonResponse<PageUpdateMarkdownResponse>(
-      response,
-      200,
-      isEmptyObject,
-    );
+    await expectStatus(response, 204);
   },
 };

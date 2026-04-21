@@ -13,7 +13,7 @@ describe("api/pages/[title]/update_markdown/route", () => {
     jest.clearAllMocks();
   });
 
-  test("POST exports the page markdown and returns an empty json object", async () => {
+  test("POST exports the page markdown and returns no content", async () => {
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages/Page/update_markdown", {
         method: "POST",
@@ -21,9 +21,9 @@ describe("api/pages/[title]/update_markdown/route", () => {
     );
 
     expect(exportOnePageToMarkdownMock).toHaveBeenCalledWith("Page");
-    expect(response.status).toBe(200);
-    expect(response.headers.get("Content-Type")).toBe("application/json");
-    await expect(response.json()).resolves.toEqual({});
+    expect(response.status).toBe(204);
+    expect(response.headers.get("Content-Type")).toBeNull();
+    await expect(response.text()).resolves.toBe("");
   });
 
   test("POST returns 500 when export fails inside the Hono app", async () => {

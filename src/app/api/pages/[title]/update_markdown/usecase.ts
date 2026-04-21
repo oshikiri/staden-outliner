@@ -5,5 +5,4 @@ export async function updateMarkdownPayload(
   title: string,
 ): Promise<UpdateMarkdownRouteResponseBody> {
   await exportOnePageToMarkdown(title);
-  return {};
 }

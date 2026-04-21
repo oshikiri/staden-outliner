@@ -122,7 +122,7 @@ const pagesRoutes = new Hono<ApiEnv>()
   .post("/:title/update_markdown", pageTitleValidator, async (c) => {
     const { title } = c.req.valid("param");
     await updateMarkdownPayload(title);
-    return jsonResponse(c, {});
+    return noContentResponse(c);
   });
 
 export const honoApiApp = new Hono<ApiEnv>()

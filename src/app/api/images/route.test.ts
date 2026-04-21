@@ -41,6 +41,19 @@ describe("api/images/route", () => {
     await expect(response.text()).resolves.toBe("Invalid image path");
   });
 
+  test("GET returns 404 when the image does not exist", async () => {
+    const error = new Error("ENOENT");
+    (error as { code?: string }).code = "ENOENT";
+    readFileMock.mockRejectedValue(error);
+
+    const response = await honoApiApp.fetch(
+      new Request("http://localhost/api/images?path=images/missing.png"),
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.text()).resolves.toBe("Image not found");
+  });
+
   test("GET returns image bytes with mime type", async () => {
     const imageBuffer = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
     readFileMock.mockResolvedValue(imageBuffer);
