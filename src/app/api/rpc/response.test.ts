@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { expectStatus, readJsonResponse } from "./response";
+import { expectStatus, isEmptyObject, readJsonResponse } from "./response";
 
 describe("api/rpc/response", () => {
   test("readJsonResponse returns parsed json for the expected status", async () => {
@@ -53,6 +53,19 @@ describe("api/rpc/response", () => {
     await expect(readJsonResponse(response)).rejects.toThrow(
       "Internal Server Error",
     );
+  });
+
+  test("readJsonResponse rejects unexpected response shapes", async () => {
+    const response = new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    await expect(
+      readJsonResponse(response, 200, isEmptyObject),
+    ).rejects.toThrow("Unexpected response shape: 200");
   });
 
   test("expectStatus accepts the expected empty response", async () => {

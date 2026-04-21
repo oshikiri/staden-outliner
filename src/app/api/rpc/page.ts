@@ -1,10 +1,15 @@
 import type { Block as BlockEntity } from "@/app/lib/markdown/block";
-import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
+import {
+  type BlockDto,
+  fromBlockDto,
+  isBlockDto,
+  toPageDto,
+} from "@/app/lib/markdown/blockDto";
 import { type InferRequestType, type InferResponseType } from "hono/client";
-import { isPageRouteError } from "../pages/[title]/contracts";
+import { type UpdateMarkdownRouteResponseBody } from "../pages/[title]/contracts";
 
 import { client, forceCacheRequest } from "./client";
-import { readJsonResponse } from "./response";
+import { isArrayOf, isEmptyObject, readJsonResponse } from "./response";
 
 function encodeTitle(title: string): string {
   return encodeURIComponent(title);
@@ -13,16 +18,11 @@ function encodeTitle(title: string): string {
 type PageRouteClient = (typeof client.api.pages)[":title"];
 type PageGetRequest = InferRequestType<PageRouteClient["$get"]>;
 type PageUpdateRequest = InferRequestType<PageRouteClient["$post"]>;
-type PageGetResponse = InferResponseType<PageRouteClient["$get"], 200>;
-type PageUpdateResponse = InferResponseType<PageRouteClient["$post"], 200>;
 type PageBacklinksResponse = InferResponseType<
   PageRouteClient["backlinks"]["$get"],
   200
 >;
-type PageUpdateMarkdownResponse = InferResponseType<
-  PageRouteClient["update_markdown"]["$post"],
-  200
->;
+type PageUpdateMarkdownResponse = UpdateMarkdownRouteResponseBody;
 
 function pageParam(title: string): PageGetRequest["param"] {
   return {
@@ -30,18 +30,8 @@ function pageParam(title: string): PageGetRequest["param"] {
   };
 }
 
-async function readPageRpcResponse(
-  response:
-    | Awaited<ReturnType<PageRouteClient["$get"]>>
-    | Awaited<ReturnType<PageRouteClient["$post"]>>,
-): Promise<BlockEntity> {
-  const json = await readJsonResponse<PageGetResponse | PageUpdateResponse>(
-    response,
-  );
-  if (isPageRouteError(json)) {
-    throw new Error(json.updateResults.message);
-  }
-  return fromBlockDto(json);
+function isBlockDtoArray(value: unknown): value is PageBacklinksResponse {
+  return isArrayOf(value, isBlockDto);
 }
 
 export const pageRpc = {
@@ -49,7 +39,8 @@ export const pageRpc = {
     const response = await client.api.pages[":title"].$get({
       param: pageParam(title),
     });
-    return readPageRpcResponse(response);
+    const json = await readJsonResponse<BlockDto>(response, 200, isBlockDto);
+    return fromBlockDto(json);
   },
   async update(page: BlockEntity | null): Promise<BlockEntity | null> {
     if (!page) {
@@ -61,7 +52,8 @@ export const pageRpc = {
       json: toPageDto(page),
     };
     const response = await client.api.pages[":title"].$post(request);
-    return readPageRpcResponse(response);
+    const json = await readJsonResponse<BlockDto>(response, 200, isBlockDto);
+    return fromBlockDto(json);
   },
   async backlinks(title: string): Promise<BlockEntity[]> {
     const response = await client.api.pages[":title"].backlinks.$get(
@@ -70,13 +62,21 @@ export const pageRpc = {
       },
       forceCacheRequest,
     );
-    const json = await readJsonResponse<PageBacklinksResponse>(response);
+    const json = await readJsonResponse<PageBacklinksResponse>(
+      response,
+      200,
+      isBlockDtoArray,
+    );
     return json.map((block) => fromBlockDto(block));
   },
   async reflectMarkdown(title: string): Promise<PageUpdateMarkdownResponse> {
     const response = await client.api.pages[":title"].update_markdown.$post({
       param: pageParam(title),
     });
-    return readJsonResponse<PageUpdateMarkdownResponse>(response);
+    return readJsonResponse<PageUpdateMarkdownResponse>(
+      response,
+      200,
+      isEmptyObject,
+    );
   },
 };

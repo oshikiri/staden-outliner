@@ -1,13 +1,13 @@
 import type { Configs } from "@/app/lib/file/config";
+import { isConfigs } from "@/app/lib/file/config";
 import type { File } from "@/app/lib/file";
-import type { InferRequestType, InferResponseType } from "hono/client";
+import { isFile } from "@/app/lib/file";
+import type { InferRequestType } from "hono/client";
 
 import { client, forceCacheRequest } from "./client";
-import { expectStatus, readJsonResponse } from "./response";
+import { isArrayOf, expectStatus, readJsonResponse } from "./response";
 
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
-type ConfigsResponse = InferResponseType<typeof client.api.configs.$get, 200>;
-type FilesResponse = InferResponseType<typeof client.api.files.$get, 200>;
 
 export const systemRpc = {
   async configs(): Promise<Configs> {
@@ -15,7 +15,7 @@ export const systemRpc = {
       undefined,
       forceCacheRequest,
     );
-    return readJsonResponse<ConfigsResponse>(response);
+    return readJsonResponse<Configs>(response, 200, isConfigs);
   },
   async files(prefix?: string): Promise<File[]> {
     const request: FilesRequest = {
@@ -24,7 +24,11 @@ export const systemRpc = {
       },
     };
     const response = await client.api.files.$get(request, forceCacheRequest);
-    return readJsonResponse<FilesResponse>(response);
+    return readJsonResponse<File[]>(
+      response,
+      200,
+      (value: unknown): value is File[] => isArrayOf(value, isFile),
+    );
   },
   async initialize(): Promise<void> {
     const response = await client.api.initialize.$post();

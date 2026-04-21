@@ -4,6 +4,8 @@ type PageRouteErrorLike = {
   };
 };
 
+type JsonValidator<T> = (value: unknown) => value is T;
+
 function readErrorMessage(data: unknown, statusCode: number): string {
   if (data && typeof data === "object") {
     const pageRouteError = data as PageRouteErrorLike;
@@ -47,15 +49,37 @@ async function toRequestError(response: Response): Promise<Error> {
   return new Error(`Request failed: ${response.status}`);
 }
 
+export function isArrayOf<T>(
+  value: unknown,
+  validator: JsonValidator<T>,
+): value is T[] {
+  return Array.isArray(value) && value.every(validator);
+}
+
+export function isEmptyObject(value: unknown): value is Record<string, never> {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.keys(value).length === 0
+  );
+}
+
 export async function readJsonResponse<T>(
   response: Response,
   expectedStatus = 200,
+  validator?: JsonValidator<T>,
 ): Promise<T> {
   if (response.status !== expectedStatus) {
     throw await toRequestError(response);
   }
 
-  return (await response.json()) as T;
+  const json = await response.json();
+  if (validator && !validator(json)) {
+    throw new Error(`Unexpected response shape: ${response.status}`);
+  }
+
+  return json as T;
 }
 
 export async function expectStatus(
