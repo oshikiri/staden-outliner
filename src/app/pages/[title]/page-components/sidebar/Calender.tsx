@@ -4,6 +4,8 @@ import { StadenDate } from "@/app/lib/date";
 import type { File } from "@/app/lib/file";
 import { systemRpc } from "@/app/api/rpc/system";
 import { usePageNavigation } from "../../navigation";
+import { isAbortError } from "@/app/lib/client/request";
+import { logError } from "@/app/lib/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function JournalCalender({ pathname }: { pathname: string }) {
@@ -18,9 +20,26 @@ export function JournalCalender({ pathname }: { pathname: string }) {
   );
 
   useEffect(() => {
+    const controller = new AbortController();
+
     systemRpc
-      .files(month)
-      .then((files) => setDays(files.map((file: File) => file.title)));
+      .files(month, { signal: controller.signal })
+      .then((files) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        setDays(files.map((file: File) => file.title));
+      })
+      .catch((error) => {
+        if (controller.signal.aborted || isAbortError(error)) {
+          return;
+        }
+        logError("Failed to load journal calendar", error);
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, [month]);
 
   const dayExists = new Map<string, boolean>();

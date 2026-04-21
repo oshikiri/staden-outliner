@@ -1,4 +1,4 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 
 import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
 import { StadenDate } from "@/app/lib/date";
@@ -10,6 +10,8 @@ import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
 import { logError } from "@/app/lib/logger";
+import { isAbortError } from "@/app/lib/client/request";
+import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
 
 // eslint-disable-next-line max-lines-per-function
 export function SideBar({
@@ -71,20 +73,8 @@ function SideBarElement({
 }
 
 function SearchBox(): JSX.Element {
-  const [files, setFiles] = useState<string[]>();
+  const files = useSidebarFiles();
   const { navigateToPage } = usePageNavigation();
-
-  useEffect(() => {
-    systemRpc
-      .files()
-      .then((files) => {
-        const titles = files.map((file: { title: string }) => file.title);
-        setFiles(new Array(...new Set(titles)).sort());
-      })
-      .catch((error) => {
-        logError("Failed to load sidebar files", error);
-      });
-  }, []);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -112,16 +102,7 @@ function SearchBox(): JSX.Element {
 }
 
 function Favorites() {
-  const [favorites, setFavorites] = useState<string[]>();
-
-  useEffect(() => {
-    systemRpc
-      .configs()
-      .then((configs) => setFavorites(configs.favorites))
-      .catch((error) => {
-        logError("Failed to load favorites", error);
-      });
-  }, []);
+  const favorites = useSidebarFavorites();
 
   const listElement = favorites?.map((favorite) => {
     return (
@@ -136,4 +117,45 @@ function Favorites() {
 function RecentJournal() {
   const todayStr = new StadenDate().format();
   return <PageRef pageref={new PageRefEntity(todayStr)} />;
+}
+
+function useSidebarFiles(): string[] | undefined {
+  const [files, setFiles] = useState<string[]>();
+
+  useAbortableEffect((signal) => {
+    systemRpc
+      .files(undefined, { signal })
+      .then((nextFiles) => {
+        const titles = nextFiles.map((file: { title: string }) => file.title);
+        setFiles(new Array(...new Set(titles)).sort());
+      })
+      .catch((error) => {
+        if (isAbortError(error)) {
+          return;
+        }
+        logError("Failed to load sidebar files", error);
+      });
+  }, []);
+
+  return files;
+}
+
+function useSidebarFavorites(): string[] | undefined {
+  const [favorites, setFavorites] = useState<string[]>();
+
+  useAbortableEffect((signal) => {
+    systemRpc
+      .configs({ signal })
+      .then((configs) => {
+        setFavorites(configs.favorites);
+      })
+      .catch((error) => {
+        if (isAbortError(error)) {
+          return;
+        }
+        logError("Failed to load favorites", error);
+      });
+  }, []);
+
+  return favorites;
 }

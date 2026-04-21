@@ -1,30 +1,20 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
 import { PageRef } from "@/app/lib/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
-import { logDebug } from "@/app/lib/logger";
+import { logDebug, logError } from "@/app/lib/logger";
+import { isAbortError } from "@/app/lib/client/request";
+import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
 
 export function BacklinksContainer({
   pageTitle,
 }: {
   pageTitle: string | undefined;
 }): JSX.Element {
-  const [backlinks, setBacklinks] = useState<BlockEntity[]>([]);
-  useEffect(() => {
-    if (!pageTitle) {
-      return;
-    }
-    getPageBacklinks(pageTitle).then((backlinks) => {
-      if (!backlinks) {
-        return;
-      }
-      logDebug("getPageBacklinks", { count: backlinks.length });
-      setBacklinks(backlinks);
-    });
-  }, [pageTitle]);
+  const backlinks = useBacklinks(pageTitle);
 
   return (
     <div className="mt-20 break-all">
@@ -46,10 +36,33 @@ export function BacklinksContainer({
   );
 }
 
-async function getPageBacklinks(
-  pageTitle: string,
-): Promise<BlockEntity[] | null> {
-  return pageRpc.backlinks(pageTitle).catch(() => null);
+function useBacklinks(pageTitle: string | undefined): BlockEntity[] {
+  const [backlinks, setBacklinks] = useState<BlockEntity[]>([]);
+
+  useAbortableEffect(
+    (signal) => {
+      if (!pageTitle) {
+        setBacklinks([]);
+        return;
+      }
+
+      pageRpc
+        .backlinks(pageTitle, { signal })
+        .then((nextBacklinks) => {
+          logDebug("getPageBacklinks", { count: nextBacklinks.length });
+          setBacklinks(nextBacklinks);
+        })
+        .catch((error) => {
+          if (isAbortError(error)) {
+            return;
+          }
+          logError("Failed to load backlinks", error);
+        });
+    },
+    [pageTitle],
+  );
+
+  return backlinks;
 }
 
 function BacklinkPage({

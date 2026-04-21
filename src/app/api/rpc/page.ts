@@ -9,6 +9,10 @@ import { type InferResponseType } from "hono/client";
 
 import { client } from "./client";
 import { expectStatus, isArrayOf, readJsonResponse } from "./response";
+import {
+  type AbortableRequestOptions,
+  toRequestInit,
+} from "@/app/lib/client/request";
 
 type PageRouteClient = (typeof client.api.pages)[":title"];
 type PageBacklinksResponse = InferResponseType<
@@ -21,16 +25,27 @@ function isBlockDtoArray(value: unknown): value is PageBacklinksResponse {
 }
 
 export const pageRpc = {
-  async get(title: string): Promise<BlockEntity> {
-    const response = await client.api.pages[":title"].$get({
-      param: {
-        title: encodeURIComponent(title),
+  async get(
+    title: string,
+    options?: AbortableRequestOptions,
+  ): Promise<BlockEntity> {
+    const response = await client.api.pages[":title"].$get(
+      {
+        param: {
+          title: encodeURIComponent(title),
+        },
       },
-    });
+      {
+        init: toRequestInit(options),
+      },
+    );
     const json = await readJsonResponse<BlockDto>(response, 200, isBlockDto);
     return fromBlockDto(json);
   },
-  async update(page: BlockEntity | null): Promise<BlockEntity | null> {
+  async update(
+    page: BlockEntity | null,
+    options?: AbortableRequestOptions,
+  ): Promise<BlockEntity | null> {
     if (!page) {
       return null;
     }
@@ -41,16 +56,26 @@ export const pageRpc = {
       },
       json: toPageDto(page),
     };
-    const response = await client.api.pages[":title"].$post(request);
+    const response = await client.api.pages[":title"].$post(request, {
+      init: toRequestInit(options),
+    });
     const json = await readJsonResponse<BlockDto>(response, 200, isBlockDto);
     return fromBlockDto(json);
   },
-  async backlinks(title: string): Promise<BlockEntity[]> {
-    const response = await client.api.pages[":title"].backlinks.$get({
-      param: {
-        title: encodeURIComponent(title),
+  async backlinks(
+    title: string,
+    options?: AbortableRequestOptions,
+  ): Promise<BlockEntity[]> {
+    const response = await client.api.pages[":title"].backlinks.$get(
+      {
+        param: {
+          title: encodeURIComponent(title),
+        },
       },
-    });
+      {
+        init: toRequestInit(options),
+      },
+    );
     const json = await readJsonResponse<PageBacklinksResponse>(
       response,
       200,
@@ -58,12 +83,20 @@ export const pageRpc = {
     );
     return json.map((block) => fromBlockDto(block));
   },
-  async reflectMarkdown(title: string): Promise<void> {
-    const response = await client.api.pages[":title"].update_markdown.$post({
-      param: {
-        title: encodeURIComponent(title),
+  async reflectMarkdown(
+    title: string,
+    options?: AbortableRequestOptions,
+  ): Promise<void> {
+    const response = await client.api.pages[":title"].update_markdown.$post(
+      {
+        param: {
+          title: encodeURIComponent(title),
+        },
       },
-    });
+      {
+        init: toRequestInit(options),
+      },
+    );
     await expectStatus(response, 204);
   },
 };

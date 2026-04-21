@@ -53,6 +53,32 @@ describe("api/rpc/page", () => {
     expect(url).toContain("/api/pages/Page%20%2F%20Draft");
   });
 
+  test("get forwards abort signals", async () => {
+    const controller = new AbortController();
+    const fetchMock = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: "page-1",
+          pageId: "page-1",
+          depth: 0,
+          content: [{ type: 16, status: "TODO" }],
+          children: [],
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      ),
+    );
+
+    await pageRpc.get("Page", { signal: controller.signal });
+
+    const requestInit = fetchMock.mock.calls[0][1];
+    expect(requestInit?.signal).toBe(controller.signal);
+  });
+
   test("reflectMarkdown requires no content", async () => {
     jest.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(null, {

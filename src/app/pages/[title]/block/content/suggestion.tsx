@@ -2,6 +2,7 @@ import { JSX, useEffect, useState } from "react";
 
 import { systemRpc } from "@/app/api/rpc/system";
 import { logError } from "@/app/lib/logger";
+import { isAbortError } from "@/app/lib/client/request";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({
@@ -63,16 +64,28 @@ function useCachedFiles(): string[] {
   });
 
   useEffect(() => {
+    const controller = new AbortController();
+
     systemRpc
-      .files()
+      .files(undefined, { signal: controller.signal })
       .then((f) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         const nextFiles = f.map((file: { title: string }) => file.title);
         setFiles(nextFiles);
         localStorage.setItem("files", JSON.stringify(nextFiles));
       })
       .catch((error) => {
+        if (controller.signal.aborted || isAbortError(error)) {
+          return;
+        }
         logError("Failed to cache files", error);
       });
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return files;

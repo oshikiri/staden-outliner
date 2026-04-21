@@ -36,4 +36,21 @@ describe("api/rpc/system", () => {
       "Unexpected response shape: 200",
     );
   });
+
+  test("files forwards abort signals", async () => {
+    const controller = new AbortController();
+    const fetchMock = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify([]), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    );
+
+    await systemRpc.files("2026-04", { signal: controller.signal });
+
+    const requestInit = fetchMock.mock.calls[0][1];
+    expect(requestInit?.signal).toBe(controller.signal);
+  });
 });

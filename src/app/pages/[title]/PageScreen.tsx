@@ -9,7 +9,8 @@ import { SideBar } from "./page-components/sidebar";
 import { PageNavigationProvider } from "./navigation";
 import { useStore } from "./state";
 import { pageRpc } from "@/app/api/rpc/page";
-import { logDebug } from "@/app/lib/logger";
+import { logDebug, logError } from "@/app/lib/logger";
+import { isAbortError } from "@/app/lib/client/request";
 
 // eslint-disable-next-line max-lines-per-function
 export function PageScreen({
@@ -31,10 +32,27 @@ export function PageScreen({
   }, [title]);
 
   useEffect(() => {
-    pageRpc.get(title).then((nextBlock) => {
-      logDebug("pageUpdate", nextBlock?.id);
-      setPage(nextBlock);
-    });
+    const controller = new AbortController();
+
+    pageRpc
+      .get(title, { signal: controller.signal })
+      .then((nextBlock) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        logDebug("pageUpdate", nextBlock?.id);
+        setPage(nextBlock);
+      })
+      .catch((error) => {
+        if (controller.signal.aborted || isAbortError(error)) {
+          return;
+        }
+        logError("Failed to load page", error);
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, [title]);
 
   useEffect(() => {
