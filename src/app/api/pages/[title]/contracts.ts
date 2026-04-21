@@ -1,5 +1,4 @@
-import { Block } from "@/app/lib/markdown/block";
-import { BlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
+import { BlockDto } from "@/app/lib/markdown/blockDto";
 
 export type PageRouteError = {
   updateResults: {
@@ -26,8 +25,4 @@ export function isPageRouteError(
   payload: PageRouteResponseBody,
 ): payload is PageRouteError {
   return "updateResults" in payload;
-}
-
-export function serializePageRequest(page: Block): string {
-  return JSON.stringify(toPageDto(page));
 }

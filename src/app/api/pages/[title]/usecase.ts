@@ -1,9 +1,7 @@
 import {
   createPageRouteError,
-  type PageRouteError,
   type PageRouteRequestBody,
   type PageRouteResponseBody,
-  isPageRouteError as isPageRouteErrorContract,
 } from "./contracts";
 import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
 import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
@@ -11,10 +9,6 @@ import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
 export async function getPagePayload(
   title: string,
 ): Promise<PageRouteResponseBody> {
-  if (!title) {
-    return createPageRouteError("Missing title");
-  }
-
   const page = await getPageByTitle(title);
   return toPageDto(page);
 }
@@ -23,9 +17,6 @@ export async function updatePagePayload(
   title: string,
   pagePayload: PageRouteRequestBody | null,
 ): Promise<PageRouteResponseBody> {
-  if (!title) {
-    return createPageRouteError("Missing title");
-  }
   if (!pagePayload) {
     return createPageRouteError("Missing page content");
   }
@@ -42,10 +33,4 @@ export async function updatePagePayload(
    */
   const updatedPage = await updatePageByTitle(title, fromBlockDto(pagePayload));
   return toPageDto(updatedPage);
-}
-
-export function isPageRouteError(
-  payload: PageRouteResponseBody,
-): payload is PageRouteError {
-  return isPageRouteErrorContract(payload);
 }
