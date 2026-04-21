@@ -4,17 +4,14 @@ import type { File } from "@/app/lib/file";
 import { isFile } from "@/app/lib/file";
 import type { InferRequestType } from "hono/client";
 
-import { client, forceCacheRequest } from "./client";
+import { client } from "./client";
 import { isArrayOf, expectStatus, readJsonResponse } from "./response";
 
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
 
 export const systemRpc = {
   async configs(): Promise<Configs> {
-    const response = await client.api.configs.$get(
-      undefined,
-      forceCacheRequest,
-    );
+    const response = await client.api.configs.$get();
     return readJsonResponse<Configs>(response, 200, isConfigs);
   },
   async files(prefix?: string): Promise<File[]> {
@@ -23,7 +20,7 @@ export const systemRpc = {
         prefix: prefix ?? "",
       },
     };
-    const response = await client.api.files.$get(request, forceCacheRequest);
+    const response = await client.api.files.$get(request);
     return readJsonResponse<File[]>(
       response,
       200,

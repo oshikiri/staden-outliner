@@ -7,7 +7,7 @@ import {
 } from "@/app/lib/markdown/blockDto";
 import { type InferResponseType } from "hono/client";
 
-import { client, forceCacheRequest } from "./client";
+import { client } from "./client";
 import { expectStatus, isArrayOf, readJsonResponse } from "./response";
 
 type PageRouteClient = (typeof client.api.pages)[":title"];
@@ -46,14 +46,11 @@ export const pageRpc = {
     return fromBlockDto(json);
   },
   async backlinks(title: string): Promise<BlockEntity[]> {
-    const response = await client.api.pages[":title"].backlinks.$get(
-      {
-        param: {
-          title: encodeURIComponent(title),
-        },
+    const response = await client.api.pages[":title"].backlinks.$get({
+      param: {
+        title: encodeURIComponent(title),
       },
-      forceCacheRequest,
-    );
+    });
     const json = await readJsonResponse<PageBacklinksResponse>(
       response,
       200,
