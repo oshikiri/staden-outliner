@@ -18,8 +18,7 @@ export async function resolvePageContent(page: Block): Promise<Block> {
 }
 
 async function resolveBlockRefs(page: Block): Promise<void> {
-  for (const i in page.content) {
-    const content = page.content[i];
+  for (const content of page.content) {
     if (content instanceof BlockRef) {
       const block = await getBlockByIdDb(content.id);
       content.resolvedContent = block.content;
@@ -32,7 +31,7 @@ async function resolveBlockRefs(page: Block): Promise<void> {
 }
 
 async function resolveCommandTokens(page: Block): Promise<void> {
-  for (const i in page.content) {
+  for (let i = 0; i < page.content.length; i++) {
     const content = page.content[i];
     if (content instanceof Command) {
       await resolveCommand(content);

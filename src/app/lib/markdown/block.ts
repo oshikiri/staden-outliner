@@ -45,7 +45,7 @@ export class Block {
 
     // case 2: current has no children
     //   Go up the tree until we find a parent that has a next sibling
-    let current: Block = create(this);
+    let current: Block = this;
     logDebug("getNext current", {
       id: current.id,
       depth: current.depth,

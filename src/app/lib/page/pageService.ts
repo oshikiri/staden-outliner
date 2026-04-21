@@ -9,10 +9,9 @@ import * as PageStore from "@/app/lib/sqlite/pages";
 import * as ContentResolver from "./contentResolver";
 
 export async function getPageByTitle(title: string): Promise<Block> {
-  const decodedTitle = decodeURIComponent(title);
-  const page = await findPageByTitle(decodedTitle);
+  const page = await findPageByTitle(title);
   if (!page) {
-    return ContentResolver.resolvePageContent(createDraftPage(decodedTitle));
+    return ContentResolver.resolvePageContent(createDraftPage(title));
   }
   return ContentResolver.resolvePageContent(page);
 }
@@ -21,23 +20,19 @@ export async function updatePageByTitle(
   title: string,
   pagePayload: Block,
 ): Promise<Block> {
-  const decodedTitle = decodeURIComponent(title);
-  const pagePrev = await findPageByTitle(decodedTitle);
-  const pageFile = await PageStore.getPageByTitle(decodedTitle);
+  const pagePrev = await findPageByTitle(title);
+  const pageFile = await PageStore.getPageByTitle(title);
   const pageUpdated = createBlock(pagePayload);
   const pageId = pageFile?.pageId || pageUpdated.id;
   if (!pageId) {
-    throw new Error(`Missing pageId for page "${decodedTitle}"`);
+    throw new Error(`Missing pageId for page "${title}"`);
   }
 
   assignPageTreeMetadata(pageUpdated, pageId, undefined);
-  pageUpdated.setProperty(
-    "title",
-    pagePrev?.getProperty("title") || decodedTitle,
-  );
+  pageUpdated.setProperty("title", pagePrev?.getProperty("title") || title);
 
   if (!pageFile) {
-    const file = await FileStore.create(decodedTitle, pageId);
+    const file = await FileStore.create(title, pageId);
     await PageStore.putFile(file);
   }
 
