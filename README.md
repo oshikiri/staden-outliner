@@ -10,11 +10,10 @@
 ## Roadmap
 - Add automatic export of markdown files
 - Improve the Markdown editor
-  - See also https://github.com/oshikiri/react-plaintext-outliner
+  - See also https://github.com/oshikiri/outliner-playground
   - Support pasting images from the clipboard
   - Improve caret movement
   - Implement undo and redo
-- Android viewer app
 - Full-text search
 - Additional E2E tests
 
