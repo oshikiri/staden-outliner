@@ -26,8 +26,11 @@ export class Token {
     return "";
   }
   toText(): string {
-    // @owner Uses `any` cast to access `textContent`; prefer a typed union or a virtual method on subclasses for safer access.
-    return (this as any).textContent || "";
+    return this.getTextContent() ?? "";
+  }
+
+  protected getTextContent(): string | undefined {
+    return undefined;
   }
 }
 
@@ -97,6 +100,9 @@ export class Text extends Token {
   toMarkdown(): string {
     return this.textContent;
   }
+  protected getTextContent(): string | undefined {
+    return this.textContent;
+  }
 }
 
 export class PageRef extends Token {
@@ -150,6 +156,9 @@ export class InlineCode extends Token {
   toMarkdown(): string {
     return `\`${this.textContent}\``;
   }
+  protected getTextContent(): string | undefined {
+    return this.textContent;
+  }
 }
 
 export class CodeBlock extends Token {
@@ -162,6 +171,9 @@ export class CodeBlock extends Token {
   }
   toMarkdown(): string {
     return `\`\`\`${this.lang}\n${this.textContent}\`\`\``;
+  }
+  protected getTextContent(): string | undefined {
+    return this.textContent;
   }
 }
 
@@ -246,51 +258,155 @@ export class Marker extends Token {
   }
 }
 
-// eslint-disable-next-line max-lines-per-function
-export function createToken(obj: any): Token {
-  // @owner `obj` is `any`; add runtime validation or a type guard to prevent crashes from malformed input.
-  const tokenType = obj.type;
-  switch (tokenType) {
-    case TokenType.NewLine:
-      return new Newline();
-    case TokenType.Image:
-      return new Image(obj.src, obj.alt, obj.width, obj.height);
-    case TokenType.ListStart:
-      return new ListStart(obj.depth);
-    case TokenType.Heading:
-      return new Heading(obj.level, obj.content.map(createToken));
-    case TokenType.Text:
-      return new Text(obj.textContent);
-    case TokenType.PageRef:
-      return new PageRef(obj.title);
-    case TokenType.Link:
-      return new Link(obj.url, obj.title);
-    case TokenType.Quote:
-      return new Quote(obj.tokens.map(createToken));
-    case TokenType.InlineCode:
-      return new InlineCode(obj.textContent);
-    case TokenType.CodeBlock:
-      return new CodeBlock(obj.textContent, obj.lang);
-    case TokenType.PropertyPair:
-      return new PropertyPair(createToken(obj.key), obj.value.map(createToken));
-    case TokenType.PropertyPairSeparator:
-      return new PropertyPairSeparator();
-    case TokenType.BlockRef:
-      return new BlockRef(obj.id, obj.resolvedContent?.map(createToken));
-    case TokenType.Command:
-      return new Command(obj.name, obj.args);
-    case TokenType.CommandQuery:
-      return new CommandQuery(
-        obj.query,
-        obj.resolvedBlocks,
-        obj.vlJsonStr,
-        obj.resolvedDataForVlJson,
-        obj.queryExecutionMilliseconds,
-      );
-    case TokenType.Marker:
-      return new Marker(obj.status);
-    default:
-      // Throwing with full serialized object may leak sensitive data; include only minimal info.
-      throw new Error(`Unknown token type: ${JSON.stringify(obj)}`);
+const tokenTypes: TokenType[] = [
+  TokenType.NewLine,
+  TokenType.Image,
+  TokenType.ListStart,
+  TokenType.Text,
+  TokenType.PageRef,
+  TokenType.Link,
+  TokenType.PropertyPair,
+  TokenType.Heading,
+  TokenType.Quote,
+  TokenType.InlineCode,
+  TokenType.CodeBlock,
+  TokenType.PropertyPairSeparator,
+  TokenType.BlockRef,
+  TokenType.Command,
+  TokenType.CommandQuery,
+  TokenType.Marker,
+];
+
+export function createToken(obj: unknown): Token {
+  if (!isRecord(obj)) {
+    throw new Error("Invalid token dto: expected object");
   }
+  const tokenType = readTokenType(obj);
+  const tokenFactory = tokenFactories[tokenType];
+  if (!tokenFactory) {
+    // Throwing with full serialized object may leak sensitive data; include only minimal info.
+    throw new Error(`Unknown token type: ${JSON.stringify(obj)}`);
+  }
+  return tokenFactory(obj);
+}
+
+const tokenFactories: Partial<
+  Record<TokenType, (obj: Record<string, unknown>) => Token>
+> = {
+  [TokenType.NewLine]: () => new Newline(),
+  [TokenType.Image]: (obj) =>
+    new Image(
+      readString(obj, "src"),
+      readString(obj, "alt"),
+      typeof obj.width === "string" ? obj.width : undefined,
+      typeof obj.height === "string" ? obj.height : undefined,
+    ),
+  [TokenType.ListStart]: (obj) => new ListStart(readNumber(obj, "depth")),
+  [TokenType.Heading]: createHeadingToken,
+  [TokenType.Text]: (obj) => new Text(readString(obj, "textContent")),
+  [TokenType.PageRef]: (obj) => new PageRef(readString(obj, "title")),
+  [TokenType.Link]: (obj) =>
+    new Link(readString(obj, "url"), readString(obj, "title")),
+  [TokenType.Quote]: (obj) =>
+    new Quote(readTokenArray(obj, "tokens").map(createToken)),
+  [TokenType.InlineCode]: (obj) =>
+    new InlineCode(readString(obj, "textContent")),
+  [TokenType.CodeBlock]: (obj) =>
+    new CodeBlock(readString(obj, "textContent"), readString(obj, "lang")),
+  [TokenType.PropertyPair]: createPropertyPairToken,
+  [TokenType.PropertyPairSeparator]: () => new PropertyPairSeparator(),
+  [TokenType.BlockRef]: createBlockRefToken,
+  [TokenType.Command]: (obj) =>
+    new Command(readString(obj, "name"), readString(obj, "args")),
+  [TokenType.CommandQuery]: createCommandQueryToken,
+  [TokenType.Marker]: (obj) => new Marker(readString(obj, "status")),
+};
+
+export function isTokenType(value: unknown): value is TokenType {
+  return typeof value === "number" && tokenTypes.includes(value);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readTokenType(obj: Record<string, unknown>): TokenType {
+  const tokenType = obj.type;
+  if (typeof tokenType !== "number") {
+    throw new Error("Invalid token dto: missing numeric type");
+  }
+  return tokenType;
+}
+
+function readString(obj: Record<string, unknown>, key: string): string {
+  const value = obj[key];
+  if (typeof value !== "string") {
+    throw new Error(`Invalid token dto: ${key} must be a string`);
+  }
+  return value;
+}
+
+function readNumber(obj: Record<string, unknown>, key: string): number {
+  const value = obj[key];
+  if (typeof value !== "number") {
+    throw new Error(`Invalid token dto: ${key} must be a number`);
+  }
+  return value;
+}
+
+function readTokenArray(obj: Record<string, unknown>, key: string): unknown[] {
+  const value = obj[key];
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid token dto: ${key} must be an array`);
+  }
+  return value;
+}
+
+function readOptionalTokenArray(
+  obj: Record<string, unknown>,
+  key: string,
+): unknown[] | undefined {
+  const value = obj[key];
+  if (value === undefined) {
+    return undefined;
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid token dto: ${key} must be an array`);
+  }
+  return value;
+}
+
+function createHeadingToken(obj: Record<string, unknown>): Heading {
+  return new Heading(
+    readNumber(obj, "level"),
+    readTokenArray(obj, "content").map(createToken),
+  );
+}
+
+function createPropertyPairToken(obj: Record<string, unknown>): PropertyPair {
+  return new PropertyPair(
+    createToken(obj.key),
+    readTokenArray(obj, "value").map(createToken),
+  );
+}
+
+function createBlockRefToken(obj: Record<string, unknown>): BlockRef {
+  return new BlockRef(
+    readString(obj, "id"),
+    readOptionalTokenArray(obj, "resolvedContent")?.map(createToken),
+  );
+}
+
+function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
+  return new CommandQuery(
+    readString(obj, "query"),
+    readOptionalTokenArray(obj, "resolvedBlocks") as Block[] | undefined,
+    typeof obj.vlJsonStr === "string" ? obj.vlJsonStr : undefined,
+    Array.isArray(obj.resolvedDataForVlJson)
+      ? obj.resolvedDataForVlJson
+      : undefined,
+    typeof obj.queryExecutionMilliseconds === "number"
+      ? obj.queryExecutionMilliseconds
+      : undefined,
+  );
 }

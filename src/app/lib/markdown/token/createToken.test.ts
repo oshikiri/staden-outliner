@@ -214,4 +214,16 @@ describe("createToken", () => {
     };
     expect(() => createToken(obj)).toThrow('Unknown token type: {"type":100}');
   });
+
+  test("rejects non-object input", () => {
+    expect(() => createToken(null)).toThrow(
+      "Invalid token dto: expected object",
+    );
+  });
+
+  test("rejects missing token fields with a clear error", () => {
+    expect(() => createToken({ type: 4 })).toThrow(
+      "Invalid token dto: textContent must be a string",
+    );
+  });
 });

@@ -124,4 +124,24 @@ describe("blockDto", () => {
       }),
     ).toBe(false);
   });
+
+  test("isBlockDto rejects token payloads with missing required fields", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{ type: 4 }],
+        children: [],
+      }),
+    ).toBe(false);
+  });
+
+  test("isBlockDto rejects the internal base token type", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{ type: 0 }],
+        children: [],
+      }),
+    ).toBe(false);
+  });
 });
