@@ -196,7 +196,6 @@ export class PropertyPair extends Token {
     return `${this.key.toMarkdown()}:: ${this.value.map((v) => v.toMarkdown()).join(" ")}\n`;
   }
   toPair(): [string, string] {
-    // @owner Key uses `toMarkdown()` which may include formatting; consider `toText()` to extract plain key.
     return [this.key.toMarkdown(), this.value.map((v) => v.toText()).join("")];
   }
 }

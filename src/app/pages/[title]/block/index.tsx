@@ -14,7 +14,6 @@ export default function Block({
   block: BlockEntity;
   editable?: boolean;
 }): JSX.Element {
-  // @owner `createBlock` clones and recalculates properties; doing this on every render can be costly. Memoize or move to data layer.
   block = createBlock(block);
   return (
     <div

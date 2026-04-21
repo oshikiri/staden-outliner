@@ -6,7 +6,6 @@ export function ReflectToMarkdown({
   pageTitle: string;
 }): JSX.Element {
   const onClick = () => {
-    // @owner No error handling or user feedback on failure.
     void pageRpc.reflectMarkdown(pageTitle).catch(() => undefined);
   };
 

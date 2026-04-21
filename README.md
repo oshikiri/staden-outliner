@@ -8,7 +8,6 @@
 - Query tables using SQLite
 
 ## Roadmap
-- Fix remaining `@owner` comments
 - Add automatic export of markdown files
 - Improve the Markdown editor
   - See also https://github.com/oshikiri/react-plaintext-outliner

@@ -275,7 +275,7 @@ export function applyContentMarkdown(
   block: Block,
   contentMarkdown: string,
 ): Block {
-  const lexer = new Lexer("- " + contentMarkdown); // @owner workaround
+  const lexer = new Lexer("- " + contentMarkdown);
   const tokens = lexer.exec();
   const parser = new Parser(tokens);
   const blockForMarkdown = parser.parse();
