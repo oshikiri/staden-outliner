@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { pageRpc } from "@/app/api/rpc/page";
+import { pageRpc } from "@/app/lib/client/rpc/page";
 export function ReflectToMarkdown({
   pageTitle,
 }: {

@@ -2,7 +2,7 @@ import { JSX, useEffect, useState } from "react";
 
 import { StadenDate } from "@/shared/date";
 import type { File } from "@/shared/file";
-import { systemRpc } from "@/app/api/rpc/system";
+import { systemRpc } from "@/app/lib/client/rpc/system";
 import { usePageNavigation } from "../../navigation";
 import { isAbortError } from "@/app/lib/client/request";
 import { logError } from "@/shared/logger";

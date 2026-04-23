@@ -6,7 +6,7 @@ mock.module("@/server/lib/sqlite/pages", () => ({
   getPagesByPrefix: getPagesByPrefixMock,
 }));
 
-import { honoApiApp } from "@/app/api/hono/app";
+import { honoApiApp } from "@/app/api/app";
 
 describe("api/files/route", () => {
   beforeEach(() => {

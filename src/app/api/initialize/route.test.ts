@@ -23,7 +23,7 @@ mock.module("@/server/lib/importer/bulk_importer", () => ({
   })),
 }));
 
-import { honoApiApp } from "@/app/api/hono/app";
+import { honoApiApp } from "@/app/api/app";
 
 describe("api/initialize/route", () => {
   beforeEach(() => {

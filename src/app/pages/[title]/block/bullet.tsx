@@ -5,7 +5,7 @@ import {
   Block as BlockEntity,
   getContentMarkdown,
 } from "@/shared/markdown/block";
-import { pageRpc } from "@/app/api/rpc/page";
+import { pageRpc } from "@/app/lib/client/rpc/page";
 import { flipCollapsed } from "@/shared/markdown/utils";
 import { useStore } from "../state";
 import { logError, logDebug } from "@/shared/logger";

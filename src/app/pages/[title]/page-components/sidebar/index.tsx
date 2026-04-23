@@ -2,7 +2,7 @@ import { JSX, useState } from "react";
 
 import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 import { StadenDate } from "@/shared/date";
-import { systemRpc } from "@/app/api/rpc/system";
+import { systemRpc } from "@/app/lib/client/rpc/system";
 import { PageRef } from "../../token";
 import { JournalCalender } from "./Calender";
 import { RecentPages } from "./RecentPages";

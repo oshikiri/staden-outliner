@@ -1,7 +1,7 @@
 import { JSX, useState } from "react";
 
 import { Block as BlockEntity } from "@/shared/markdown/block";
-import { pageRpc } from "@/app/api/rpc/page";
+import { pageRpc } from "@/app/lib/client/rpc/page";
 import { PageRef } from "@/shared/markdown/token";
 import { Token } from "../token";
 import Block from "../block";

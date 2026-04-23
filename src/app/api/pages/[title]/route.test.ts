@@ -4,7 +4,7 @@ import { Block } from "@/shared/markdown/block";
 import { Marker, Text } from "@/shared/markdown/token";
 import * as PageService from "@/server/lib/page/pageService";
 
-import { honoApiApp } from "@/app/api/hono/app";
+import { honoApiApp } from "@/app/api/app";
 
 describe("api/pages/[title]/route", () => {
   beforeEach(() => {

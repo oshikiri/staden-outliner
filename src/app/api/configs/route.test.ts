@@ -6,7 +6,7 @@ mock.module("@/server/lib/file/config", () => ({
   getAllConfigs: getAllConfigsMock,
 }));
 
-import { honoApiApp } from "@/app/api/hono/app";
+import { honoApiApp } from "@/app/api/app";
 
 describe("api/configs/route", () => {
   beforeEach(() => {

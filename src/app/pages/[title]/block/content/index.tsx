@@ -13,7 +13,7 @@ import {
   Block as BlockEntity,
   getContentMarkdown,
 } from "@/shared/markdown/block";
-import { pageRpc } from "@/app/api/rpc/page";
+import { pageRpc } from "@/app/lib/client/rpc/page";
 import { Token } from "../../token";
 import { useStore } from "../../state";
 

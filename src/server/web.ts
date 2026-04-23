@@ -2,7 +2,7 @@ import { access, stat } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 import { join, normalize, resolve } from "node:path";
 
-import { honoApiApp } from "@/app/api/hono/app";
+import { honoApiApp } from "@/app/api/app";
 import { logInfo } from "@/shared/logger";
 
 const DEFAULT_HOST = "127.0.0.1";

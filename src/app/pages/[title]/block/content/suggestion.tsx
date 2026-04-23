@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from "react";
 
-import { systemRpc } from "@/app/api/rpc/system";
+import { systemRpc } from "@/app/lib/client/rpc/system";
 import { logError } from "@/shared/logger";
 import { isAbortError } from "@/app/lib/client/request";
 

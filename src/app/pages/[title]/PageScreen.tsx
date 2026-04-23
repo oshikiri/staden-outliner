@@ -6,7 +6,7 @@ import { BacklinksContainer } from "./page-components/Backlink";
 import { SideBar } from "./page-components/sidebar";
 import { PageNavigationProvider } from "./navigation";
 import { useStore } from "./state";
-import { pageRpc } from "@/app/api/rpc/page";
+import { pageRpc } from "@/app/lib/client/rpc/page";
 import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/app/lib/client/request";
 
