@@ -1,5 +1,3 @@
-"use client";
-
 import { JSX, useEffect, useState } from "react";
 
 import { appendAndSaveRecentPage } from "@/app/lib/client/recentPagesStorage";

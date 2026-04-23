@@ -1,5 +1,3 @@
-"use client";
-
 import { appendRecentPage } from "../recentPages";
 
 export const RECENT_PAGES_STORAGE_KEY = "staden.recentPages";

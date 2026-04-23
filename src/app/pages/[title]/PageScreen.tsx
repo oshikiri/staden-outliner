@@ -1,5 +1,3 @@
-"use client";
-
 import { JSX, useEffect } from "react";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
