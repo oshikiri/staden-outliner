@@ -4,7 +4,7 @@ import {
   applyContentMarkdown,
   Block as BlockEntity,
 } from "@/shared/markdown/block";
-import { pageRpc } from "@/app/lib/client/rpc/page";
+import { pageRpc } from "@/client/rpc/page";
 import { logDebug, logError, logWarn } from "@/shared/logger";
 import { extractTextContent } from "../dom";
 import * as caret from "./caret";

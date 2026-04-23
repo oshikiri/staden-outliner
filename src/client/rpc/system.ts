@@ -6,10 +6,7 @@ import type { InferRequestType } from "hono/client";
 
 import { client } from "./client";
 import { isArrayOf, expectStatus, readJsonResponse } from "./response";
-import {
-  type AbortableRequestOptions,
-  toRequestInit,
-} from "@/app/lib/client/request";
+import { type AbortableRequestOptions, toRequestInit } from "@/client/request";
 
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
 

@@ -1,5 +1,5 @@
 import { JSX, useState } from "react";
-import { systemRpc } from "@/app/lib/client/rpc/system";
+import { systemRpc } from "@/client/rpc/system";
 
 export function ReloadButton(): JSX.Element {
   const [reloadStatus, setReloadStatus] = useState("reload completed");

@@ -1,8 +1,8 @@
 import { JSX, useEffect, useState } from "react";
 
-import { systemRpc } from "@/app/lib/client/rpc/system";
+import { systemRpc } from "@/client/rpc/system";
 import { logError } from "@/shared/logger";
-import { isAbortError } from "@/app/lib/client/request";
+import { isAbortError } from "@/client/request";
 
 // eslint-disable-next-line max-lines-per-function
 export function Suggestion({

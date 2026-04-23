@@ -9,10 +9,7 @@ import { type InferResponseType } from "hono/client";
 
 import { client } from "./client";
 import { expectStatus, isArrayOf, readJsonResponse } from "./response";
-import {
-  type AbortableRequestOptions,
-  toRequestInit,
-} from "@/app/lib/client/request";
+import { type AbortableRequestOptions, toRequestInit } from "@/client/request";
 
 type PageRouteClient = (typeof client.api.pages)[":title"];
 type PageBacklinksResponse = InferResponseType<

@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from "react";
 
-import { appendAndSaveRecentPage } from "@/app/lib/client/recentPagesStorage";
+import { appendAndSaveRecentPage } from "@/client/recentPagesStorage";
 import { PageRef } from "../../token";
 import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 

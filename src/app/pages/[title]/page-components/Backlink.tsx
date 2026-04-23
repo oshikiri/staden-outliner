@@ -1,13 +1,13 @@
 import { JSX, useState } from "react";
 
 import { Block as BlockEntity } from "@/shared/markdown/block";
-import { pageRpc } from "@/app/lib/client/rpc/page";
+import { pageRpc } from "@/client/rpc/page";
 import { PageRef } from "@/shared/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
 import { logDebug, logError } from "@/shared/logger";
-import { isAbortError } from "@/app/lib/client/request";
-import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
+import { isAbortError } from "@/client/request";
+import { useAbortableEffect } from "@/client/useAbortableEffect";
 
 export function BacklinksContainer({
   pageTitle,

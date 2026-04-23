@@ -2,7 +2,7 @@ import { JSX, useState } from "react";
 
 import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 import { StadenDate } from "@/shared/date";
-import { systemRpc } from "@/app/lib/client/rpc/system";
+import { systemRpc } from "@/client/rpc/system";
 import { PageRef } from "../../token";
 import { JournalCalender } from "./Calender";
 import { RecentPages } from "./RecentPages";
@@ -10,8 +10,8 @@ import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
 import { logError } from "@/shared/logger";
-import { isAbortError } from "@/app/lib/client/request";
-import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
+import { isAbortError } from "@/client/request";
+import { useAbortableEffect } from "@/client/useAbortableEffect";
 
 // eslint-disable-next-line max-lines-per-function
 export function SideBar({
