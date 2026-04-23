@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 import { loadMarkdown } from ".";
 import { Block, Token } from "../markdown";
 import { getPageRefTitles } from "../markdown/utils";
@@ -36,7 +34,7 @@ export class BulkImporter {
       if (!file.path) {
         continue;
       }
-      const rootBlock = loadMarkdown(file);
+      const rootBlock = await loadMarkdown(file);
       await this.importBlockToDB(rootBlock, file.pageId || "", undefined);
     }
 
@@ -78,7 +76,7 @@ export class BulkImporter {
     return fileCreated;
   }
   private async putFile(file: File): Promise<File | undefined> {
-    file.pageId = file.pageId || randomUUID();
+    file.pageId = file.pageId || crypto.randomUUID();
 
     this.files.set(file.pageId, file);
     this.fileTitleToId.set(file.title, file.pageId);
@@ -91,7 +89,7 @@ export class BulkImporter {
     pageId: string,
     parent: Block | undefined,
   ): Promise<void> {
-    block.id = block.id || randomUUID();
+    block.id = block.id || crypto.randomUUID();
     block.parent = parent;
     block.setPropertiesFromContent();
 

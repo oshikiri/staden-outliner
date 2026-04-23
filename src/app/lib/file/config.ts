@@ -1,5 +1,4 @@
-import * as fs from "fs";
-import path from "path";
+import path from "node:path";
 
 import { getStadenRoot } from "../env/stadenRoot";
 
@@ -21,16 +20,14 @@ export function isConfigs(value: unknown): value is Configs {
 
 export async function getAllConfigs(): Promise<Configs> {
   const configFile = path.join(getStadenRoot(), "config.json");
-  if (!fs.existsSync(configFile)) {
+  const file = Bun.file(configFile);
+  if (!(await file.exists())) {
     return { favorites: [] };
   }
-  const jsonTxt = fs.readFileSync(configFile, "utf8");
-  const configs = JSON.parse(jsonTxt);
-
-  const response: Configs = { favorites: [] };
-  if (configs?.favorites) {
-    response.favorites = configs.favorites;
+  const configs = JSON.parse(await file.text());
+  if (!isConfigs(configs)) {
+    return { favorites: [] };
   }
 
-  return response;
+  return configs;
 }

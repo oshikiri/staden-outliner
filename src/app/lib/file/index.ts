@@ -1,6 +1,5 @@
-import { readdirSync } from "fs";
-import * as path from "path";
-import * as fs from "fs";
+import { readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
 
 import { getStadenRoot } from "../env/stadenRoot";
 
@@ -77,24 +76,16 @@ export function extractTitle(filePath: string): string {
 }
 
 export function getLocalFile(path: string) {
-  const data = fs.readFileSync(path);
+  const data = readFileSync(path);
   return data;
 }
 
 export function updateFile(file: File, content: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (!file.path) {
-      reject(new Error("File path is not defined"));
-      return;
-    }
-    fs.writeFile(file.path, content, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  if (!file.path) {
+    return Promise.reject(new Error("File path is not defined"));
+  }
+
+  return Bun.write(file.path, content).then(() => undefined);
 }
 
 export async function fillPathToFile(file: File): Promise<void> {
@@ -111,7 +102,8 @@ export async function fillPathToFile(file: File): Promise<void> {
   }
 
   file.path = candidatePath;
-  if (!fs.existsSync(file.path)) {
-    fs.writeFileSync(file.path, "");
+  const fileOnDisk = Bun.file(file.path);
+  if (!(await fileOnDisk.exists())) {
+    await Bun.write(file.path, "");
   }
 }

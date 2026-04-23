@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
+import path from "node:path";
 
 import { getStadenRoot } from "@/app/lib/env/stadenRoot";
 
@@ -20,24 +19,16 @@ export type ImagePayload = ImageSuccess | ImageFailure;
 async function readImageBuffer(
   imagePath: string,
 ): Promise<Uint8Array | ImageFailure> {
-  try {
-    return new Uint8Array(await fs.readFile(imagePath));
-  } catch (error) {
-    const imageError = error as { code?: unknown };
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      imageError.code === "ENOENT"
-    ) {
-      return {
-        ok: false,
-        status: 404,
-        message: "Image not found",
-      };
-    }
-    throw error;
+  const file = Bun.file(imagePath);
+  if (!(await file.exists())) {
+    return {
+      ok: false,
+      status: 404,
+      message: "Image not found",
+    };
   }
+
+  return new Uint8Array(await file.arrayBuffer());
 }
 
 export async function getImagePayload(

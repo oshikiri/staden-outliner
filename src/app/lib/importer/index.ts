@@ -1,14 +1,12 @@
-import * as fs from "fs";
-
 import { Block, parse } from "../markdown";
 import { File } from "../file";
 
-export function loadMarkdown(file: File): Block {
+export async function loadMarkdown(file: File): Promise<Block> {
   if (!file.path) {
     throw new Error(`File path is not defined for file: ${file.title}`);
   }
 
-  const markdown: string = fs.readFileSync(file.path || "", "utf8");
+  const markdown = await Bun.file(file.path).text();
   const pageBlock = parse(markdown);
 
   pageBlock.id = file.pageId;

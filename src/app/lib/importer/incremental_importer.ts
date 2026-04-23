@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 import { File, create as createFile } from "../file";
 import { Block } from "../markdown/block";
 import { getPageRefTitles } from "@/app/lib/markdown/utils";
@@ -48,10 +46,10 @@ export async function createNewFileWithEmptyBlock(
   file: File;
 }> {
   if (!pageId) {
-    pageId = randomUUID();
+    pageId = crypto.randomUUID();
   }
   const file = await createFile(title, pageId);
-  const child = new Block([], 1, []).withId(randomUUID());
+  const child = new Block([], 1, []).withId(crypto.randomUUID());
   const page = new Block([], 0, [child]).withId(pageId);
   child.parent = page;
 

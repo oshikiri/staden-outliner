@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 import { Block, create as createBlock } from "@/app/lib/markdown/block";
 import * as FileStore from "@/app/lib/file";
 import * as IncrementalImporter from "@/app/lib/importer/incremental_importer";
@@ -54,8 +52,11 @@ async function findPageByTitle(title: string): Promise<Block | null> {
   return createDraftPage(title, file.pageId);
 }
 
-function createDraftPage(title: string, pageId: string = randomUUID()): Block {
-  const child = new Block([], 1, []).withId(randomUUID());
+function createDraftPage(
+  title: string,
+  pageId: string = crypto.randomUUID(),
+): Block {
+  const child = new Block([], 1, []).withId(crypto.randomUUID());
   const page = new Block([], 0, [child]).withId(pageId);
 
   assignPageTreeMetadata(page, pageId, undefined);
@@ -74,7 +75,7 @@ function assignPageTreeMetadata(
     block.parent = undefined;
   } else {
     if (!block.id) {
-      block.id = randomUUID();
+      block.id = crypto.randomUUID();
     }
     block.parent = parent;
   }

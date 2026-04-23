@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import { statSync } from "node:fs";
+import path from "node:path";
 
 let cachedRoot: string | undefined;
 
@@ -9,9 +9,9 @@ function validateRoot(rawValue: string | undefined): string {
   }
 
   const resolved = path.resolve(rawValue);
-  let stats: fs.Stats;
+  let stats: ReturnType<typeof statSync>;
   try {
-    stats = fs.statSync(resolved);
+    stats = statSync(resolved);
   } catch {
     throw new Error(
       `The configured vault root path does not exist: ${resolved}`,
