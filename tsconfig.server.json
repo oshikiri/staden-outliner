@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["bun-types", "node"]
+  },
+  "include": [
+    "src/server/**/*.ts",
+    "src/app/api/**/*.ts",
+    "src/shared/**/*.ts",
+    "src/shared/**/*.tsx",
+    "src/global.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

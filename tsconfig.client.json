@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["bun-types", "node"]
+  },
+  "include": [
+    "src/client/**/*.ts",
+    "src/client/**/*.tsx",
+    "src/app/App.tsx",
+    "src/app/main.tsx",
+    "src/app/routes/**/*.ts",
+    "src/app/routes/**/*.tsx",
+    "src/app/pages/**/*.ts",
+    "src/app/pages/**/*.tsx",
+    "src/shared/**/*.ts",
+    "src/shared/**/*.tsx",
+    "src/global.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

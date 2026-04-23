@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,19 +11,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "types": ["bun-types", "node"],
     "incremental": true,
     "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
-  },
-  "include": [
-    "eslint.config.ts",
-    "playwright.config.ts",
-    "test/**/*.ts",
-    "e2e/**/*.ts",
-    "src/global.d.ts"
-  ],
-  "exclude": ["node_modules"]
+  }
 }
