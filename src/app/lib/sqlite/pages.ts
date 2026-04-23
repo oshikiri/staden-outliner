@@ -1,5 +1,5 @@
 import { File } from "../file";
-import { getDb, query } from ".";
+import { getDb, logSqliteQuery } from ".";
 import { chunk } from "../lodash";
 import { logInfo } from "../logger";
 
@@ -15,9 +15,9 @@ export async function initializePages() {
 }
 
 export async function getPageById(pageId: string): Promise<File | undefined> {
-  const result = await query(`SELECT * FROM pages WHERE id = ? LIMIT 1;`, [
-    pageId,
-  ]);
+  const sql = `SELECT * FROM pages WHERE id = ? LIMIT 1;`;
+  logSqliteQuery(sql, [pageId]);
+  const result = getDb().query<PageRow, string>(sql).all(pageId);
   if (result.length == 0) {
     return undefined;
   }
@@ -25,9 +25,9 @@ export async function getPageById(pageId: string): Promise<File | undefined> {
 }
 
 export async function getPageByTitle(title: string): Promise<File | undefined> {
-  const result = await query(`SELECT * FROM pages WHERE title = ? LIMIT 1;`, [
-    title,
-  ]);
+  const sql = `SELECT * FROM pages WHERE title = ? LIMIT 1;`;
+  logSqliteQuery(sql, [title]);
+  const result = getDb().query<PageRow, string>(sql).all(title);
   if (result.length == 0) {
     return undefined;
   }
@@ -41,17 +41,18 @@ export async function getPagesByTitles(titles: string[]): Promise<File[]> {
   }
 
   const placeholders = titles.map(() => "?").join(", ");
-  const result = await query(
-    `SELECT * FROM pages WHERE title IN (${placeholders});`,
-    titles,
-  );
+  const sql = `SELECT * FROM pages WHERE title IN (${placeholders});`;
+  logSqliteQuery(sql, titles);
+  const result = getDb()
+    .query<PageRow, string[]>(sql)
+    .all(...titles);
   return result.map(toFile);
 }
 
 export async function getPagesByPrefix(prefix: string): Promise<File[]> {
-  return (
-    await query(`SELECT * FROM pages where title like ?;`, [`${prefix}%`])
-  ).map(toFile);
+  const sql = `SELECT * FROM pages where title like ?;`;
+  logSqliteQuery(sql, [`${prefix}%`]);
+  return getDb().query<PageRow, string>(sql).all(`${prefix}%`).map(toFile);
 }
 
 export async function batchInsertFiles(files: File[], BATCH_SIZE: number) {
@@ -67,21 +68,28 @@ export async function batchInsertFiles(files: File[], BATCH_SIZE: number) {
 
 export async function putFile(file: File) {
   const db = getDb();
-  const insert = db.prepare(
+  const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );
-  insert.run(file.pageId, file.title, file.path);
+  if (!file.pageId) {
+    throw new Error("File pageId is not defined");
+  }
+
+  insert.run(file.pageId, file.title, file.path ?? null);
   return file;
 }
 
 async function insertFiles(files: File[]) {
   const db = getDb();
-  const insert = db.prepare(
+  const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );
   const insertMany = db.transaction((files: File[]) => {
     for (const file of files) {
-      insert.run(file.pageId, file.title, file.path);
+      if (!file.pageId) {
+        throw new Error("File pageId is not defined");
+      }
+      insert.run(file.pageId, file.title, file.path ?? null);
     }
   });
   insertMany(files);
@@ -90,13 +98,13 @@ async function insertFiles(files: File[]) {
 type PageRow = {
   id: string;
   title: string;
-  path: string;
+  path: string | null;
 };
 
 function toFile(page: PageRow): File {
   return {
     pageId: page.id,
     title: page.title,
-    path: page.path,
+    path: page.path ?? undefined,
   };
 }

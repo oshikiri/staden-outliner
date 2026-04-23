@@ -18,6 +18,17 @@ export type BlockInsertOptions = {
   pageIdByBlockId?: Map<string, string>;
 };
 
+export type BlockInsertRecord = [
+  string,
+  string,
+  string | null,
+  number,
+  number,
+  string,
+  string,
+  string,
+];
+
 export function createPageBlockFromRows(rows: BlockRecord[]): Block {
   if (rows.length === 0) {
     throw new Error("No blocks found");
@@ -62,7 +73,7 @@ export function createPageBlockFromRows(rows: BlockRecord[]): Block {
 export function toBlockInsertRecord(
   block: Block,
   options: BlockInsertOptions,
-): unknown[] | null {
+): BlockInsertRecord | null {
   if (!block.id) {
     return null;
   }

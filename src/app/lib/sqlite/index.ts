@@ -1,6 +1,6 @@
 import { Database as BunDatabase } from "bun:sqlite";
 import { getStadenRoot } from "../env/stadenRoot";
-import { logDebug, logError } from "../logger";
+import { logDebug } from "../logger";
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
@@ -10,29 +10,8 @@ export * from "./pages";
 export * from "./blocks";
 export * from "./links";
 
-type SqliteStatement = {
-  all: (...params: unknown[]) => any[];
-  get: (...params: unknown[]) => unknown;
-  run: (...params: unknown[]) => { lastInsertRowid: number; changes: number };
-};
-
-type SqliteDatabase = {
-  prepare: (sql: string) => SqliteStatement;
-  exec: (sql: string) => unknown;
-  transaction: <T extends (...args: any[]) => any>(
-    callback: T,
-  ) => T & {
-    deferred: T;
-    immediate: T;
-    exclusive: T;
-  };
-  close: () => void;
-};
-
-type SqliteDatabaseConstructor = new (filename: string) => SqliteDatabase;
-
-let db: SqliteDatabase | undefined;
-let databaseConstructorForTests: SqliteDatabaseConstructor | undefined;
+let db: BunDatabase | undefined;
+let databaseConstructorForTests: typeof BunDatabase | undefined;
 
 export function initializeAllTables() {
   const database = getDb();
@@ -47,24 +26,6 @@ export function initializeAllTables() {
     FROM blocks
     JOIN pages ON blocks.page_id = pages.id;
   `);
-}
-
-export async function query(
-  sql: string,
-  params: unknown[] = [],
-): Promise<any[]> {
-  logDebug(
-    "sqlite.query:",
-    sql.replace(/[\n\r]\s*/g, " ").replace(/^\s*/g, " "),
-    { paramCount: params.length },
-  );
-  try {
-    const database = getDb();
-    return database.prepare(sql).all(...params);
-  } catch (e) {
-    logError("Error executing query:", e);
-    throw e;
-  }
 }
 
 export async function open() {
@@ -87,7 +48,7 @@ export async function close() {
   db = undefined;
 }
 
-export function getDb(): SqliteDatabase {
+export function getDb(): BunDatabase {
   if (!db) {
     const stadenRoot = getStadenRoot();
     const Database = loadDatabaseConstructor();
@@ -98,7 +59,7 @@ export function getDb(): SqliteDatabase {
 }
 
 export function __setDatabaseConstructorForTests(
-  constructor: SqliteDatabaseConstructor | undefined,
+  constructor: typeof BunDatabase | undefined,
 ): void {
   databaseConstructorForTests = constructor;
 }
@@ -107,9 +68,17 @@ export function __resetDbForTests(): void {
   db = undefined;
 }
 
-function loadDatabaseConstructor(): SqliteDatabaseConstructor {
+export function logSqliteQuery(sql: string, params: readonly unknown[]): void {
+  logDebug(
+    "sqlite.query:",
+    sql.replace(/[\n\r]\s*/g, " ").replace(/^\s*/g, " "),
+    { params },
+  );
+}
+
+function loadDatabaseConstructor(): typeof BunDatabase {
   if (databaseConstructorForTests) {
     return databaseConstructorForTests;
   }
-  return BunDatabase as unknown as SqliteDatabaseConstructor;
+  return BunDatabase;
 }

@@ -1,8 +1,10 @@
 import { Block } from "../markdown";
 import { chunk } from "../lodash";
-import { getDb, query } from ".";
+import { getDb, logSqliteQuery } from ".";
 import {
+  BlockRecord,
   BlockInsertOptions,
+  BlockInsertRecord,
   createPageBlockFromRows,
   toBlockInsertRecord,
 } from "./blockRecordMapper";
@@ -26,15 +28,14 @@ export async function initializeBlocks() {
 }
 
 export async function getPageBlockById(pageId: string): Promise<Block> {
-  const blocks = await query(
-    `
+  const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks
     LEFT JOIN pages ON pages.id = blocks.page_id
     WHERE pages.id = ?;
-  `,
-    [pageId],
-  );
+  `;
+  logSqliteQuery(sql, [pageId]);
+  const blocks = getDb().query<BlockRecord, string>(sql).all(pageId);
 
   const rootBlock = createPageBlockFromRows(blocks);
   return rootBlock;
@@ -43,15 +44,14 @@ export async function getPageBlockById(pageId: string): Promise<Block> {
 export async function getPageBlockByTitle(
   title: string,
 ): Promise<Block | undefined> {
-  const blocks = await query(
-    `
+  const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks
     LEFT JOIN pages ON pages.id = blocks.page_id
     WHERE pages.title = ?;
-  `,
-    [title],
-  );
+  `;
+  logSqliteQuery(sql, [title]);
+  const blocks = getDb().query<BlockRecord, string>(sql).all(title);
 
   if (blocks.length == 0) {
     return undefined;
@@ -70,15 +70,14 @@ export async function getBlockById(id: string): Promise<Block> {
 }
 
 export async function getCurrentPage(childId: string): Promise<Block> {
-  const blocks = await query(
-    `
+  const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks
     LEFT JOIN pages ON pages.id = blocks.page_id
     WHERE blocks.page_id = (SELECT page_id FROM blocks WHERE id = ?);
-  `,
-    [childId],
-  );
+  `;
+  logSqliteQuery(sql, [childId]);
+  const blocks = getDb().query<BlockRecord, string>(sql).all(childId);
   if (blocks.length == 0) {
     throw new Error(`Block not found for pageId: ${childId}`);
   }
@@ -103,7 +102,7 @@ export async function batchInsertBlocks(
 
 async function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
   const db = getDb();
-  const insert = db.prepare(`
+  const insert = db.prepare<unknown, BlockInsertRecord>(`
     REPLACE INTO blocks
       (id, page_id, parent_id, depth, order_index, content, content_markdown, properties)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -115,7 +114,7 @@ async function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
         continue;
       }
 
-      insert.run(record);
+      insert.run(...record);
     }
   });
   insertMany(blocks);

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import { Database as BunDatabase } from "bun:sqlite";
 
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
@@ -21,7 +22,9 @@ let importCounter = 0;
 
 async function loadSqliteModule() {
   const module = await import(`./index.ts?test=${importCounter++}`);
-  module.__setDatabaseConstructorForTests(databaseConstructorMock);
+  module.__setDatabaseConstructorForTests(
+    databaseConstructorMock as unknown as typeof BunDatabase,
+  );
   return module;
 }
 

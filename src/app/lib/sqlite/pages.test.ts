@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
-const queryMock = jest.fn();
+const queryAllMock = jest.fn();
+const queryMock = jest.fn(() => ({
+  all: queryAllMock,
+}));
 
 mock.module("./index", () => ({
-  getDb: jest.fn(),
-  query: queryMock,
+  getDb: jest.fn(() => ({
+    query: queryMock,
+  })),
 }));
 
 import { getPagesByTitles } from "./pages";
@@ -20,7 +24,7 @@ describe("sqlite/pages", () => {
   });
 
   test("getPagesByTitles builds placeholders for each title", async () => {
-    queryMock.mockResolvedValue([
+    queryAllMock.mockReturnValue([
       {
         id: "page-1",
         title: "Page",
@@ -38,7 +42,7 @@ describe("sqlite/pages", () => {
 
     expect(queryMock).toHaveBeenCalledWith(
       "SELECT * FROM pages WHERE title IN (?, ?);",
-      ["Page", "Other"],
     );
+    expect(queryAllMock).toHaveBeenCalledWith("Page", "Other");
   });
 });

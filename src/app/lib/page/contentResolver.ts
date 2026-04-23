@@ -7,8 +7,10 @@ import {
 } from "@/app/lib/markdown/token";
 import {
   getBlockById as getBlockByIdDb,
-  query as sqliteQuery,
+  getDb,
+  logSqliteQuery,
 } from "@/app/lib/sqlite";
+import type { SQLQueryBindings } from "bun:sqlite";
 import { logDebug } from "../logger";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
@@ -76,10 +78,11 @@ async function resolveCommandQuery(
 
   const query = code.textContent;
   const queryExecutionStart = Date.now();
-  const rows = await sqliteQuery(query);
+  logSqliteQuery(query, []);
+  const rows = getDb().query<unknown, SQLQueryBindings[]>(query).all();
   command.queryExecutionMilliseconds = Date.now() - queryExecutionStart;
   if (rows) {
-    command.resolvedBlocks = rows;
+    command.resolvedBlocks = rows as Block[];
   }
 
   const vlJsonCodeBlock = block.children[1]?.content?.[0];

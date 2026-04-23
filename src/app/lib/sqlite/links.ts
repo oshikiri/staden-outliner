@@ -1,4 +1,4 @@
-import { getDb, query } from ".";
+import { getDb, logSqliteQuery } from ".";
 
 export async function initializeLinks() {
   const db = getDb();
@@ -16,15 +16,16 @@ export async function initializeLinks() {
 export async function getSourceLinks(
   targetPageTitle: string,
 ): Promise<string[]> {
-  const links = await query(
-    `
+  const sql = `
     SELECT links.*
     FROM links
     JOIN blocks_p AS to_blocks ON links.to_id = to_blocks.id
     WHERE to_blocks.page_title = ?;
-    `,
-    [targetPageTitle],
-  );
+    `;
+  logSqliteQuery(sql, [targetPageTitle]);
+  const links = getDb()
+    .query<{ from_id: string }, string>(sql)
+    .all(targetPageTitle);
   return links.map((link: any) => link.from_id);
 }
 
