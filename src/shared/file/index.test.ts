@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { extractTitle, create } from ".";
+import { create } from ".";
 
 describe("create", () => {
   test("returns a file object", async () => {
@@ -8,11 +8,5 @@ describe("create", () => {
       title: "test",
       pageId: "test-uuid",
     });
-  });
-});
-
-describe("extractTitle", () => {
-  test("replaces `_` with `-` for journal pages", () => {
-    expect(extractTitle("staden/journals/2023_01_23.md")).toBe("2023-01-23");
   });
 });

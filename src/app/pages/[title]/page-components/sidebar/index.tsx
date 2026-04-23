@@ -1,7 +1,7 @@
 import { JSX, useState } from "react";
 
-import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
-import { StadenDate } from "@/app/lib/date";
+import { PageRef as PageRefEntity } from "@/shared/markdown/token";
+import { StadenDate } from "@/shared/date";
 import { systemRpc } from "@/app/api/rpc/system";
 import { PageRef } from "../../token";
 import { JournalCalender } from "./Calender";
@@ -9,7 +9,7 @@ import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
-import { logError } from "@/app/lib/logger";
+import { logError } from "@/shared/logger";
 import { isAbortError } from "@/app/lib/client/request";
 import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
 

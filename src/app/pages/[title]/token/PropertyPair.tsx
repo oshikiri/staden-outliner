@@ -5,7 +5,7 @@ import {
   Text as TextEntity,
   PropertyPair as PropertyPairEntity,
   PageRef as PageRefEntity,
-} from "@/app/lib/markdown/token";
+} from "@/shared/markdown/token";
 
 function isText(token: TokenEntity): token is TextEntity {
   return token instanceof TextEntity;

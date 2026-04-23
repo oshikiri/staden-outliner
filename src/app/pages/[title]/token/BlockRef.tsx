@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { Token } from ".";
-import { BlockRef as BlockRefEntity } from "@/app/lib/markdown/token";
+import { BlockRef as BlockRefEntity } from "@/shared/markdown/token";
 
 export function BlockRef({ token }: { token: BlockRefEntity }): JSX.Element {
   return (

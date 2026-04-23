@@ -1,5 +1,5 @@
-import { Block, create as createBlock } from "@/app/lib/markdown/block";
-import * as FileStore from "@/app/lib/file";
+import { Block, create as createBlock } from "@/shared/markdown/block";
+import * as FileStore from "@/shared/file";
 import * as IncrementalImporter from "@/server/lib/importer/incremental_importer";
 import * as PageBlocks from "@/server/lib/sqlite/blocks";
 import * as PageStore from "@/server/lib/sqlite/pages";

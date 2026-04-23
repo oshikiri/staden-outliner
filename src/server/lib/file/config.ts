@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { isConfigs, type Configs } from "@/app/lib/file/config";
+import { isConfigs, type Configs } from "@/shared/file/config";
 import { getStadenRoot } from "@/server/lib/env/stadenRoot";
 
 export async function getAllConfigs(): Promise<Configs> {

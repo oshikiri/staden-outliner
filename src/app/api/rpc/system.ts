@@ -1,7 +1,7 @@
-import type { Configs } from "@/app/lib/file/config";
-import { isConfigs } from "@/app/lib/file/config";
-import type { File } from "@/app/lib/file";
-import { isFile } from "@/app/lib/file";
+import type { Configs } from "@/shared/file/config";
+import { isConfigs } from "@/shared/file/config";
+import type { File } from "@/shared/file";
+import { isFile } from "@/shared/file";
 import type { InferRequestType } from "hono/client";
 
 import { client } from "./client";

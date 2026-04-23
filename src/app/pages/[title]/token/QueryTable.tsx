@@ -1,12 +1,12 @@
 import { JSX } from "react";
 
-import { Block } from "@/app/lib/markdown/block";
+import { Block } from "@/shared/markdown/block";
 import { Token } from ".";
 import {
   PageRef as PageRefEntity,
   Token as TokenEntity,
   createToken,
-} from "@/app/lib/markdown/token";
+} from "@/shared/markdown/token";
 import { PageRef as PageRefComponent } from ".";
 
 export function QueryTable({ data }: { data: Block[] }): JSX.Element {

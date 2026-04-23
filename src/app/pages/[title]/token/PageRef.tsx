@@ -1,4 +1,4 @@
-import { PageRef as PageRefEntity } from "@/app/lib/markdown/token";
+import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 import { usePageNavigation } from "../navigation";
 
 export function PageRef({ pageref }: { pageref: PageRefEntity }) {

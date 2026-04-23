@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
-import { Block } from "@/app/lib/markdown/block";
-import { Text } from "@/app/lib/markdown/token";
+import { Block } from "@/shared/markdown/block";
+import { Text } from "@/shared/markdown/token";
 const getSourceLinksMock = jest.fn();
 const getCurrentPageMock = jest.fn();
 

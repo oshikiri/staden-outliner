@@ -1,5 +1,3 @@
-import path from "node:path";
-
 export interface File {
   path?: string;
   title: string;
@@ -25,16 +23,4 @@ export async function create(title: string, pageId: string): Promise<File> {
     pageId,
   };
   return file;
-}
-
-export function extractTitle(filePath: string): string {
-  const filename = path.basename(filePath);
-  // TODO: handle meta characters in filename
-  const title = filename
-    .replace(/\.md$/i, "")
-    .replaceAll("_", "-")
-    .replaceAll("%20", " ")
-    .replaceAll("%3A", ":")
-    .replaceAll("%2F", "/");
-  return title;
 }

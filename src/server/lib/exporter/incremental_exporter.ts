@@ -1,8 +1,8 @@
 import { getPageBlockById, putFile } from "../sqlite";
 import { getPageByTitle } from "../sqlite/pages";
-import { Block } from "@/app/lib/markdown/block";
+import { Block } from "@/shared/markdown/block";
 import { updateFile, fillPathToFile } from "../file";
-import { logInfo } from "@/app/lib/logger";
+import { logInfo } from "@/shared/logger";
 
 export async function exportOnePageToMarkdown(
   pageTitle: string,

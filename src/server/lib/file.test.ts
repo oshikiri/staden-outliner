@@ -1,17 +1,23 @@
 import { describe, expect, test } from "bun:test";
 
-import { getLocalFile, listAllFilePaths } from "./file";
+import { extractTitle, getLocalFile, listAllFilePaths } from "./file";
 
 describe("listAllFilePaths", () => {
   test("returns descendant file", async () => {
-    const paths = await listAllFilePaths("src/app/lib/file/fixtures/");
-    expect(paths).toContain("src/app/lib/file/fixtures/d/d-1.md");
+    const paths = await listAllFilePaths("src/shared/file/fixtures/");
+    expect(paths).toContain("src/shared/file/fixtures/d/d-1.md");
   });
 });
 
 describe("getLocalFile", () => {
   test("returns the file content", () => {
-    const data = getLocalFile("src/app/lib/file/fixtures/a.md");
+    const data = getLocalFile("src/shared/file/fixtures/a.md");
     expect(data.toString()).toBe("- [[b]]\n");
+  });
+});
+
+describe("extractTitle", () => {
+  test("replaces `_` with `-` for journal pages", () => {
+    expect(extractTitle("staden/journals/2023_01_23.md")).toBe("2023-01-23");
   });
 });

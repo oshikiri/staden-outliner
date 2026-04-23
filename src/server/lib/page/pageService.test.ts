@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, jest, test } from "bun:test";
 
-import * as FileStore from "@/app/lib/file";
+import * as FileStore from "@/shared/file";
 import * as IncrementalImporter from "../importer/incremental_importer";
-import { Block } from "@/app/lib/markdown/block";
+import { Block } from "@/shared/markdown/block";
 import * as PageBlocks from "../sqlite/blocks";
 import * as PageStore from "../sqlite/pages";
 

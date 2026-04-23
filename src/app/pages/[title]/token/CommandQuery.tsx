@@ -1,6 +1,6 @@
 import { JSX, useRef, useEffect } from "react";
 import { QueryTable } from "./QueryTable";
-import { CommandQuery as CommandQueryEntity } from "@/app/lib/markdown/token";
+import { CommandQuery as CommandQueryEntity } from "@/shared/markdown/token";
 
 export function CommandQuery({
   token,

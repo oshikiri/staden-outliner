@@ -4,7 +4,7 @@ import { constants as fsConstants } from "node:fs";
 
 import tailwindcss from "@tailwindcss/postcss";
 import postcss from "postcss";
-import { logError } from "@/app/lib/logger";
+import { logError } from "@/shared/logger";
 
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");

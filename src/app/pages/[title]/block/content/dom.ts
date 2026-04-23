@@ -1,4 +1,4 @@
-import { logError } from "@/app/lib/logger";
+import { logError } from "@/shared/logger";
 
 export function extractTextContent(content: HTMLDivElement | null): string {
   if (!content) {

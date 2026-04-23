@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import { Block as BlockEntity } from "@/shared/markdown/block";
 
 interface PageState {
   page: BlockEntity | null;

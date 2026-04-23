@@ -1,6 +1,6 @@
 import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
 import { close, open } from "@/server/lib/sqlite";
-import { logError } from "@/app/lib/logger";
+import { logError } from "@/shared/logger";
 
 import { createWebServer } from "./web";
 import { createShutdownHandler } from "./shutdown";

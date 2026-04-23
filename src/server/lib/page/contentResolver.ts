@@ -1,17 +1,17 @@
-import { Block } from "@/app/lib/markdown";
+import { Block } from "@/shared/markdown";
 import {
   BlockRef,
   CodeBlock,
   Command,
   CommandQuery,
-} from "@/app/lib/markdown/token";
+} from "@/shared/markdown/token";
 import {
   getBlockById as getBlockByIdDb,
   getDb,
   logSqliteQuery,
 } from "@/server/lib/sqlite";
 import type { SQLQueryBindings } from "bun:sqlite";
-import { logDebug } from "@/app/lib/logger";
+import { logDebug } from "@/shared/logger";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);

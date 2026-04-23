@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Link as LinkEntity } from "@/app/lib/markdown/token";
+import { Link as LinkEntity } from "@/shared/markdown/token";
 
 export function Link({ token }: { token: LinkEntity }): JSX.Element {
   const url = token.url;

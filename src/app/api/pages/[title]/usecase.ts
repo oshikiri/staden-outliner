@@ -3,7 +3,7 @@ import {
   type PageRouteRequestBody,
   type PageRouteResponseBody,
 } from "./contracts";
-import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
+import { fromBlockDto, toPageDto } from "@/shared/markdown/blockDto";
 import {
   getPageByTitle,
   updatePageByTitle,

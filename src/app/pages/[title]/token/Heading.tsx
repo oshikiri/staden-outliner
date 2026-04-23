@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { Token } from ".";
-import { Heading as HeadingEntity } from "@/app/lib/markdown/token";
+import { Heading as HeadingEntity } from "@/shared/markdown/token";
 
 export function Heading({ token }: { token: HeadingEntity }): JSX.Element {
   return (

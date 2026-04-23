@@ -1,7 +1,7 @@
 import { JSX } from "react";
 
-import * as entity from "@/app/lib/markdown/token";
-import { logWarn } from "@/app/lib/logger";
+import * as entity from "@/shared/markdown/token";
+import { logWarn } from "@/shared/logger";
 
 import { BlockRef } from "./BlockRef";
 import { CodeBlock } from "./CodeBlock";

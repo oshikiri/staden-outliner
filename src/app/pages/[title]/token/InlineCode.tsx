@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { InlineCode as InlineCodeEntity } from "@/app/lib/markdown/token";
+import { InlineCode as InlineCodeEntity } from "@/shared/markdown/token";
 
 export function InlineCode({
   token,

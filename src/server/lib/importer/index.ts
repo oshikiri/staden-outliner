@@ -1,5 +1,5 @@
-import { Block, parse } from "@/app/lib/markdown";
-import type { File } from "@/app/lib/file";
+import { Block, parse } from "@/shared/markdown";
+import type { File } from "@/shared/file";
 
 export async function loadMarkdown(file: File): Promise<Block> {
   if (!file.path) {

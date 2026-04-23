@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
-import { logWarn } from "./lib/logger";
+import { logWarn } from "@/shared/logger";
 
 const root = document.getElementById("root");
 

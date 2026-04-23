@@ -1,7 +1,7 @@
-import { Block } from "@/app/lib/markdown";
-import { getContentMarkdown } from "@/app/lib/markdown/block";
-import { createToken } from "@/app/lib/markdown/token";
-import { type BlockPropertyDto } from "@/app/lib/markdown/blockDto";
+import { Block } from "@/shared/markdown";
+import { getContentMarkdown } from "@/shared/markdown/block";
+import { createToken } from "@/shared/markdown/token";
+import { type BlockPropertyDto } from "@/shared/markdown/blockDto";
 
 export type BlockRecord = {
   id: string;

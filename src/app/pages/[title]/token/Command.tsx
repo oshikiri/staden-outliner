@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { Token } from ".";
-import { Command as CommandEntity } from "@/app/lib/markdown/token";
-import { logWarn } from "@/app/lib/logger";
+import { Command as CommandEntity } from "@/shared/markdown/token";
+import { logWarn } from "@/shared/logger";
 
 export function Command({
   token,

@@ -3,7 +3,7 @@ import { constants as fsConstants } from "node:fs";
 import { join, normalize, resolve } from "node:path";
 
 import { honoApiApp } from "@/app/api/hono/app";
-import { logInfo } from "@/app/lib/logger";
+import { logInfo } from "@/shared/logger";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 3000;

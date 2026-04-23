@@ -1,4 +1,4 @@
-import { appendRecentPage } from "../recentPages";
+import { appendRecentPage } from "@/shared/recentPages";
 
 export const RECENT_PAGES_STORAGE_KEY = "staden.recentPages";
 

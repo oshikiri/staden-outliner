@@ -1,6 +1,6 @@
 import { JSX } from "react";
 
-import { Quote as QuoteEntity } from "@/app/lib/markdown/token";
+import { Quote as QuoteEntity } from "@/shared/markdown/token";
 import { Token } from ".";
 
 export function Quote({ token }: { token: QuoteEntity }): JSX.Element {

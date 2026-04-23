@@ -3,7 +3,7 @@ import { JSX } from "react";
 import {
   Block as BlockEntity,
   create as createBlock,
-} from "@/app/lib/markdown/block";
+} from "@/shared/markdown/block";
 import { Bullet } from "./bullet";
 import { Content } from "./content";
 

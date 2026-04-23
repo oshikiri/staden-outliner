@@ -1,7 +1,7 @@
-import { File, create as createFile } from "@/app/lib/file";
-import { Block } from "@/app/lib/markdown/block";
-import { getPageRefTitles } from "@/app/lib/markdown/utils";
-import { logDebug } from "@/app/lib/logger";
+import { File, create as createFile } from "@/shared/file";
+import { Block } from "@/shared/markdown/block";
+import { getPageRefTitles } from "@/shared/markdown/utils";
+import { logDebug } from "@/shared/logger";
 
 import {
   batchInsertLinks,

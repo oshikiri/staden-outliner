@@ -12,7 +12,7 @@ import {
   applyContentMarkdown,
   Block as BlockEntity,
   getContentMarkdown,
-} from "@/app/lib/markdown/block";
+} from "@/shared/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
 import { Token } from "../../token";
 import { useStore } from "../../state";
@@ -25,7 +25,7 @@ import {
   extractTextContent,
   setCursor,
 } from "./dom";
-import { logDebug, logError } from "@/app/lib/logger";
+import { logDebug, logError } from "@/shared/logger";
 
 // eslint-disable-next-line max-lines-per-function
 export function Content({

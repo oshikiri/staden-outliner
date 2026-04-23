@@ -1,6 +1,6 @@
 import { JSX } from "react";
 
-import { Image as ImageEntity } from "@/app/lib/markdown/token";
+import { Image as ImageEntity } from "@/shared/markdown/token";
 
 export function Image({ token }: { token: ImageEntity }): JSX.Element {
   return (

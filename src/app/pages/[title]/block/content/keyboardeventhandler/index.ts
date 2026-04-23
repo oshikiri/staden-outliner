@@ -3,9 +3,9 @@ import { KeyboardEventHandler, KeyboardEvent, RefObject } from "react";
 import {
   applyContentMarkdown,
   Block as BlockEntity,
-} from "@/app/lib/markdown/block";
+} from "@/shared/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
-import { logDebug, logError, logWarn } from "@/app/lib/logger";
+import { logDebug, logError, logWarn } from "@/shared/logger";
 import { extractTextContent } from "../dom";
 import * as caret from "./caret";
 import * as dom from "./dom";

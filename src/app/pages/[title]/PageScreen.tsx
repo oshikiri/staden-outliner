@@ -1,13 +1,13 @@
 import { JSX, useEffect } from "react";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import { Block as BlockEntity } from "@/shared/markdown/block";
 import Block from "./block";
 import { BacklinksContainer } from "./page-components/Backlink";
 import { SideBar } from "./page-components/sidebar";
 import { PageNavigationProvider } from "./navigation";
 import { useStore } from "./state";
 import { pageRpc } from "@/app/api/rpc/page";
-import { logDebug, logError } from "@/app/lib/logger";
+import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/app/lib/client/request";
 
 // eslint-disable-next-line max-lines-per-function

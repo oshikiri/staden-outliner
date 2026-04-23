@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
 import { getStadenRoot } from "./env/stadenRoot";
-import type { File } from "@/app/lib/file";
+import type { File } from "@/shared/file";
 
 // https://blog.araya.dev/posts/2019-05-09-node-recursive-readdir/
 function readdirRecursively(rootDir: string): string[] {
@@ -40,6 +40,18 @@ export async function listAllFilePaths(
 export function getLocalFile(path: string) {
   const data = readFileSync(path);
   return data;
+}
+
+export function extractTitle(filePath: string): string {
+  const filename = path.basename(filePath);
+  // TODO: handle meta characters in filename
+  const title = filename
+    .replace(/\.md$/i, "")
+    .replaceAll("_", "-")
+    .replaceAll("%20", " ")
+    .replaceAll("%3A", ":")
+    .replaceAll("%2F", "/");
+  return title;
 }
 
 export function updateFile(file: File, content: string): Promise<void> {

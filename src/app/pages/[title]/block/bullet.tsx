@@ -4,11 +4,11 @@ import {
   applyContentMarkdown,
   Block as BlockEntity,
   getContentMarkdown,
-} from "@/app/lib/markdown/block";
+} from "@/shared/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
-import { flipCollapsed } from "@/app/lib/markdown/utils";
+import { flipCollapsed } from "@/shared/markdown/utils";
 import { useStore } from "../state";
-import { logError, logDebug } from "@/app/lib/logger";
+import { logError, logDebug } from "@/shared/logger";
 
 export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
   const page = useStore((state) => state.page) || new BlockEntity([], 0, []);

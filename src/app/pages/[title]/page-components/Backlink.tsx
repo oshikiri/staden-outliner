@@ -1,11 +1,11 @@
 import { JSX, useState } from "react";
 
-import { Block as BlockEntity } from "@/app/lib/markdown/block";
+import { Block as BlockEntity } from "@/shared/markdown/block";
 import { pageRpc } from "@/app/api/rpc/page";
-import { PageRef } from "@/app/lib/markdown/token";
+import { PageRef } from "@/shared/markdown/token";
 import { Token } from "../token";
 import Block from "../block";
-import { logDebug, logError } from "@/app/lib/logger";
+import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/app/lib/client/request";
 import { useAbortableEffect } from "@/app/lib/client/useAbortableEffect";
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { StadenDate } from "@/app/lib/date";
+import { StadenDate } from "@/shared/date";
 
 export function HomeRoute() {
   const navigate = useNavigate();

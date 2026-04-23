@@ -1,10 +1,10 @@
-import type { Block as BlockEntity } from "@/app/lib/markdown/block";
+import type { Block as BlockEntity } from "@/shared/markdown/block";
 import {
   type BlockDto,
   fromBlockDto,
   isBlockDto,
   toPageDto,
-} from "@/app/lib/markdown/blockDto";
+} from "@/shared/markdown/blockDto";
 import { type InferResponseType } from "hono/client";
 
 import { client } from "./client";
