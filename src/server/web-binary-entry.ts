@@ -1,5 +1,5 @@
-import { readStadenRoot, setStadenRoot } from "@/app/lib/env/stadenRoot";
-import { close, open } from "@/app/lib/sqlite";
+import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
+import { close, open } from "@/server/lib/sqlite";
 import { logError } from "@/app/lib/logger";
 
 import { createWebServer } from "./web";

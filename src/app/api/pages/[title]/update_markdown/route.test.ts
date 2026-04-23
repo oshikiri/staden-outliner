@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const exportOnePageToMarkdownMock = jest.fn();
 
-mock.module("@/app/lib/exporter/incremental_exporter", () => ({
+mock.module("@/server/lib/exporter/incremental_exporter", () => ({
   exportOnePageToMarkdown: exportOnePageToMarkdownMock,
 }));
 

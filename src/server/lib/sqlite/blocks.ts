@@ -1,5 +1,5 @@
-import { Block } from "../markdown";
-import { chunk } from "../lodash";
+import { Block } from "@/app/lib/markdown";
+import { chunk } from "@/app/lib/lodash";
 import { getDb, logSqliteQuery } from ".";
 import {
   BlockRecord,
@@ -8,7 +8,7 @@ import {
   createPageBlockFromRows,
   toBlockInsertRecord,
 } from "./blockRecordMapper";
-import { logInfo } from "../logger";
+import { logInfo } from "@/app/lib/logger";
 
 export async function initializeBlocks() {
   const db = getDb();

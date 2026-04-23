@@ -1,7 +1,7 @@
-import { File } from "../file";
+import type { File } from "@/app/lib/file";
 import { getDb, logSqliteQuery } from ".";
-import { chunk } from "../lodash";
-import { logInfo } from "../logger";
+import { chunk } from "@/app/lib/lodash";
+import { logInfo } from "@/app/lib/logger";
 
 export async function initializePages() {
   const db = getDb();

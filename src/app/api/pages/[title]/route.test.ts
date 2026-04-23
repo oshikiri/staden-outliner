@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import { Block } from "@/app/lib/markdown/block";
 import { Marker, Text } from "@/app/lib/markdown/token";
-import * as PageService from "@/app/lib/page/pageService";
+import * as PageService from "@/server/lib/page/pageService";
 
 import { honoApiApp } from "@/app/api/hono/app";
 

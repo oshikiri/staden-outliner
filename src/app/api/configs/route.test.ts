@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const getAllConfigsMock = jest.fn();
 
-mock.module("@/app/lib/file/config", () => ({
+mock.module("@/server/lib/file/config", () => ({
   getAllConfigs: getAllConfigsMock,
 }));
 

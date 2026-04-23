@@ -1,4 +1,4 @@
-import { readStadenRoot, setStadenRoot } from "@/app/lib/env/stadenRoot";
+import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
 import { createWebServer } from "./web";
 
 setStadenRoot(readStadenRoot(process.argv.slice(2)));

@@ -3,8 +3,8 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
 
-import { getAllConfigs } from "@/app/lib/file/config";
-import { exportOnePageToMarkdown } from "@/app/lib/exporter/incremental_exporter";
+import { getAllConfigs } from "@/server/lib/file/config";
+import { exportOnePageToMarkdown } from "@/server/lib/exporter/incremental_exporter";
 import { getImagePayload } from "@/app/api/images/usecase";
 import { isBlockDto } from "@/app/lib/markdown/blockDto";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@/app/api/pages/[title]/contracts";
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
 import { getPagePayload } from "@/app/api/pages/[title]/usecase";
-import { getPagesByPrefix } from "@/app/lib/sqlite/pages";
+import { getPagesByPrefix } from "@/server/lib/sqlite/pages";
 import { updatePagePayload } from "@/app/api/pages/[title]/usecase";
 
 import {

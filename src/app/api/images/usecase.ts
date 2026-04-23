@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { getStadenRoot } from "@/app/lib/env/stadenRoot";
+import { getStadenRoot } from "@/server/lib/env/stadenRoot";
 
 type ImageSuccess = {
   ok: true;

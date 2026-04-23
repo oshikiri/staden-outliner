@@ -4,7 +4,10 @@ import {
   type PageRouteResponseBody,
 } from "./contracts";
 import { fromBlockDto, toPageDto } from "@/app/lib/markdown/blockDto";
-import { getPageByTitle, updatePageByTitle } from "@/app/lib/page/pageService";
+import {
+  getPageByTitle,
+  updatePageByTitle,
+} from "@/server/lib/page/pageService";
 
 export async function getPagePayload(
   title: string,

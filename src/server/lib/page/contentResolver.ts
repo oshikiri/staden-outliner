@@ -9,9 +9,9 @@ import {
   getBlockById as getBlockByIdDb,
   getDb,
   logSqliteQuery,
-} from "@/app/lib/sqlite";
+} from "@/server/lib/sqlite";
 import type { SQLQueryBindings } from "bun:sqlite";
-import { logDebug } from "../logger";
+import { logDebug } from "@/app/lib/logger";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);

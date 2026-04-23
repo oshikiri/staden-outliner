@@ -1,15 +1,15 @@
-import { File, create as createFile } from "../file";
-import { Block } from "../markdown/block";
+import { File, create as createFile } from "@/app/lib/file";
+import { Block } from "@/app/lib/markdown/block";
 import { getPageRefTitles } from "@/app/lib/markdown/utils";
-import { logDebug } from "../logger";
+import { logDebug } from "@/app/lib/logger";
 
 import {
   batchInsertLinks,
   deleteLinksByFromId,
   getPagesByTitles,
-} from "@/app/lib/sqlite";
-import { putFile } from "@/app/lib/sqlite/pages";
-import { batchInsertBlocks } from "../sqlite/blocks";
+} from "@/server/lib/sqlite";
+import { putFile } from "@/server/lib/sqlite/pages";
+import { batchInsertBlocks } from "@/server/lib/sqlite/blocks";
 
 export async function importBlockRecursive(block: Block): Promise<Block> {
   const pageId = block.id;

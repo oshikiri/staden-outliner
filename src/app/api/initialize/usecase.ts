@@ -1,5 +1,5 @@
-import * as sqlite from "../../lib/sqlite";
-import { logInfo } from "../../lib/logger";
+import * as sqlite from "@/server/lib/sqlite";
+import { logInfo } from "@/app/lib/logger";
 
 export async function initializeDatabase(): Promise<void> {
   logInfo("Initializing database...");
@@ -8,7 +8,8 @@ export async function initializeDatabase(): Promise<void> {
   try {
     sqlite.initializeAllTables();
 
-    const { BulkImporter } = await import("../../lib/importer/bulk_importer");
+    const { BulkImporter } =
+      await import("@/server/lib/importer/bulk_importer");
     const importer = new BulkImporter();
     const { blocks, pageIdByBlockId, files, links } = await importer.run();
 

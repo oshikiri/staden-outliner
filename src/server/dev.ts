@@ -2,7 +2,7 @@ import { watch, type FSWatcher } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 
-import { readStadenRoot, setStadenRoot } from "@/app/lib/env/stadenRoot";
+import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
 
 import { buildWeb } from "./build-web";
 import { createWebServer } from "./web";

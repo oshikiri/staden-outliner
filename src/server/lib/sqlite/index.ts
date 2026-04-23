@@ -1,6 +1,6 @@
 import { Database as BunDatabase } from "bun:sqlite";
 import { getStadenRoot } from "../env/stadenRoot";
-import { logDebug } from "../logger";
+import { logDebug } from "@/app/lib/logger";
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";

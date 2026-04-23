@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
-import { Block } from "./../markdown/block";
-import { Text } from "./../markdown/token";
+import { Block } from "@/app/lib/markdown/block";
+import { Text } from "@/app/lib/markdown/token";
 import {
   convertToMarkdownRecursive,
   getContentMarkdown,

@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const getStadenRootMock = jest.fn(() => "/staden");
 
-mock.module("@/app/lib/env/stadenRoot", () => ({
+mock.module("@/server/lib/env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 

@@ -5,7 +5,7 @@ import { Text } from "@/app/lib/markdown/token";
 const getSourceLinksMock = jest.fn();
 const getCurrentPageMock = jest.fn();
 
-mock.module("@/app/lib/sqlite", () => ({
+mock.module("@/server/lib/sqlite", () => ({
   getSourceLinks: getSourceLinksMock,
   getCurrentPage: getCurrentPageMock,
 }));

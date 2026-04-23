@@ -8,7 +8,7 @@ const openMock = jest.fn();
 const closeMock = jest.fn();
 const runMock = jest.fn();
 
-mock.module("../../lib/sqlite", () => ({
+mock.module("@/server/lib/sqlite", () => ({
   open: openMock,
   close: closeMock,
   initializeAllTables: initializeAllTablesMock,
@@ -17,7 +17,7 @@ mock.module("../../lib/sqlite", () => ({
   batchInsertLinks: batchInsertLinksMock,
 }));
 
-mock.module("../../lib/importer/bulk_importer", () => ({
+mock.module("@/server/lib/importer/bulk_importer", () => ({
   BulkImporter: jest.fn().mockImplementation(() => ({
     run: runMock,
   })),

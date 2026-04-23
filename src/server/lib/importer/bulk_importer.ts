@@ -1,9 +1,10 @@
 import { loadMarkdown } from ".";
-import { Block, Token } from "../markdown";
-import { getPageRefTitles } from "../markdown/utils";
-import { File, extractTitle, listAllFilePaths } from "../file";
-import { getStadenRoot } from "../env/stadenRoot";
-import { logInfo } from "../logger";
+import { Block, Token } from "@/app/lib/markdown";
+import { getPageRefTitles } from "@/app/lib/markdown/utils";
+import { File, extractTitle } from "@/app/lib/file";
+import { listAllFilePaths } from "@/server/lib/file";
+import { getStadenRoot } from "@/server/lib/env/stadenRoot";
+import { logInfo } from "@/app/lib/logger";
 
 export class BulkImporter {
   stadenRoot: string;

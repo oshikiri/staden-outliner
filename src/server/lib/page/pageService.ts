@@ -1,8 +1,8 @@
 import { Block, create as createBlock } from "@/app/lib/markdown/block";
 import * as FileStore from "@/app/lib/file";
-import * as IncrementalImporter from "@/app/lib/importer/incremental_importer";
-import * as PageBlocks from "@/app/lib/sqlite/blocks";
-import * as PageStore from "@/app/lib/sqlite/pages";
+import * as IncrementalImporter from "@/server/lib/importer/incremental_importer";
+import * as PageBlocks from "@/server/lib/sqlite/blocks";
+import * as PageStore from "@/server/lib/sqlite/pages";
 
 import * as ContentResolver from "./contentResolver";
 
