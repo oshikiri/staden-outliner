@@ -3,7 +3,7 @@ import { createToken, isTokenType, TokenType } from "./token";
 
 export type BlockPropertyDto = [string, unknown];
 
-export type TokenDto = {
+type TokenDto = {
   type: TokenType;
   [key: string]: unknown;
 };

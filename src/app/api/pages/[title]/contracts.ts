@@ -1,6 +1,6 @@
 import { BlockDto } from "@/app/lib/markdown/blockDto";
 
-export type PageRouteError = {
+type PageRouteError = {
   updateResults: {
     status: "unchanged";
     message: string;
@@ -10,8 +10,6 @@ export type PageRouteError = {
 export type PageRouteRequestBody = BlockDto;
 export type PageRouteResponseBody = BlockDto | PageRouteError;
 export type BacklinksRouteResponseBody = BlockDto[];
-export type UpdateMarkdownRouteResponseBody = void;
-
 export function createPageRouteError(message: string): PageRouteError {
   return {
     updateResults: {

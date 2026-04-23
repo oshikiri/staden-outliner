@@ -1,4 +1,4 @@
-export class RangeSet {
+class RangeSet {
   constructor(private ranges: Range[]) {}
   pushRange(l: number, r: number): void {
     this.ranges.push(new Range(l, r));

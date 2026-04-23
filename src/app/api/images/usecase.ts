@@ -14,7 +14,7 @@ type ImageFailure = {
   message: string;
 };
 
-export type ImagePayload = ImageSuccess | ImageFailure;
+type ImagePayload = ImageSuccess | ImageFailure;
 
 async function readImageBuffer(
   imagePath: string,

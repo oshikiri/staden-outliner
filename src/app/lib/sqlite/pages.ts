@@ -14,16 +14,6 @@ export async function initializePages() {
     )`);
 }
 
-export async function getPageById(pageId: string): Promise<File | undefined> {
-  const sql = `SELECT * FROM pages WHERE id = ? LIMIT 1;`;
-  logSqliteQuery(sql, [pageId]);
-  const result = getDb().query<PageRow, string>(sql).all(pageId);
-  if (result.length == 0) {
-    return undefined;
-  }
-  return toFile(result[0]);
-}
-
 export async function getPageByTitle(title: string): Promise<File | undefined> {
   const sql = `SELECT * FROM pages WHERE title = ? LIMIT 1;`;
   logSqliteQuery(sql, [title]);

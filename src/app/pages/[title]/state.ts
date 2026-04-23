@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import { Block as BlockEntity } from "@/app/lib/markdown/block";
 
-export interface PageState {
+interface PageState {
   page: BlockEntity | null;
   setPage: (page: BlockEntity | null) => void;
 
