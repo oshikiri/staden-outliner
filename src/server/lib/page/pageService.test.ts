@@ -4,7 +4,7 @@ import * as FileStore from "@/shared/file";
 import * as IncrementalImporter from "../importer/incremental_importer";
 import { Block } from "@/shared/markdown/block";
 import * as PageBlocks from "../sqlite/blocks";
-import * as PageStore from "../sqlite/pages";
+import * as PageStore from "../sqlite/pageStore";
 
 import * as ContentResolver from "./contentResolver";
 import { getPageByTitle, updatePageByTitle } from "./pageService";

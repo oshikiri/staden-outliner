@@ -11,9 +11,9 @@ mock.module("./index", () => ({
   })),
 }));
 
-import { getPagesByTitles } from "./pages";
+import { getPagesByTitles } from "./pageStore";
 
-describe("sqlite/pages", () => {
+describe("sqlite/pageStore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

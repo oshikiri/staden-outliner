@@ -1,5 +1,5 @@
 import { getPageBlockById, putFile } from "../sqlite";
-import { getPageByTitle } from "../sqlite/pages";
+import { getPageByTitle } from "../sqlite/pageStore";
 import { Block } from "@/shared/markdown/block";
 import { updateFile, fillPathToFile } from "../file";
 import { logInfo } from "@/shared/logger";

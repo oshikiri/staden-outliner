@@ -8,7 +8,7 @@ import {
   deleteLinksByFromId,
   getPagesByTitles,
 } from "@/server/lib/sqlite";
-import { putFile } from "@/server/lib/sqlite/pages";
+import { putFile } from "@/server/lib/sqlite/pageStore";
 import { batchInsertBlocks } from "@/server/lib/sqlite/blocks";
 
 export async function importBlockRecursive(block: Block): Promise<Block> {

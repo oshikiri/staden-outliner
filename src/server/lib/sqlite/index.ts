@@ -4,9 +4,9 @@ import { logDebug } from "@/shared/logger";
 
 import { initializeLinks } from "./links";
 import { initializeBlocks } from "./blocks";
-import { initializePages } from "./pages";
+import { initializePages } from "./pageStore";
 
-export * from "./pages";
+export * from "./pageStore";
 export * from "./blocks";
 export * from "./links";
 

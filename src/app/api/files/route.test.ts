@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const getPagesByPrefixMock = jest.fn();
 
-mock.module("@/server/lib/sqlite/pages", () => ({
+mock.module("@/server/lib/sqlite/pageStore", () => ({
   getPagesByPrefix: getPagesByPrefixMock,
 }));
 

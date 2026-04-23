@@ -2,7 +2,7 @@ import { Block, create as createBlock } from "@/shared/markdown/block";
 import * as FileStore from "@/shared/file";
 import * as IncrementalImporter from "@/server/lib/importer/incremental_importer";
 import * as PageBlocks from "@/server/lib/sqlite/blocks";
-import * as PageStore from "@/server/lib/sqlite/pages";
+import * as PageStore from "@/server/lib/sqlite/pageStore";
 
 import * as ContentResolver from "./contentResolver";
 

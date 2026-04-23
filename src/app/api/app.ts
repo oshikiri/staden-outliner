@@ -14,7 +14,7 @@ import {
 } from "@/app/api/pages/[title]/contracts";
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
 import { getPagePayload } from "@/app/api/pages/[title]/usecase";
-import { getPagesByPrefix } from "@/server/lib/sqlite/pages";
+import { getPagesByPrefix } from "@/server/lib/sqlite/pageStore";
 import { updatePagePayload } from "@/app/api/pages/[title]/usecase";
 
 import {
