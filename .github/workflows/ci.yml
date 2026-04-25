@@ -92,6 +92,22 @@ jobs:
       - name: Run build
         run: bun run build
 
+      - name: Check compiled binary startup
+        run: |
+          PORT=3002 ./dist/staden ./e2e/ &
+          server_pid=$!
+          trap 'kill $server_pid' EXIT
+
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3002/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "Compiled binary did not respond on http://127.0.0.1:3002/"
+          exit 1
+
       - name: Run E2E tests
         run: bun run test:e2e
 
