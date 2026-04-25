@@ -17,6 +17,7 @@ export async function buildWeb(): Promise<boolean> {
   const result = await buildBrowserBundle();
 
   if (!result.success) {
+    logBuildFailure(result.logs);
     return false;
   }
 
@@ -42,6 +43,19 @@ async function buildBrowserBundle() {
     target: "browser",
     minify: true,
   });
+}
+
+function logBuildFailure(logs: ReadonlyArray<unknown>): void {
+  logError("Bun.build() failed.");
+
+  if (logs.length === 0) {
+    logError("Bun.build() did not return any logs.");
+    return;
+  }
+
+  for (const log of logs) {
+    logError(log);
+  }
 }
 
 function buildIndexHtml(): string {
