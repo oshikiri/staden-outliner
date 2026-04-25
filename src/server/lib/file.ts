@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import path from "node:path";
 
 import { getStadenRoot } from "./env/stadenRoot";
@@ -37,9 +37,8 @@ export async function listAllFilePaths(
     });
 }
 
-export function getLocalFile(path: string) {
-  const data = readFileSync(path);
-  return data;
+export async function getLocalFile(path: string): Promise<string> {
+  return Bun.file(path).text();
 }
 
 export function extractTitle(filePath: string): string {

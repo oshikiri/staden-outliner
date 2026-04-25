@@ -10,9 +10,9 @@ describe("listAllFilePaths", () => {
 });
 
 describe("getLocalFile", () => {
-  test("returns the file content", () => {
-    const data = getLocalFile("src/shared/file/fixtures/a.md");
-    expect(data.toString()).toBe("- [[b]]\n");
+  test("returns the file content", async () => {
+    const data = await getLocalFile("src/shared/file/fixtures/a.md");
+    expect(data).toBe("- [[b]]\n");
   });
 });
 
