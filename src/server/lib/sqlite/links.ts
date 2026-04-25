@@ -26,7 +26,7 @@ export async function getSourceLinks(
   const links = getDb()
     .query<{ from_id: string }, string>(sql)
     .all(targetPageTitle);
-  return links.map((link: any) => link.from_id);
+  return links.map((link) => link.from_id);
 }
 
 export async function deleteLinksByFromId(fromId: string) {
