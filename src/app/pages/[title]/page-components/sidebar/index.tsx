@@ -4,7 +4,7 @@ import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 import { StadenDate } from "@/shared/date";
 import { systemRpc } from "@/client/rpc/system";
 import { PageRef } from "../../token";
-import { JournalCalender } from "./Calender";
+import { JournalCalendar } from "./Calendar";
 import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
@@ -40,7 +40,7 @@ export function SideBar({
       <SideBarElement title="📅 Journals">
         <>
           <RecentJournal />
-          <JournalCalender pathname={pathname} />
+          <JournalCalendar pathname={pathname} />
         </>
       </SideBarElement>
       <SideBarElement title="⭐ Favorite Pages">

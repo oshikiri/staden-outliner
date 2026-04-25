@@ -8,7 +8,7 @@ import { isAbortError } from "@/client/request";
 import { logError } from "@/shared/logger";
 
 // eslint-disable-next-line max-lines-per-function
-export function JournalCalender({ pathname }: { pathname: string }) {
+export function JournalCalendar({ pathname }: { pathname: string }) {
   const dateFromPathname = getDateFromPathname(pathname);
   const monthFromPathname = dateFromPathname
     ? new StadenDate(dateFromPathname).format("YYYY-MM")
