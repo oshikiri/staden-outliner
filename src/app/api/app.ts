@@ -15,6 +15,7 @@ import {
 import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
 import { getPagePayload } from "@/app/api/pages/[title]/usecase";
 import { getPagesByPrefix } from "@/server/lib/sqlite/pageStore";
+import { resolveAllowedOrigin } from "@/server/lib/env/allowedOrigin";
 import { updatePagePayload } from "@/app/api/pages/[title]/usecase";
 
 import {
@@ -108,7 +109,10 @@ export const honoApiApp = new Hono()
   .use(
     "*",
     cors({
-      origin: (origin) => origin,
+      origin: resolveAllowedOrigin(
+        Bun.env.ALLOWED_ORIGIN,
+        Bun.env.PORT ? Number(Bun.env.PORT) : undefined,
+      ),
       allowMethods: ["GET", "POST", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization"],
       maxAge: 86400,

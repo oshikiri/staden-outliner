@@ -4,9 +4,9 @@ import { join, normalize, resolve } from "node:path";
 
 import { honoApiApp } from "@/app/api/app";
 import { logInfo } from "@/shared/logger";
+import { DEFAULT_PORT } from "@/server/lib/env/defaultPort";
 
 const DEFAULT_HOST = "127.0.0.1";
-const DEFAULT_PORT = 3000;
 const DIST_DIR = join(process.cwd(), "dist");
 
 type ServerOptions = {
