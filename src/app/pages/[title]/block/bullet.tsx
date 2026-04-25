@@ -31,18 +31,22 @@ export function Bullet({ block }: { block: BlockEntity }): JSX.Element {
     pageRpc.update(page).then(setPage);
   };
   return (
-    <div
+    <button
+      type="button"
       className="
         data-[collapsed=true]:bg-primary/30
         inline-block
+        border-0
+        p-0
         m-1
         w-4 h-4
         rounded-full
+        cursor-pointer
       "
       onClick={onClick}
       data-collapsed={collapsed || undefined}
     >
       <div className="bg-primary m-1 w-2 h-2 rounded-full"></div>
-    </div>
+    </button>
   );
 }

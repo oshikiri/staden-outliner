@@ -145,19 +145,23 @@ function MoveButton({
   content: string;
 }): JSX.Element {
   return (
-    <div
+    <button
+      type="button"
       className="
         flex
+        border-0
+        p-0
         w-6 h-6
         items-center justify-center
         rounded-full
         bg-primary/10
         hover:bg-primary/30
+        cursor-pointer
       "
       onClick={onClick}
     >
       {content}
-    </div>
+    </button>
   );
 }
 
