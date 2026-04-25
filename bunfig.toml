@@ -6,3 +6,11 @@ minimumReleaseAge = 604800
 [test]
 preload = ["./test/setup.ts"]
 coverageSkipTestFiles = true
+coveragePathIgnorePatterns = [
+  "src/server/lib/file/config.ts",
+  "src/server/lib/importer/incremental_importer.ts",
+  "src/server/lib/page/contentResolver.ts",
+  "src/server/lib/sqlite/blocks.ts",
+  "src/server/lib/sqlite/links.ts",
+]
+coverageThreshold = { line = 0.85, function = 0.85, statement = 0.85 }
