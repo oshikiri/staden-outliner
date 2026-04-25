@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX, useMemo } from "react";
 
 import {
   Block as BlockEntity,
@@ -14,20 +14,21 @@ export default function Block({
   block: BlockEntity;
   editable?: boolean;
 }): JSX.Element {
-  block = createBlock(block);
+  // `createBlock` clones the whole subtree, so avoid repeating it on every render.
+  const clonedBlock = useMemo(() => createBlock(block), [block]);
   return (
     <div
       className="
         ml-2 flex
         data-[status=DONE]:opacity-30
       "
-      key={block.id}
-      data-status={block.getProperty("status")}
+      key={clonedBlock.id}
+      data-status={clonedBlock.getProperty("status")}
     >
-      <Bullet block={block} />
+      <Bullet block={clonedBlock} />
       <div className="w-full">
-        <Content block={block} editable={editable} />
-        <Children block={block} />
+        <Content block={clonedBlock} editable={editable} />
+        <Children block={clonedBlock} />
       </div>
     </div>
   );
