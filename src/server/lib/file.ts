@@ -1,14 +1,14 @@
-import { readdirSync } from "node:fs";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
 
 import { getStadenRoot } from "./env/stadenRoot";
 import type { FileRecord } from "@/shared/file";
 
 // https://blog.araya.dev/posts/2019-05-09-node-recursive-readdir/
-function readdirRecursively(rootDir: string): string[] {
-  let files = [];
-  const dirs = [];
-  const dirents = readdirSync(rootDir, { withFileTypes: true });
+async function readdirRecursively(rootDir: string): Promise<string[]> {
+  let files: string[] = [];
+  const dirs: string[] = [];
+  const dirents = await readdir(rootDir, { withFileTypes: true });
   for (const dirent of dirents) {
     const current = path.join(rootDir, dirent.name);
     if (dirent.isDirectory()) {
@@ -19,7 +19,7 @@ function readdirRecursively(rootDir: string): string[] {
     }
   }
   for (const dir of dirs) {
-    files = files.concat(readdirRecursively(dir));
+    files = files.concat(await readdirRecursively(dir));
   }
   return files;
 }
@@ -28,7 +28,7 @@ export async function listAllFilePaths(
   directoryPath: string,
 ): Promise<string[]> {
   const disallowedSegments = new Set([".recycle", "bak"]);
-  return readdirRecursively(directoryPath)
+  return (await readdirRecursively(directoryPath))
     .map((filePath) => path.normalize(filePath))
     .filter((filePath) => filePath.endsWith(".md"))
     .filter((filePath) => {
