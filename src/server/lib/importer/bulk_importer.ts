@@ -1,7 +1,7 @@
 import { loadMarkdown } from ".";
 import { Block, Token } from "@/shared/markdown";
 import { getPageRefTitles } from "@/shared/markdown/utils";
-import { File } from "@/shared/file";
+import type { FileRecord } from "@/shared/file";
 import { extractTitle, listAllFilePaths } from "@/server/lib/file";
 import { getStadenRoot } from "@/server/lib/env/stadenRoot";
 import { logInfo } from "@/shared/logger";
@@ -12,7 +12,7 @@ export class BulkImporter {
   linksCached: [string, string][] = [];
   idToBlocks: Map<string, Block> = new Map();
   pageIdByBlockId: Map<string, string> = new Map();
-  files: Map<string, File> = new Map();
+  files: Map<string, FileRecord> = new Map();
   fileTitleToId: Map<string, string> = new Map();
 
   constructor() {
@@ -61,7 +61,7 @@ export class BulkImporter {
 
   private async createOrGetFileByTitle(
     title: string,
-  ): Promise<File | undefined> {
+  ): Promise<FileRecord | undefined> {
     const pageIdByTitle = this.fileTitleToId.get(title);
     const file = this.files.get(pageIdByTitle || "");
     if (file) {
@@ -76,7 +76,7 @@ export class BulkImporter {
 
     return fileCreated;
   }
-  private async putFile(file: File): Promise<File | undefined> {
+  private async putFile(file: FileRecord): Promise<FileRecord | undefined> {
     file.pageId = file.pageId || crypto.randomUUID();
 
     this.files.set(file.pageId, file);

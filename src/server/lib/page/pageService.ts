@@ -30,7 +30,7 @@ export async function updatePageByTitle(
   pageUpdated.setProperty("title", pagePrev?.getProperty("title") || title);
 
   if (!pageFile) {
-    const file = await FileStore.create(title, pageId);
+    const file = FileStore.createFileRecord(title, pageId);
     await PageStore.putFile(file);
   }
 

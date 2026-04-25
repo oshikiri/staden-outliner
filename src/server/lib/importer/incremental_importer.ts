@@ -1,4 +1,4 @@
-import { File, create as createFile } from "@/shared/file";
+import { createFileRecord, type FileRecord } from "@/shared/file";
 import { Block } from "@/shared/markdown/block";
 import { getPageRefTitles } from "@/shared/markdown/utils";
 import { logDebug } from "@/shared/logger";
@@ -26,7 +26,7 @@ async function refreshLinksFromBlock(block: Block): Promise<void> {
 
   await deleteLinksByFromId(fromBlockId);
   const targetTitles: string[] = getPageRefTitles(block.content);
-  const targetPages: File[] = await getPagesByTitles(targetTitles);
+  const targetPages: FileRecord[] = await getPagesByTitles(targetTitles);
   const links: [string, string][] = targetPages.map((page) => [
     fromBlockId,
     page.pageId || "",
@@ -43,12 +43,12 @@ export async function createNewFileWithEmptyBlock(
   pageId: string | undefined,
 ): Promise<{
   block: Block;
-  file: File;
+  file: FileRecord;
 }> {
   if (!pageId) {
     pageId = crypto.randomUUID();
   }
-  const file = await createFile(title, pageId);
+  const file = createFileRecord(title, pageId);
   const child = new Block([], 1, []).withId(crypto.randomUUID());
   const page = new Block([], 0, [child]).withId(pageId);
   child.parent = page;

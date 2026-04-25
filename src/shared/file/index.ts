@@ -1,4 +1,4 @@
-export interface File {
+export interface FileRecord {
   path?: string;
   title: string;
   pageId?: string | undefined;
@@ -8,7 +8,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function isFile(value: unknown): value is File {
+export function isFile(value: unknown): value is FileRecord {
   return (
     isRecord(value) &&
     typeof value.title === "string" &&
@@ -17,10 +17,9 @@ export function isFile(value: unknown): value is File {
   );
 }
 
-export async function create(title: string, pageId: string): Promise<File> {
-  const file: File = {
+export function createFileRecord(title: string, pageId: string): FileRecord {
+  return {
     title,
     pageId,
   };
-  return file;
 }

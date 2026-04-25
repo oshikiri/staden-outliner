@@ -1,6 +1,6 @@
 import type { Configs } from "@/shared/file/config";
 import { isConfigs } from "@/shared/file/config";
-import type { File } from "@/shared/file";
+import type { FileRecord } from "@/shared/file";
 import { isFile } from "@/shared/file";
 import type { InferRequestType } from "hono/client";
 
@@ -20,7 +20,7 @@ export const systemRpc = {
   async files(
     prefix?: string,
     options?: AbortableRequestOptions,
-  ): Promise<File[]> {
+  ): Promise<FileRecord[]> {
     const request: FilesRequest = {
       query: {
         prefix: prefix ?? "",
@@ -29,10 +29,10 @@ export const systemRpc = {
     const response = await client.api.files.$get(request, {
       init: toRequestInit(options),
     });
-    return readJsonResponse<File[]>(
+    return readJsonResponse<FileRecord[]>(
       response,
       200,
-      (value: unknown): value is File[] => isArrayOf(value, isFile),
+      (value: unknown): value is FileRecord[] => isArrayOf(value, isFile),
     );
   },
   async initialize(options?: AbortableRequestOptions): Promise<void> {

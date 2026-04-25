@@ -1,7 +1,7 @@
 import { Block, parse } from "@/shared/markdown";
-import type { File } from "@/shared/file";
+import type { FileRecord } from "@/shared/file";
 
-export async function loadMarkdown(file: File): Promise<Block> {
+export async function loadMarkdown(file: FileRecord): Promise<Block> {
   if (!file.path) {
     throw new Error(`File path is not defined for file: ${file.title}`);
   }

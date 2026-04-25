@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { create } from ".";
+import { createFileRecord } from ".";
 
-describe("create", () => {
-  test("returns a file object", async () => {
-    const file = await create("test", "test-uuid");
+describe("createFileRecord", () => {
+  test("returns a file object", () => {
+    const file = createFileRecord("test", "test-uuid");
     expect(file).toEqual({
       title: "test",
       pageId: "test-uuid",
