@@ -1,11 +1,25 @@
-# Staden-outliner: An Opinionated and Maintainable Outliner
+# Staden
 
 <img src="./docs/icon.png" alt="staden icon" width="200" height="200" />
 
-- Supports Logseq-like markdown
-- Built with TypeScript, Bun, Hono, and SQLite
-- Limited features
-- Query tables using SQLite
+Staden is an opinionated and maintainable outliner for structured notes.
+It keeps the feature set small and focused.
+
+## Key Features
+
+- Supports Logseq-like markdown notes
+- Uses SQLite-backed query tables
+- Keeps notes stored locally
+
+## Technical Stack
+
+Staden is built on a familiar web stack.
+
+- Frontend: React, React Router
+- Backend: Hono
+- Storage: SQLite
+- Runtime: Bun
+- Language: TypeScript
 
 ## Roadmap
 - Add automatic export of markdown files
