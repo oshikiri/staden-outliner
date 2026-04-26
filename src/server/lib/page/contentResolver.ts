@@ -12,6 +12,7 @@ import {
 } from "@/server/lib/sqlite";
 import type { SQLQueryBindings } from "bun:sqlite";
 import { logDebug, logWarn } from "@/shared/logger";
+import type { CommandQueryRow } from "@/shared/markdown/token";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);
@@ -87,10 +88,12 @@ async function resolveCommandQuery(
   }
   const queryExecutionStart = Date.now();
   logSqliteQuery(query, []);
-  const rows = getReadonlyDb().query<unknown, SQLQueryBindings[]>(query).all();
+  const rows = getReadonlyDb()
+    .query<CommandQueryRow, SQLQueryBindings[]>(query)
+    .all();
   command.queryExecutionMilliseconds = Date.now() - queryExecutionStart;
   if (rows) {
-    command.resolvedBlocks = rows as Block[];
+    command.resolvedBlocks = rows;
   }
 
   const vlJsonCodeBlock = block.children[1]?.content?.[0];

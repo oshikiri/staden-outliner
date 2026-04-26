@@ -40,6 +40,16 @@ function isOptionalTokenArray(value: unknown): value is unknown[] | undefined {
   return value === undefined || Array.isArray(value);
 }
 
+function isOptionalRecordArray(
+  value: unknown,
+): value is Record<string, unknown>[] | undefined {
+  return (
+    value === undefined ||
+    (Array.isArray(value) &&
+      value.every((item) => typeof item === "object" && item !== null))
+  );
+}
+
 function isImageTokenDto(value: Record<string, unknown>): boolean {
   return (
     typeof value.src === "string" &&
@@ -86,7 +96,7 @@ function isBlockRefTokenDto(value: Record<string, unknown>): boolean {
 function isCommandQueryTokenDto(value: Record<string, unknown>): boolean {
   return (
     typeof value.query === "string" &&
-    isOptionalTokenArray(value.resolvedBlocks) &&
+    isOptionalRecordArray(value.resolvedBlocks) &&
     isOptionalString(value.vlJsonStr) &&
     isOptionalTokenArray(value.resolvedDataForVlJson) &&
     (value.queryExecutionMilliseconds === undefined ||

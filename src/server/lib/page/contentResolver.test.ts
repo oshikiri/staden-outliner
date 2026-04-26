@@ -81,4 +81,29 @@ describe("contentResolver", () => {
     );
     expect(page.content[0]).toBeInstanceOf(CommandQuery);
   });
+
+  test("resolvePageContent keeps sqlite rows as plain objects", async () => {
+    const page = new Block([new CommandQuery("{{query}}")], 0, []).withId(
+      "page-3",
+    );
+    const queryChild = new Block(
+      [new CodeBlock("select 1 as answer", "sql")],
+      2,
+      [],
+    ).withId("query-child");
+    const queryBlock = new Block([], 1, [queryChild]).withId("query-block");
+    queryChild.withParent(queryBlock);
+    jest.spyOn(Sqlite, "getBlockById").mockResolvedValue(queryBlock);
+    jest.spyOn(Sqlite, "getReadonlyDb").mockReturnValue({
+      query: () => ({
+        all: () => [{ answer: 1 }],
+      }),
+    } as never);
+
+    await resolvePageContent(page);
+
+    const resolvedToken = page.content[0];
+    expect(resolvedToken).toBeInstanceOf(CommandQuery);
+    expect(resolvedToken).toHaveProperty("resolvedBlocks", [{ answer: 1 }]);
+  });
 });

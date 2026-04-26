@@ -228,11 +228,13 @@ export class Command extends Token {
   }
 }
 
+export type CommandQueryRow = Record<string, unknown>;
+
 export class CommandQuery extends Token {
   type: TokenType = TokenType.CommandQuery;
   constructor(
     public query: string,
-    public resolvedBlocks?: Block[],
+    public resolvedBlocks?: CommandQueryRow[],
     public vlJsonStr?: string,
     public resolvedDataForVlJson?: unknown[],
     public queryExecutionMilliseconds?: number,
@@ -399,7 +401,7 @@ function createBlockRefToken(obj: Record<string, unknown>): BlockRef {
 function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
   return new CommandQuery(
     readString(obj, "query"),
-    readOptionalTokenArray(obj, "resolvedBlocks") as Block[] | undefined,
+    readOptionalRecordArray(obj, "resolvedBlocks"),
     typeof obj.vlJsonStr === "string" ? obj.vlJsonStr : undefined,
     Array.isArray(obj.resolvedDataForVlJson)
       ? obj.resolvedDataForVlJson
@@ -408,4 +410,18 @@ function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
       ? obj.queryExecutionMilliseconds
       : undefined,
   );
+}
+
+function readOptionalRecordArray(
+  obj: Record<string, unknown>,
+  key: string,
+): CommandQueryRow[] | undefined {
+  const value = obj[key];
+  if (value === undefined) {
+    return undefined;
+  }
+  if (!Array.isArray(value) || !value.every(isRecord)) {
+    throw new Error(`Invalid token dto: ${key} must be an array of objects`);
+  }
+  return value;
 }

@@ -1,6 +1,5 @@
 import { JSX } from "react";
 
-import { Block } from "@/shared/markdown/block";
 import { Token } from ".";
 import {
   PageRef as PageRefEntity,
@@ -9,7 +8,11 @@ import {
 } from "@/shared/markdown/token";
 import { PageRef as PageRefComponent } from ".";
 
-export function QueryTable({ data }: { data: Block[] }): JSX.Element {
+export function QueryTable({
+  data,
+}: {
+  data: Record<string, unknown>[];
+}): JSX.Element {
   if (data.length === 0) {
     return <></>;
   }
@@ -38,7 +41,13 @@ export function QueryTable({ data }: { data: Block[] }): JSX.Element {
   );
 }
 
-function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
+function TableRow({
+  columns,
+  rowData,
+}: {
+  columns: string[];
+  rowData: Record<string, unknown>;
+}) {
   return (
     <tr className="odd:bg-datatable-row-odd">
       {columns.map((col) => (
@@ -50,14 +59,19 @@ function TableRow({ columns, rowData }: { columns: string[]; rowData: any }) {
   );
 }
 
-function convert(key: string, value: any): JSX.Element {
+function convert(key: string, value: unknown): JSX.Element {
   if (key.endsWith("_as_tokens")) {
-    const tokens = JSON.parse(value);
-    return tokens.map((p: TokenEntity, i: number) => (
-      <Token key={i} token={createToken(p)} />
-    ));
+    const tokens =
+      typeof value === "string" ? (JSON.parse(value) as TokenEntity[]) : [];
+    return (
+      <>
+        {tokens.map((p: TokenEntity, i: number) => (
+          <Token key={i} token={createToken(p)} />
+        ))}
+      </>
+    );
   } else if (key.endsWith("_as_pageref")) {
-    return <PageRefComponent pageref={new PageRefEntity(value)} />;
+    return <PageRefComponent pageref={new PageRefEntity(String(value))} />;
   }
-  return <span>{value}</span>;
+  return <span>{String(value)}</span>;
 }
