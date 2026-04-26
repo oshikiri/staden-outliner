@@ -107,7 +107,7 @@ describe("token renderer", () => {
     ).toContain("embedded");
     expect(
       renderToken(
-        Object.assign(new CommandQueryEntity("select 1 vegalite=on"), {
+        Object.assign(new CommandQueryEntity(), {
           vlJsonStr: '{"mark":"bar"}',
           resolvedDataForVlJson: [{ label: "a", value: 1 }],
         }),
@@ -115,7 +115,14 @@ describe("token renderer", () => {
     ).toContain('id="vis"');
     expect(
       renderToken(
-        Object.assign(new CommandQueryEntity("select 1"), {
+        Object.assign(new CommandQueryEntity(), {
+          resolvedBlocks: [],
+        }),
+      ),
+    ).toContain("CommandQuery");
+    expect(
+      renderToken(
+        Object.assign(new CommandQueryEntity(), {
           resolvedBlocks: [{ answer: 1 }],
           queryExecutionMilliseconds: 7,
         }),

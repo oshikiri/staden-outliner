@@ -298,9 +298,8 @@ export class Lexer {
     i += 1; // pop the second `}`
     const [commandType, ...commandArgs] = text.split(" ");
 
-    if (commandType === "query") {
-      const queryString = commandArgs.join(" ");
-      return [i, new CommandQuery(queryString)];
+    if (commandType === "staden-query") {
+      return [i, new CommandQuery()];
     }
 
     return [i, new Command(commandType, commandArgs.join(" "))];

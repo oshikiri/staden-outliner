@@ -179,21 +179,21 @@ describe("createToken", () => {
   test("commandquery", () => {
     const obj = {
       type: 15,
-      query: '(property :status "done")',
     };
     const token = createToken(obj);
-    expect(token).toStrictEqual(new CommandQuery('(property :status "done")'));
+    expect(token).toStrictEqual(new CommandQuery());
     expect(token).toHaveProperty("resolvedBlocks", undefined);
   });
 
   test("commandquery with resolvedBlocks", () => {
     const obj = {
       type: 15,
-      query: '(property :status "done")',
       resolvedBlocks: [{ depth: 1, children: [], content: [] }],
     };
     const token = createToken(obj);
-    expect(token).toHaveProperty("query", '(property :status "done")');
+    expect(token).toStrictEqual(
+      new CommandQuery([{ depth: 1, children: [], content: [] }]),
+    );
     expect(token).toHaveProperty("resolvedBlocks", [
       { depth: 1, children: [], content: [] },
     ]);

@@ -233,7 +233,6 @@ export type CommandQueryRow = Record<string, unknown>;
 export class CommandQuery extends Token {
   type: TokenType = TokenType.CommandQuery;
   constructor(
-    public query: string,
     public resolvedBlocks?: CommandQueryRow[],
     public vlJsonStr?: string,
     public resolvedDataForVlJson?: unknown[],
@@ -245,7 +244,7 @@ export class CommandQuery extends Token {
     }
   }
   toMarkdown(): string {
-    return `{{query ${this.query}}}`;
+    return "{{staden-query}}";
   }
 }
 
@@ -400,7 +399,6 @@ function createBlockRefToken(obj: Record<string, unknown>): BlockRef {
 
 function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
   return new CommandQuery(
-    readString(obj, "query"),
     readOptionalRecordArray(obj, "resolvedBlocks"),
     typeof obj.vlJsonStr === "string" ? obj.vlJsonStr : undefined,
     Array.isArray(obj.resolvedDataForVlJson)

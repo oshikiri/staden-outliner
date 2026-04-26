@@ -95,7 +95,6 @@ function isBlockRefTokenDto(value: Record<string, unknown>): boolean {
 
 function isCommandQueryTokenDto(value: Record<string, unknown>): boolean {
   return (
-    typeof value.query === "string" &&
     isOptionalRecordArray(value.resolvedBlocks) &&
     isOptionalString(value.vlJsonStr) &&
     isOptionalTokenArray(value.resolvedDataForVlJson) &&

@@ -144,4 +144,14 @@ describe("blockDto", () => {
       }),
     ).toBe(false);
   });
+
+  test("isBlockDto accepts command query tokens without query text", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{ type: 15 }],
+        children: [],
+      }),
+    ).toBe(true);
+  });
 });

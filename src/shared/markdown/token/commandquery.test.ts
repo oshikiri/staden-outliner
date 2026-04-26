@@ -3,11 +3,9 @@ import { describe, expect, test } from "bun:test";
 
 describe("CommandQuery", () => {
   describe("toMarkdown", () => {
-    test("appends brackets", () => {
-      const commandQuery = new CommandQuery('(property :status "done")');
-      expect(commandQuery.toMarkdown()).toBe(
-        '{{query (property :status "done")}}',
-      );
+    test("returns the staden-query tag", () => {
+      const commandQuery = new CommandQuery();
+      expect(commandQuery.toMarkdown()).toBe("{{staden-query}}");
     });
   });
 });

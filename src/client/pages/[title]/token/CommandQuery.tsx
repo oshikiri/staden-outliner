@@ -8,20 +8,23 @@ export function CommandQuery({
   token: CommandQueryEntity;
 }): JSX.Element {
   return (
-    <div>
-      <div className="text-sm w-full text-right text-primary/50">
-        {token.resolvedBlocks?.length || 0} results, execution time:{" "}
-        {token.queryExecutionMilliseconds || "?"} ms
+    <div className="relative">
+      <div className="flex items-center gap-2 text-sm text-primary/50 whitespace-nowrap">
+        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs tracking-wide">
+          CommandQuery
+        </span>
+        <span>
+          {token.resolvedBlocks?.length || 0} results, execution time:{" "}
+          {token.queryExecutionMilliseconds || "?"} ms
+        </span>
       </div>
-      {token.query.includes("vegalite=on") && (
+      {token.vlJsonStr && (
         <VegaLiteEmbed
-          vlJsonStr={token.vlJsonStr || ""}
+          vlJsonStr={token.vlJsonStr}
           data={token.resolvedDataForVlJson || []}
         />
       )}
-      {!token.query.includes("table=off") && (
-        <QueryTable data={token.resolvedBlocks || []} />
-      )}
+      <QueryTable data={token.resolvedBlocks || []} />
     </div>
   );
 }

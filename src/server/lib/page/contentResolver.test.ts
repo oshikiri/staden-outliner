@@ -12,9 +12,8 @@ describe("contentResolver", () => {
   });
 
   test("resolvePageContent logs a warning when CommandQuery resolution fails", async () => {
-    const page = new Block([new CommandQuery("{{query}}")], 0, []).withId(
-      "page-1",
-    );
+    const page = new Block([new CommandQuery()], 0, []);
+    page.withId("page-1");
     const queryChild = new Block(
       [new CodeBlock("select * from pages", "sql")],
       2,
@@ -53,9 +52,8 @@ describe("contentResolver", () => {
   });
 
   test("resolvePageContent logs a warning when CommandQuery is not read only", async () => {
-    const page = new Block([new CommandQuery("{{query}}")], 0, []).withId(
-      "page-2",
-    );
+    const page = new Block([new CommandQuery()], 0, []);
+    page.withId("page-2");
     const queryChild = new Block(
       [new CodeBlock("insert into pages values (1)", "sql")],
       2,
@@ -83,9 +81,8 @@ describe("contentResolver", () => {
   });
 
   test("resolvePageContent keeps sqlite rows as plain objects", async () => {
-    const page = new Block([new CommandQuery("{{query}}")], 0, []).withId(
-      "page-3",
-    );
+    const page = new Block([new CommandQuery()], 0, []);
+    page.withId("page-3");
     const queryChild = new Block(
       [new CodeBlock("select 1 as answer", "sql")],
       2,

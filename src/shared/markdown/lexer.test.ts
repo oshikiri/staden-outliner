@@ -334,12 +334,19 @@ describe("lexer", () => {
     });
 
     test("query table", () => {
+      const lexer = new Lexer("{{staden-query}}");
+      const token = lexer.exec();
+      expect(token).toEqual([new CommandQuery()]);
+    });
+
+    test("old query table", () => {
       const lexer = new Lexer(
         '{{query (AND (property :status "doing") (property :type "book"))}}',
       );
       const token = lexer.exec();
       expect(token).toEqual([
-        new CommandQuery(
+        new Command(
+          "query",
           '(AND (property :status "doing") (property :type "book"))',
         ),
       ]);

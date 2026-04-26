@@ -1,4 +1,4 @@
-- {{query }}
+- {{staden-query}}
 	- ```sql
 	  with versions as (
 	      select

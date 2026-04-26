@@ -1,20 +1,20 @@
 - ## Total number of blocks
-	- {{query }}
+	- {{staden-query}}
 		- ```sql
 		  select count(1) from blocks_p
 		  ```
 - ## Get pages
-	- {{query }}
+	- {{staden-query}}
 		- ```sql
 		  select * from pages limit 5
 		  ```
 - ## Get blocks
-	- {{query }}
+	- {{staden-query}}
 		- ```sql
 		  select * from blocks_p limit 5;
 		  ```
 - ## Links
-	- {{query }}
+	- {{staden-query}}
 		- ```sql
 		  select
 		    links.*,
@@ -26,7 +26,7 @@
 		  limit 10;
 		  ```
 - ## Extract SQL queries
-	- {{query }}
+	- {{staden-query}}
 		- ```sql
 		  with queries as (
 		  	select
