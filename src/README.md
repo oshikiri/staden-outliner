@@ -21,3 +21,12 @@
 2. server 専用なら `src/server/`
 3. 両側で使うなら `src/shared/`
 4. 画面や route に密着するなら `src/app/`
+
+## `tsconfig` の追従手順
+
+新しいファイルを追加したら、最初に置き場所の責務を決める。
+
+- `src/client/` の新規入口は `tsconfig.client.json` の対象に入れる。
+- `src/server/` と `src/app/api/` の新規入口は `tsconfig.server.json` の対象に入れる。
+- `eslint.config.ts`、`playwright.config.ts`、`test/**/*.ts`、`e2e/**/*.ts` のような root-level ファイルは `tsconfig.json` の対象に入れる。
+- 迷ったら `bun run typecheck` を先に通して、追加したファイルがどの `tsconfig` に入っていないかを確認する。

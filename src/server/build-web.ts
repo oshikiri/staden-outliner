@@ -38,7 +38,7 @@ async function main() {
 
 async function buildBrowserBundle() {
   return Bun.build({
-    entrypoints: [join(process.cwd(), "src/app/main.tsx")],
+    entrypoints: [join(process.cwd(), "src/client/main.tsx")],
     outdir: assetsDir,
     target: "browser",
     minify: true,

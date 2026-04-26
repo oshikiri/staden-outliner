@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import { HomeRoute } from "./routes/HomeRoute";
-import { PageRoute } from "./routes/PageRoute";
+import { HomeRoute } from "@/app/routes/HomeRoute";
+import { PageRoute } from "@/app/routes/PageRoute";
 
 export function App() {
   return (
