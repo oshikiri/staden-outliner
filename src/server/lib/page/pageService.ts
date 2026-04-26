@@ -1,6 +1,8 @@
 import { Block, create as createBlock } from "@/shared/markdown/block";
 import * as FileStore from "@/shared/file";
+import { logError } from "@/shared/logger";
 import * as IncrementalImporter from "@/server/lib/importer/incremental_importer";
+import { exportOnePageToMarkdown } from "@/server/lib/exporter/incremental_exporter";
 import * as PageBlocks from "@/server/lib/sqlite/blocks";
 import * as PageStore from "@/server/lib/sqlite/pageStore";
 
@@ -35,6 +37,12 @@ export async function updatePageByTitle(
   }
 
   await IncrementalImporter.importBlockRecursive(pageUpdated);
+  try {
+    await exportOnePageToMarkdown(title);
+  } catch (error) {
+    logError("Failed to export page to markdown after save", title, error);
+    throw error;
+  }
   return ContentResolver.resolvePageContent(pageUpdated);
 }
 

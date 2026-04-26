@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, jest, test } from "bun:test";
 import * as FileStore from "@/shared/file";
 import * as IncrementalImporter from "../importer/incremental_importer";
 import { Block } from "@/shared/markdown/block";
+import * as IncrementalExporter from "../exporter/incremental_exporter";
 import * as PageBlocks from "../sqlite/blocks";
 import * as PageStore from "../sqlite/pageStore";
 
@@ -78,6 +79,9 @@ describe("pageService", () => {
     const importSpy = jest
       .spyOn(IncrementalImporter, "importBlockRecursive")
       .mockImplementation(async (page) => page);
+    const exportSpy = jest
+      .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
+      .mockResolvedValue("draft-page");
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -87,6 +91,7 @@ describe("pageService", () => {
     expect(createFileSpy).toHaveBeenCalledWith("draft-page", "page-1");
     expect(putFileSpy).toHaveBeenCalled();
     expect(importSpy).toHaveBeenCalledWith(savedPage);
+    expect(exportSpy).toHaveBeenCalledWith("draft-page");
     expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage);
     expect(savedPage.id).toBe("page-1");
     expect(savedPage.children[0].parent).toBe(savedPage);
@@ -112,6 +117,9 @@ describe("pageService", () => {
     const importSpy = jest
       .spyOn(IncrementalImporter, "importBlockRecursive")
       .mockImplementation(async (page) => page);
+    const exportSpy = jest
+      .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
+      .mockResolvedValue("draft-page");
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -121,7 +129,36 @@ describe("pageService", () => {
     expect(createFileSpy).toHaveBeenCalledWith("draft%20page", "page-1");
     expect(putFileSpy).toHaveBeenCalled();
     expect(importSpy).toHaveBeenCalledWith(savedPage);
+    expect(exportSpy).toHaveBeenCalledWith("draft%20page");
     expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage);
     expect(savedPage.getProperty("title")).toBe("draft%20page");
+  });
+
+  test("updatePageByTitle surfaces markdown export failures after saving", async () => {
+    const draftPage = new Block([], 0, [
+      new Block([], 1, []).withId("child-1"),
+    ]);
+    draftPage.withId("page-1");
+    draftPage.setProperty("title", "draft-page");
+
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest
+      .spyOn(FileStore, "createPageFileRecord")
+      .mockReturnValue({ title: "draft-page", pageId: "page-1" });
+    jest.spyOn(PageStore, "putFile").mockResolvedValue({
+      title: "draft-page",
+      pageId: "page-1",
+    });
+    jest
+      .spyOn(IncrementalImporter, "importBlockRecursive")
+      .mockImplementation(async (page) => page);
+    jest
+      .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
+      .mockRejectedValue(new Error("export failed"));
+
+    await expect(updatePageByTitle("draft-page", draftPage)).rejects.toThrow(
+      "export failed",
+    );
   });
 });
