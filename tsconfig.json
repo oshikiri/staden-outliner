@@ -7,6 +7,8 @@
   "include": [
     "eslint.config.ts",
     "playwright.config.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "test/**/*.ts",
     "e2e/**/*.ts",
     "src/global.d.ts"
