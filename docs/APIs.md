@@ -1,7 +1,0 @@
-- ## GET: `/api/configs`
-- ## GET: `/api/files`
-- ## GET: `/api/images`
-- ## POST: `/api/initialize`
-	- Load all markdown files into staden
-- ## GET: `/api/pages`
-- ## POST: `/api/pages`
