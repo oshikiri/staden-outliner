@@ -7,10 +7,6 @@
   "include": [
     "src/client/**/*.ts",
     "src/client/**/*.tsx",
-    "src/app/routes/**/*.ts",
-    "src/app/routes/**/*.tsx",
-    "src/app/pages/**/*.ts",
-    "src/app/pages/**/*.tsx",
     "src/shared/**/*.ts",
     "src/shared/**/*.tsx",
     "src/global.d.ts"

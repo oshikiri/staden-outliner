@@ -10,7 +10,7 @@ mock.module("@/server/lib/sqlite", () => ({
   getCurrentPage: getCurrentPageMock,
 }));
 
-import { honoApiApp } from "@/app/api/app";
+import { honoApiApp } from "@/server/api/app";
 
 describe("api/pages/[title]/backlinks/route", () => {
   beforeEach(() => {

@@ -6,7 +6,6 @@
   },
   "include": [
     "src/server/**/*.ts",
-    "src/app/api/**/*.ts",
     "src/shared/**/*.ts",
     "src/shared/**/*.tsx",
     "src/global.d.ts"

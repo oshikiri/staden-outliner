@@ -6,7 +6,7 @@ mock.module("@/server/lib/file/config", () => ({
   getAllConfigs: getAllConfigsMock,
 }));
 
-import { honoApiApp } from "@/app/api/app";
+import { honoApiApp } from "@/server/api/app";
 
 describe("api/app cors", () => {
   test("allows the localhost origin by default", async () => {

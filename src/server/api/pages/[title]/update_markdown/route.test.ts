@@ -6,7 +6,7 @@ mock.module("@/server/lib/exporter/incremental_exporter", () => ({
   exportOnePageToMarkdown: exportOnePageToMarkdownMock,
 }));
 
-import { honoApiApp } from "@/app/api/app";
+import { honoApiApp } from "@/server/api/app";
 
 describe("api/pages/[title]/update_markdown/route", () => {
   beforeEach(() => {

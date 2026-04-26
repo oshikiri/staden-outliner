@@ -10,7 +10,7 @@ mock.module("@/server/lib/env/stadenRoot", () => ({
   getStadenRoot: getStadenRootMock,
 }));
 
-import { honoApiApp } from "@/app/api/app";
+import { honoApiApp } from "@/server/api/app";
 
 describe("api/images/route", () => {
   beforeEach(() => {

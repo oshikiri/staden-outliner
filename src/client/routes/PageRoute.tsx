@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { PageScreen } from "@/app/pages/[title]/PageScreen";
+import { PageScreen } from "@/client/pages/[title]/PageScreen";
 
 export function PageRoute() {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import { access, stat } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 import { join, normalize, resolve } from "node:path";
 
-import { honoApiApp } from "@/app/api/app";
+import { honoApiApp } from "@/server/api/app";
 import { logInfo } from "@/shared/logger";
 import { DEFAULT_PORT } from "@/server/lib/env/defaultPort";
 

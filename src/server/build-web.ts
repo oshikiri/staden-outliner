@@ -8,7 +8,7 @@ import { logError } from "@/shared/logger";
 
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
-const cssEntry = join(process.cwd(), "src/app/default-theme.css");
+const cssEntry = join(process.cwd(), "src/client/default-theme.css");
 
 export async function buildWeb(): Promise<boolean> {
   await rm(distDir, { recursive: true, force: true });
@@ -65,6 +65,7 @@ function buildIndexHtml(): string {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Staden Outliner</title>
+    <link rel="icon" href="/public/favicon.ico" />
     <link rel="stylesheet" href="/assets/main.css" />
   </head>
   <body class="max-w-full mx-20 text-primary bg-background">

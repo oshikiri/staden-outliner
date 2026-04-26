@@ -5,18 +5,18 @@ import { validator } from "hono/validator";
 
 import { getAllConfigs } from "@/server/lib/file/config";
 import { exportOnePageToMarkdown } from "@/server/lib/exporter/incremental_exporter";
-import { getImagePayload } from "@/app/api/images/usecase";
+import { getImagePayload } from "@/server/api/images/usecase";
 import { isBlockDto } from "@/shared/markdown/blockDto";
 import {
   createPageRouteError,
   isPageRouteError,
   type PageRouteRequestBody,
-} from "@/app/api/pages/[title]/contracts";
-import { getBacklinkPayload } from "@/app/api/pages/[title]/backlinks/usecase";
-import { getPagePayload } from "@/app/api/pages/[title]/usecase";
+} from "@/server/api/pages/[title]/contracts";
+import { getBacklinkPayload } from "@/server/api/pages/[title]/backlinks/usecase";
+import { getPagePayload } from "@/server/api/pages/[title]/usecase";
 import { getPagesByPrefix } from "@/server/lib/sqlite/pageStore";
 import { resolveAllowedOrigin } from "@/server/lib/env/allowedOrigin";
-import { updatePagePayload } from "@/app/api/pages/[title]/usecase";
+import { updatePagePayload } from "@/server/api/pages/[title]/usecase";
 
 import {
   type GlobalErrorResponse,
@@ -133,7 +133,8 @@ export const honoApiApp = new Hono()
     return internalServerError(c);
   })
   .post("/initialize", async (c) => {
-    const { initializeDatabase } = await import("@/app/api/initialize/usecase");
+    const { initializeDatabase } =
+      await import("@/server/api/initialize/usecase");
     await initializeDatabase();
     return noContentResponse(c);
   })
