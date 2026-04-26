@@ -11,7 +11,7 @@ import {
   logSqliteQuery,
 } from "@/server/lib/sqlite";
 import type { SQLQueryBindings } from "bun:sqlite";
-import { logDebug } from "@/shared/logger";
+import { logDebug, logWarn } from "@/shared/logger";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
   await resolveBlockRefs(page);
@@ -43,7 +43,12 @@ async function resolveCommandTokens(page: Block): Promise<void> {
     if (content instanceof CommandQuery) {
       try {
         page.content[i] = await resolveCommandQuery(content, page.id || "");
-      } catch {}
+      } catch (error) {
+        logWarn("Failed to resolve CommandQuery", {
+          blockId: page.id || "",
+          error,
+        });
+      }
     }
   }
 
