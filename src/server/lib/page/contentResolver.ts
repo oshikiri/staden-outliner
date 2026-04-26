@@ -7,7 +7,7 @@ import {
 } from "@/shared/markdown/token";
 import {
   getBlockById as getBlockByIdDb,
-  getDb,
+  getReadonlyDb,
   logSqliteQuery,
 } from "@/server/lib/sqlite";
 import type { SQLQueryBindings } from "bun:sqlite";
@@ -82,9 +82,12 @@ async function resolveCommandQuery(
   }
 
   const query = code.textContent;
+  if (!isReadonlyQuery(query)) {
+    throw new Error("CommandQuery only allows read-only SELECT queries");
+  }
   const queryExecutionStart = Date.now();
   logSqliteQuery(query, []);
-  const rows = getDb().query<unknown, SQLQueryBindings[]>(query).all();
+  const rows = getReadonlyDb().query<unknown, SQLQueryBindings[]>(query).all();
   command.queryExecutionMilliseconds = Date.now() - queryExecutionStart;
   if (rows) {
     command.resolvedBlocks = rows as Block[];
@@ -101,4 +104,8 @@ async function resolveCommandQuery(
   }
 
   return command;
+}
+
+function isReadonlyQuery(query: string): boolean {
+  return /^(with|select|explain)\b/i.test(query.trim());
 }

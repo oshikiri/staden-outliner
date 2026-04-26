@@ -11,6 +11,7 @@ export * from "./blocks";
 export * from "./links";
 
 let db: BunDatabase | undefined;
+let readonlyDb: BunDatabase | undefined;
 let databaseConstructorForTests: typeof BunDatabase | undefined;
 
 export function initializeAllTables() {
@@ -41,11 +42,20 @@ export async function open() {
 
 export async function close() {
   if (!db) {
-    return;
+    if (!readonlyDb) {
+      return;
+    }
   }
 
-  db.close();
-  db = undefined;
+  if (db) {
+    db.close();
+    db = undefined;
+  }
+
+  if (readonlyDb) {
+    readonlyDb.close();
+    readonlyDb = undefined;
+  }
 }
 
 export function getDb(): BunDatabase {
@@ -58,6 +68,18 @@ export function getDb(): BunDatabase {
   return db;
 }
 
+export function getReadonlyDb(): BunDatabase {
+  if (!readonlyDb) {
+    const stadenRoot = getStadenRoot();
+    const Database = loadDatabaseConstructor();
+    readonlyDb = new Database(`${stadenRoot}/vault.sqlite3`, {
+      readonly: true,
+    });
+  }
+
+  return readonlyDb;
+}
+
 export function __setDatabaseConstructorForTests(
   constructor: typeof BunDatabase | undefined,
 ): void {
@@ -66,6 +88,7 @@ export function __setDatabaseConstructorForTests(
 
 export function __resetDbForTests(): void {
   db = undefined;
+  readonlyDb = undefined;
 }
 
 export function logSqliteQuery(sql: string, params: readonly unknown[]): void {
