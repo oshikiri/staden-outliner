@@ -21,16 +21,6 @@ Staden is built on a familiar web stack.
 - Runtime: Bun
 - Language: TypeScript
 
-## Roadmap
-- Add automatic export of markdown files
-- Improve the Markdown editor
-  - See also https://github.com/oshikiri/outliner-playground
-  - Support pasting images from the clipboard
-  - Improve caret movement
-  - Implement undo and redo
-- Full-text search
-- Additional E2E tests
-
 ## Getting Started
 
 Requirements:
@@ -47,7 +37,7 @@ bun run dev -- ./docs
 
 The dev server rebuilds the web assets when files under `src/` or `public/` change.
 
-Then initialize the vault:
+[WIP] Then initialize the vault:
 
 ```bash
 curl -X POST http://127.0.0.1:3000/api/initialize
