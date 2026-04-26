@@ -30,8 +30,8 @@ export async function updatePageByTitle(
   pageUpdated.setProperty("title", pagePrev?.getProperty("title") || title);
 
   if (!pageFile) {
-    const file = FileStore.createFileRecord(title, pageId);
-    await PageStore.putFile(file);
+    const pageRecord = FileStore.createPageFileRecord(title, pageId);
+    await PageStore.putFile(pageRecord);
   }
 
   await IncrementalImporter.importBlockRecursive(pageUpdated);
@@ -44,6 +44,7 @@ async function findPageByTitle(title: string): Promise<Block | null> {
     return page;
   }
 
+  // A page record can exist before the corresponding block tree is imported.
   const file = await PageStore.getPageByTitle(title);
   if (!file?.pageId) {
     return null;

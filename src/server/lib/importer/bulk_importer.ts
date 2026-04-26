@@ -1,7 +1,7 @@
 import { loadMarkdown } from ".";
 import { Block, Token } from "@/shared/markdown";
 import { getPageRefTitles } from "@/shared/markdown/utils";
-import type { FileRecord } from "@/shared/file";
+import type { PageFileRecord } from "@/shared/file";
 import { extractTitle, listAllFilePaths } from "@/server/lib/file";
 import { getStadenRoot } from "@/server/lib/env/stadenRoot";
 import { logInfo } from "@/shared/logger";
@@ -12,7 +12,7 @@ export class BulkImporter {
   linksCached: [string, string][] = [];
   idToBlocks: Map<string, Block> = new Map();
   pageIdByBlockId: Map<string, string> = new Map();
-  files: Map<string, FileRecord> = new Map();
+  pageFiles: Map<string, PageFileRecord> = new Map();
   fileTitleToId: Map<string, string> = new Map();
 
   constructor() {
@@ -27,11 +27,11 @@ export class BulkImporter {
     const paths = await listAllFilePaths(this.stadenRoot);
     for (const path of paths) {
       const title = extractTitle(path);
-      await this.putFile({ title, path });
+      await this.putPageFile({ title, path });
     }
 
     // Import blocks from all files
-    for (const file of this.files.values()) {
+    for (const file of this.pageFiles.values()) {
       if (!file.path) {
         continue;
       }
@@ -44,7 +44,7 @@ export class BulkImporter {
     return {
       blocks: Array.from(this.idToBlocks.values()),
       pageIdByBlockId: this.pageIdByBlockId,
-      files: Array.from(this.files.values()),
+      files: Array.from(this.pageFiles.values()),
       links: this.linksCached,
     };
   }
@@ -61,14 +61,14 @@ export class BulkImporter {
 
   private async createOrGetFileByTitle(
     title: string,
-  ): Promise<FileRecord | undefined> {
+  ): Promise<PageFileRecord | undefined> {
     const pageIdByTitle = this.fileTitleToId.get(title);
-    const file = this.files.get(pageIdByTitle || "");
+    const file = this.pageFiles.get(pageIdByTitle || "");
     if (file) {
       return file;
     }
 
-    const fileCreated = await this.putFile({ title });
+    const fileCreated = await this.putPageFile({ title });
     const pageId = fileCreated?.pageId || "";
     const block = new Block([], 1, []).withId(pageId);
     this.idToBlocks.set(pageId, block);
@@ -76,10 +76,12 @@ export class BulkImporter {
 
     return fileCreated;
   }
-  private async putFile(file: FileRecord): Promise<FileRecord | undefined> {
+  private async putPageFile(
+    file: PageFileRecord,
+  ): Promise<PageFileRecord | undefined> {
     file.pageId = file.pageId || crypto.randomUUID();
 
-    this.files.set(file.pageId, file);
+    this.pageFiles.set(file.pageId, file);
     this.fileTitleToId.set(file.title, file.pageId);
 
     return Promise.resolve(file);

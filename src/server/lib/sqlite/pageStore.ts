@@ -1,4 +1,4 @@
-import type { FileRecord } from "@/shared/file";
+import type { PageFileRecord } from "@/shared/file";
 import { getDb, logSqliteQuery } from ".";
 import { chunk } from "@/shared/lodash";
 import { logInfo } from "@/shared/logger";
@@ -16,7 +16,7 @@ export async function initializePages() {
 
 export async function getPageByTitle(
   title: string,
-): Promise<FileRecord | undefined> {
+): Promise<PageFileRecord | undefined> {
   const sql = `SELECT * FROM pages WHERE title = ? LIMIT 1;`;
   logSqliteQuery(sql, [title]);
   const result = getDb().query<PageRow, string>(sql).all(title);
@@ -29,7 +29,7 @@ export async function getPageByTitle(
 
 export async function getPagesByTitles(
   titles: string[],
-): Promise<FileRecord[]> {
+): Promise<PageFileRecord[]> {
   if (titles.length === 0) {
     return [];
   }
@@ -43,14 +43,16 @@ export async function getPagesByTitles(
   return result.map(toFile);
 }
 
-export async function getPagesByPrefix(prefix: string): Promise<FileRecord[]> {
+export async function getPagesByPrefix(
+  prefix: string,
+): Promise<PageFileRecord[]> {
   const sql = `SELECT * FROM pages where title like ?;`;
   logSqliteQuery(sql, [`${prefix}%`]);
   return getDb().query<PageRow, string>(sql).all(`${prefix}%`).map(toFile);
 }
 
 export async function batchInsertFiles(
-  files: FileRecord[],
+  files: PageFileRecord[],
   BATCH_SIZE: number,
 ) {
   let i = 0;
@@ -63,7 +65,7 @@ export async function batchInsertFiles(
   }
 }
 
-export async function putFile(file: FileRecord) {
+export async function putFile(file: PageFileRecord) {
   const db = getDb();
   const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
@@ -76,12 +78,12 @@ export async function putFile(file: FileRecord) {
   return file;
 }
 
-async function insertFiles(files: FileRecord[]) {
+async function insertFiles(files: PageFileRecord[]) {
   const db = getDb();
   const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
   );
-  const insertMany = db.transaction((files: FileRecord[]) => {
+  const insertMany = db.transaction((files: PageFileRecord[]) => {
     for (const file of files) {
       if (!file.pageId) {
         throw new Error("File pageId is not defined");
@@ -98,7 +100,7 @@ type PageRow = {
   path: string | null;
 };
 
-function toFile(page: PageRow): FileRecord {
+function toFile(page: PageRow): PageFileRecord {
   return {
     pageId: page.id,
     title: page.title,

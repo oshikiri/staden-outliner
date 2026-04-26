@@ -1,4 +1,10 @@
-export interface FileRecord {
+/**
+ * Metadata for a persisted page entry in the vault.
+ *
+ * This is not the browser's File object and does not imply that a file has
+ * already been created on disk.
+ */
+export interface PageFileRecord {
   path?: string;
   title: string;
   pageId?: string | undefined;
@@ -8,7 +14,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function isFile(value: unknown): value is FileRecord {
+export function isPageFileRecord(value: unknown): value is PageFileRecord {
   return (
     isRecord(value) &&
     typeof value.title === "string" &&
@@ -17,7 +23,10 @@ export function isFile(value: unknown): value is FileRecord {
   );
 }
 
-export function createFileRecord(title: string, pageId: string): FileRecord {
+export function createPageFileRecord(
+  title: string,
+  pageId: string,
+): PageFileRecord {
   return {
     title,
     pageId,

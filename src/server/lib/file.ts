@@ -2,7 +2,7 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 
 import { getStadenRoot } from "./env/stadenRoot";
-import type { FileRecord } from "@/shared/file";
+import type { PageFileRecord } from "@/shared/file";
 
 // https://blog.araya.dev/posts/2019-05-09-node-recursive-readdir/
 async function readdirRecursively(rootDir: string): Promise<string[]> {
@@ -53,7 +53,10 @@ export function extractTitle(filePath: string): string {
   return title;
 }
 
-export function updateFile(file: FileRecord, content: string): Promise<void> {
+export function updateFile(
+  file: PageFileRecord,
+  content: string,
+): Promise<void> {
   if (!file.path) {
     return Promise.reject(new Error("File path is not defined"));
   }
@@ -61,7 +64,7 @@ export function updateFile(file: FileRecord, content: string): Promise<void> {
   return Bun.write(file.path, content).then(() => undefined);
 }
 
-export async function fillPathToFile(file: FileRecord): Promise<void> {
+export async function fillPathToFile(file: PageFileRecord): Promise<void> {
   if (!file.pageId) {
     throw new Error("File pageId is not defined");
   }

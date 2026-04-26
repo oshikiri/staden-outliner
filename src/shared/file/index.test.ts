@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { createFileRecord } from ".";
+import { createPageFileRecord } from ".";
 
-describe("createFileRecord", () => {
+describe("createPageFileRecord", () => {
   test("returns a file object", () => {
-    const file = createFileRecord("test", "test-uuid");
+    const file = createPageFileRecord("test", "test-uuid");
     expect(file).toEqual({
       title: "test",
       pageId: "test-uuid",

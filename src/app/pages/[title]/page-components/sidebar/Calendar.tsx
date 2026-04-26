@@ -1,7 +1,7 @@
 import { JSX, useEffect, useState } from "react";
 
 import { StadenDate } from "@/shared/date";
-import type { FileRecord } from "@/shared/file";
+import type { PageFileRecord } from "@/shared/file";
 import { systemRpc } from "@/client/rpc/system";
 import { usePageNavigation } from "../../navigation";
 import { isAbortError } from "@/client/request";
@@ -28,7 +28,7 @@ export function JournalCalendar({ pathname }: { pathname: string }) {
         if (controller.signal.aborted) {
           return;
         }
-        setDays(files.map((file: FileRecord) => file.title));
+        setDays(files.map((file: PageFileRecord) => file.title));
       })
       .catch((error) => {
         if (controller.signal.aborted || isAbortError(error)) {

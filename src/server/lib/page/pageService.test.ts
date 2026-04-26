@@ -69,7 +69,7 @@ describe("pageService", () => {
     jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
     jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
     const createFileSpy = jest
-      .spyOn(FileStore, "createFileRecord")
+      .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
     const putFileSpy = jest.spyOn(PageStore, "putFile").mockResolvedValue({
       title: "draft-page",
@@ -103,7 +103,7 @@ describe("pageService", () => {
     jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
     jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
     const createFileSpy = jest
-      .spyOn(FileStore, "createFileRecord")
+      .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft%20page", pageId: "page-1" });
     const putFileSpy = jest.spyOn(PageStore, "putFile").mockResolvedValue({
       title: "draft%20page",
