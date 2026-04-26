@@ -20,6 +20,31 @@ test("when typing characters, it should add them to the block content", async ({
   await expect(target).toHaveText("add content:new");
 });
 
+test("when saving and reloading, the edited content should persist", async ({
+  page,
+}) => {
+  await page.goto("./pages/edit");
+
+  const target = page.getByText("add content");
+
+  // Click on the block to enter edit mode
+  await enterEditMode(page, target);
+
+  // Type "new" at the end of the content
+  await page.keyboard.type("new");
+
+  // Click outside to exit edit mode and trigger save
+  await page.click("h1");
+
+  // Wait for the rendered content to reflect the saved edit before reloading.
+  await expect(page.getByText("add content:new")).toBeVisible();
+
+  await page.reload();
+  await page.waitForLoadState("networkidle");
+
+  await expect(page.getByText("add content:new")).toBeVisible();
+});
+
 test("when pressing backspace, it should delete characters from the block content", async ({
   page,
 }) => {
@@ -51,7 +76,7 @@ async function enterEditMode(page: Page, element: Locator) {
   }
 }
 
-test.fixme("when pressing Tab/Shift+Tab, it should change the block indentation level", async ({
+test("when pressing Tab/Shift+Tab, it should change the block indentation level", async ({
   page,
 }) => {
   await page.goto("./pages/edit");
