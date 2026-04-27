@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, jest, test } from "bun:test";
 import { Database as BunDatabase } from "bun:sqlite";
 
 import * as StadenRoot from "../env/stadenRoot";
@@ -13,10 +13,10 @@ const prepareMock = jest.fn(() => ({
 }));
 const execMock = jest.fn();
 const closeMock = jest.fn();
-const transactionMock = jest.fn((callback) => () => {
+const transactionMock = jest.fn((callback) => (...args: unknown[]) => {
   inTransaction = true;
   try {
-    callback();
+    callback(...args);
   } finally {
     inTransaction = false;
   }
@@ -44,6 +44,13 @@ describe.serial("sqlite lifecycle", () => {
     jest.clearAllMocks();
     inTransaction = false;
     jest.spyOn(StadenRoot, "getStadenRoot").mockReturnValue("/tmp/staden");
+  });
+
+  afterEach(async () => {
+    const sqlite = await loadSqliteModule();
+    sqlite.__resetDbForTests();
+    sqlite.__setDatabaseConstructorForTests(undefined);
+    await sqlite.close();
   });
 
   test("getDb reuses a single connection", async () => {
