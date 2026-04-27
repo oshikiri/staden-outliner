@@ -1,6 +1,6 @@
-import { getDb, logSqliteQuery } from ".";
+import { getDb, logSqliteQuery } from "./db";
 
-export async function initializeLinks() {
+export function initializeLinks() {
   const db = getDb();
   db.exec("DROP TABLE IF EXISTS links");
   db.exec(`
@@ -29,12 +29,12 @@ export async function getSourceLinks(
   return links.map((link) => link.from_id);
 }
 
-export async function deleteLinksByFromId(fromId: string) {
+export function deleteLinksByFromId(fromId: string) {
   const db = getDb();
   db.prepare("DELETE FROM links WHERE from_id = ?").run(fromId);
 }
 
-export async function batchInsertLinks(links: [string, string][]) {
+export function batchInsertLinks(links: [string, string][]) {
   if (links.length === 0) {
     return;
   }

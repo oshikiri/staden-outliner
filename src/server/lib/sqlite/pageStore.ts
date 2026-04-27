@@ -1,9 +1,9 @@
 import type { PageFileRecord } from "@/shared/file";
-import { getDb, logSqliteQuery } from ".";
 import { chunk } from "@/shared/lodash";
 import { logInfo } from "@/shared/logger";
+import { getDb, logSqliteQuery } from "./db";
 
-export async function initializePages() {
+export function initializePages() {
   const db = getDb();
   db.exec("DROP TABLE IF EXISTS pages");
   db.exec(`
@@ -27,9 +27,7 @@ export async function getPageByTitle(
   return toFile(result[0]);
 }
 
-export async function getPagesByTitles(
-  titles: string[],
-): Promise<PageFileRecord[]> {
+export function getPagesByTitles(titles: string[]): PageFileRecord[] {
   if (titles.length === 0) {
     return [];
   }
@@ -51,21 +49,18 @@ export async function getPagesByPrefix(
   return getDb().query<PageRow, string>(sql).all(`${prefix}%`).map(toFile);
 }
 
-export async function batchInsertFiles(
-  files: PageFileRecord[],
-  BATCH_SIZE: number,
-) {
+export function batchInsertFiles(files: PageFileRecord[], BATCH_SIZE: number) {
   let i = 0;
   for (const batch of chunk(files, BATCH_SIZE)) {
     logInfo(
       `Importing files batch ${i + 1} of ${Math.ceil(files.length / BATCH_SIZE)}`,
     );
     i++;
-    await insertFiles(batch);
+    insertFiles(batch);
   }
 }
 
-export async function putFile(file: PageFileRecord) {
+export function putFile(file: PageFileRecord) {
   const db = getDb();
   const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",
@@ -78,7 +73,7 @@ export async function putFile(file: PageFileRecord) {
   return file;
 }
 
-async function insertFiles(files: PageFileRecord[]) {
+function insertFiles(files: PageFileRecord[]) {
   const db = getDb();
   const insert = db.prepare<unknown, [string, string, string | null]>(
     "REPLACE INTO pages (id, title, path) VALUES (?, ?, ?)",

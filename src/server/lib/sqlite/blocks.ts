@@ -1,6 +1,6 @@
 import { Block } from "@/shared/markdown";
 import { chunk } from "@/shared/lodash";
-import { getDb, logSqliteQuery } from ".";
+import { getDb, logSqliteQuery } from "./db";
 import {
   BlockRecord,
   BlockInsertOptions,
@@ -10,7 +10,7 @@ import {
 } from "./blockRecordMapper";
 import { logInfo } from "@/shared/logger";
 
-export async function initializeBlocks() {
+export function initializeBlocks() {
   const db = getDb();
   db.exec("DROP TABLE IF EXISTS blocks");
   db.exec(
@@ -85,7 +85,7 @@ export async function getCurrentPage(childId: string): Promise<Block> {
   return rootBlock;
 }
 
-export async function batchInsertBlocks(
+export function batchInsertBlocks(
   blocks: Block[],
   BATCH_SIZE: number,
   options: BlockInsertOptions = {},
@@ -96,11 +96,11 @@ export async function batchInsertBlocks(
       `Importing batch ${i + 1} of ${Math.ceil(blocks.length / BATCH_SIZE)}`,
     );
     i++;
-    await batchInsertBlock(batch, options);
+    batchInsertBlock(batch, options);
   }
 }
 
-async function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
+function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
   const db = getDb();
   const insert = db.prepare<unknown, BlockInsertRecord>(`
     REPLACE INTO blocks

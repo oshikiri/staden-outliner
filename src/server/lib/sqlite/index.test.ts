@@ -1,5 +1,10 @@
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import { beforeEach, describe, expect, jest, test } from "bun:test";
 import { Database as BunDatabase } from "bun:sqlite";
+
+import * as StadenRoot from "../env/stadenRoot";
+import * as Links from "./links";
+import * as Blocks from "./blocks";
+import * as Pages from "./pageStore";
 
 let inTransaction = false;
 
@@ -16,34 +21,11 @@ const transactionMock = jest.fn((callback) => () => {
     inTransaction = false;
   }
 });
-const initializeLinksMock = jest.fn(() => {
-  expect(inTransaction).toBe(true);
-});
-const initializeBlocksMock = jest.fn(() => {
-  expect(inTransaction).toBe(true);
-});
-const initializePagesMock = jest.fn(() => {
-  expect(inTransaction).toBe(true);
-});
 const databaseConstructorMock = jest.fn(() => ({
   prepare: prepareMock,
   exec: execMock,
   close: closeMock,
   transaction: transactionMock,
-}));
-const getStadenRootMock = jest.fn(() => "/tmp/staden");
-
-mock.module("../env/stadenRoot", () => ({
-  getStadenRoot: getStadenRootMock,
-}));
-mock.module("./links", () => ({
-  initializeLinks: initializeLinksMock,
-}));
-mock.module("./blocks", () => ({
-  initializeBlocks: initializeBlocksMock,
-}));
-mock.module("./pageStore", () => ({
-  initializePages: initializePagesMock,
 }));
 
 let importCounter = 0;
@@ -57,9 +39,11 @@ async function loadSqliteModule() {
 }
 
 describe.serial("sqlite lifecycle", () => {
-  beforeEach(async () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
     jest.clearAllMocks();
     inTransaction = false;
+    jest.spyOn(StadenRoot, "getStadenRoot").mockReturnValue("/tmp/staden");
   });
 
   test("getDb reuses a single connection", async () => {
@@ -86,6 +70,22 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("initializeAllTables runs inside a transaction", async () => {
+    const initializeLinksSpy = jest
+      .spyOn(Links, "initializeLinks")
+      .mockImplementation(() => {
+        expect(inTransaction).toBe(true);
+      });
+    const initializeBlocksSpy = jest
+      .spyOn(Blocks, "initializeBlocks")
+      .mockImplementation(() => {
+        expect(inTransaction).toBe(true);
+      });
+    const initializePagesSpy = jest
+      .spyOn(Pages, "initializePages")
+      .mockImplementation(() => {
+        expect(inTransaction).toBe(true);
+      });
+
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
@@ -93,27 +93,35 @@ describe.serial("sqlite lifecycle", () => {
     sqlite.initializeAllTables();
 
     expect(transactionMock).toHaveBeenCalledTimes(1);
-    expect(initializeLinksMock).toHaveBeenCalledTimes(1);
-    expect(initializeBlocksMock).toHaveBeenCalledTimes(1);
-    expect(initializePagesMock).toHaveBeenCalledTimes(1);
+    expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
+    expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
+    expect(initializePagesSpy).toHaveBeenCalledTimes(1);
     expect(execMock).toHaveBeenCalledTimes(1);
     expect(execMock).toHaveBeenCalledWith(expect.stringContaining("DROP VIEW"));
   });
 
   test("initializeAllTables stops when a step fails", async () => {
+    const initializeLinksSpy = jest
+      .spyOn(Links, "initializeLinks")
+      .mockImplementation(() => {
+        expect(inTransaction).toBe(true);
+      });
+    const initializeBlocksSpy = jest
+      .spyOn(Blocks, "initializeBlocks")
+      .mockImplementation(() => {
+        expect(inTransaction).toBe(true);
+        throw new Error("boom");
+      });
+    const initializePagesSpy = jest.spyOn(Pages, "initializePages");
+
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
 
-    initializeBlocksMock.mockImplementation(() => {
-      expect(inTransaction).toBe(true);
-      throw new Error("boom");
-    });
-
     expect(() => sqlite.initializeAllTables()).toThrow("boom");
-    expect(initializeLinksMock).toHaveBeenCalledTimes(1);
-    expect(initializeBlocksMock).toHaveBeenCalledTimes(1);
-    expect(initializePagesMock).not.toHaveBeenCalled();
+    expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
+    expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
+    expect(initializePagesSpy).not.toHaveBeenCalled();
     expect(execMock).not.toHaveBeenCalled();
   });
 });

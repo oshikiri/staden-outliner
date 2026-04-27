@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, test } from "bun:test";
 
 import * as FileStore from "@/shared/file";
+import * as SqliteDb from "../sqlite/db";
 import * as IncrementalImporter from "../importer/incremental_importer";
 import { Block } from "@/shared/markdown/block";
 import * as IncrementalExporter from "../exporter/incremental_exporter";
@@ -10,9 +11,36 @@ import * as PageStore from "../sqlite/pageStore";
 import * as ContentResolver from "./contentResolver";
 import { getPageByTitle, updatePageByTitle } from "./pageService";
 
+let inTransaction = false;
+const transactionMock = jest.fn((callback) => () => {
+  inTransaction = true;
+  try {
+    callback();
+  } finally {
+    inTransaction = false;
+  }
+});
+const queryAllMock = jest.fn(() => []);
+const queryMock = jest.fn(() => ({
+  all: queryAllMock,
+}));
+const prepareMock = jest.fn(() => ({
+  run: jest.fn(),
+}));
+const execMock = jest.fn();
+
 describe("pageService", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllMocks();
+    inTransaction = false;
+    queryAllMock.mockReturnValue([]);
+    jest.spyOn(SqliteDb, "getDb").mockReturnValue({
+      transaction: transactionMock,
+      query: queryMock,
+      prepare: prepareMock,
+      exec: execMock,
+    } as never);
   });
 
   test("getPageByTitle returns a draft page without persisting when the page does not exist", async () => {
@@ -72,16 +100,24 @@ describe("pageService", () => {
     const createFileSpy = jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
-    const putFileSpy = jest.spyOn(PageStore, "putFile").mockResolvedValue({
-      title: "draft-page",
-      pageId: "page-1",
-    });
+    const putFileSpy = jest
+      .spyOn(PageStore, "putFile")
+      .mockImplementation((file) => {
+        expect(inTransaction).toBe(true);
+        return file;
+      });
     const importSpy = jest
       .spyOn(IncrementalImporter, "importBlockRecursive")
-      .mockImplementation(async (page) => page);
+      .mockImplementation((page) => {
+        expect(inTransaction).toBe(true);
+        return page;
+      });
     const exportSpy = jest
       .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
-      .mockResolvedValue("draft-page");
+      .mockImplementation(async () => {
+        expect(inTransaction).toBe(false);
+        return "draft-page";
+      });
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -110,16 +146,24 @@ describe("pageService", () => {
     const createFileSpy = jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft%20page", pageId: "page-1" });
-    const putFileSpy = jest.spyOn(PageStore, "putFile").mockResolvedValue({
-      title: "draft%20page",
-      pageId: "page-1",
-    });
+    const putFileSpy = jest
+      .spyOn(PageStore, "putFile")
+      .mockImplementation((file) => {
+        expect(inTransaction).toBe(true);
+        return file;
+      });
     const importSpy = jest
       .spyOn(IncrementalImporter, "importBlockRecursive")
-      .mockImplementation(async (page) => page);
+      .mockImplementation((page) => {
+        expect(inTransaction).toBe(true);
+        return page;
+      });
     const exportSpy = jest
       .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
-      .mockResolvedValue("draft-page");
+      .mockImplementation(async () => {
+        expect(inTransaction).toBe(false);
+        return "draft-page";
+      });
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -146,13 +190,16 @@ describe("pageService", () => {
     jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
-    jest.spyOn(PageStore, "putFile").mockResolvedValue({
-      title: "draft-page",
-      pageId: "page-1",
+    jest.spyOn(PageStore, "putFile").mockImplementation((file) => {
+      expect(inTransaction).toBe(true);
+      return file;
     });
     jest
       .spyOn(IncrementalImporter, "importBlockRecursive")
-      .mockImplementation(async (page) => page);
+      .mockImplementation((page) => {
+        expect(inTransaction).toBe(true);
+        return page;
+      });
     jest
       .spyOn(IncrementalExporter, "exportOnePageToMarkdown")
       .mockRejectedValue(new Error("export failed"));
@@ -160,5 +207,34 @@ describe("pageService", () => {
     await expect(updatePageByTitle("draft-page", draftPage)).rejects.toThrow(
       "export failed",
     );
+  });
+
+  test("updatePageByTitle surfaces sqlite save failures before export", async () => {
+    const draftPage = new Block([], 0, [
+      new Block([], 1, []).withId("child-1"),
+    ]);
+    draftPage.withId("page-1");
+    draftPage.setProperty("title", "draft-page");
+
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(FileStore, "createPageFileRecord").mockReturnValue({
+      title: "draft-page",
+      pageId: "page-1",
+    });
+    jest.spyOn(PageStore, "putFile").mockImplementation(() => {
+      throw new Error("sqlite save failed");
+    });
+    const importSpy = jest.spyOn(IncrementalImporter, "importBlockRecursive");
+    const exportSpy = jest.spyOn(
+      IncrementalExporter,
+      "exportOnePageToMarkdown",
+    );
+
+    await expect(updatePageByTitle("draft-page", draftPage)).rejects.toThrow(
+      "sqlite save failed",
+    );
+    expect(importSpy).not.toHaveBeenCalled();
+    expect(exportSpy).not.toHaveBeenCalled();
   });
 });

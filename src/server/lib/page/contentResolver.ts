@@ -5,11 +5,8 @@ import {
   Command,
   CommandQuery,
 } from "@/shared/markdown/token";
-import {
-  getBlockById as getBlockByIdDb,
-  getReadonlyDb,
-  logSqliteQuery,
-} from "@/server/lib/sqlite";
+import { getReadonlyDb, logSqliteQuery } from "../sqlite/db";
+import * as SqliteBlocks from "../sqlite/blocks";
 import type { SQLQueryBindings } from "bun:sqlite";
 import { logDebug, logWarn } from "@/shared/logger";
 import type { CommandQueryRow } from "@/shared/markdown/token";
@@ -23,7 +20,7 @@ export async function resolvePageContent(page: Block): Promise<Block> {
 async function resolveBlockRefs(page: Block): Promise<void> {
   for (const content of page.content) {
     if (content instanceof BlockRef) {
-      const block = await getBlockByIdDb(content.id);
+      const block = await SqliteBlocks.getBlockById(content.id);
       content.resolvedContent = block.content;
     }
   }
@@ -64,7 +61,7 @@ async function resolveCommand(command: Command): Promise<void> {
   }
 
   const id = command.args.replace("((", "").replace("))", "");
-  const block = await getBlockByIdDb(id);
+  const block = await SqliteBlocks.getBlockById(id);
   command.resolvedContent = block.content || [];
 }
 
@@ -72,7 +69,7 @@ async function resolveCommandQuery(
   command: CommandQuery,
   blockId: string,
 ): Promise<CommandQuery> {
-  const block = await getBlockByIdDb(blockId);
+  const block = await SqliteBlocks.getBlockById(blockId);
   if (!block) {
     return command;
   }

@@ -19,7 +19,7 @@ describe("sqlite/pageStore", () => {
   });
 
   test("getPagesByTitles returns empty array without querying when titles are empty", async () => {
-    await expect(getPagesByTitles([])).resolves.toEqual([]);
+    expect(getPagesByTitles([])).toEqual([]);
     expect(queryMock).not.toHaveBeenCalled();
   });
 
@@ -32,7 +32,7 @@ describe("sqlite/pageStore", () => {
       },
     ]);
 
-    await expect(getPagesByTitles(["Page", "Other"])).resolves.toEqual([
+    expect(getPagesByTitles(["Page", "Other"])).toEqual([
       {
         pageId: "page-1",
         title: "Page",

@@ -1,10 +1,11 @@
 import { Block, create as createBlock } from "@/shared/markdown/block";
 import * as FileStore from "@/shared/file";
-import { logError } from "@/shared/logger";
-import * as IncrementalImporter from "@/server/lib/importer/incremental_importer";
-import { exportOnePageToMarkdown } from "@/server/lib/exporter/incremental_exporter";
-import * as PageBlocks from "@/server/lib/sqlite/blocks";
-import * as PageStore from "@/server/lib/sqlite/pageStore";
+import { logError, logInfo } from "@/shared/logger";
+import { getDb } from "../sqlite/db";
+import * as IncrementalImporter from "../importer/incremental_importer";
+import { exportOnePageToMarkdown } from "../exporter/incremental_exporter";
+import * as PageBlocks from "../sqlite/blocks";
+import * as PageStore from "../sqlite/pageStore";
 
 import * as ContentResolver from "./contentResolver";
 
@@ -31,13 +32,23 @@ export async function updatePageByTitle(
   assignPageTreeMetadata(pageUpdated, pageId, undefined);
   pageUpdated.setProperty("title", pagePrev?.getProperty("title") || title);
 
-  if (!pageFile) {
-    const pageRecord = FileStore.createPageFileRecord(title, pageId);
-    await PageStore.putFile(pageRecord);
+  try {
+    const savePageTx = getDb().transaction(() => {
+      if (!pageFile) {
+        const pageRecord = FileStore.createPageFileRecord(title, pageId);
+        PageStore.putFile(pageRecord);
+      }
+
+      IncrementalImporter.importBlockRecursive(pageUpdated);
+    });
+    savePageTx();
+  } catch (error) {
+    logError("Failed to save page to sqlite before export", title, error);
+    throw error;
   }
 
-  await IncrementalImporter.importBlockRecursive(pageUpdated);
   try {
+    logInfo("Exporting page to markdown after save", title);
     await exportOnePageToMarkdown(title);
   } catch (error) {
     logError("Failed to export page to markdown after save", title, error);
