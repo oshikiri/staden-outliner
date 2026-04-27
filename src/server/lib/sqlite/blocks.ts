@@ -89,6 +89,7 @@ export function batchInsertBlocks(
   blocks: Block[],
   BATCH_SIZE: number,
   options: BlockInsertOptions = {},
+  db = getDb(),
 ) {
   let i = 0;
   for (const batch of chunk(Array.from(blocks), BATCH_SIZE)) {
@@ -96,12 +97,15 @@ export function batchInsertBlocks(
       `Importing batch ${i + 1} of ${Math.ceil(blocks.length / BATCH_SIZE)}`,
     );
     i++;
-    batchInsertBlock(batch, options);
+    batchInsertBlock(batch, options, db);
   }
 }
 
-function batchInsertBlock(blocks: Block[], options: BlockInsertOptions) {
-  const db = getDb();
+function batchInsertBlock(
+  blocks: Block[],
+  options: BlockInsertOptions,
+  db = getDb(),
+) {
   const insert = db.prepare<unknown, BlockInsertRecord>(`
     REPLACE INTO blocks
       (id, page_id, parent_id, depth, order_index, content, content_markdown, properties)
