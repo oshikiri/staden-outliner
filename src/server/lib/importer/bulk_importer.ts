@@ -49,8 +49,8 @@ export class BulkImporter {
     };
   }
 
-  async getPageIdOrCreate(pageTitle: string): Promise<string> {
-    const targetFile = await this.createOrGetFileByTitle(pageTitle);
+  getPageIdOrCreate(pageTitle: string): string {
+    const targetFile = this.createOrGetFileByTitle(pageTitle);
     const targetPageId = targetFile?.pageId;
     if (!targetPageId) {
       throw new Error(`No page found with title ${pageTitle}`);
@@ -59,16 +59,14 @@ export class BulkImporter {
     return targetPageId;
   }
 
-  private async createOrGetFileByTitle(
-    title: string,
-  ): Promise<PageFileRecord | undefined> {
+  private createOrGetFileByTitle(title: string): PageFileRecord | undefined {
     const pageIdByTitle = this.fileTitleToId.get(title);
     const file = this.pageFiles.get(pageIdByTitle || "");
     if (file) {
       return file;
     }
 
-    const fileCreated = await this.putPageFile({ title });
+    const fileCreated = this.putPageFile({ title });
     const pageId = fileCreated?.pageId || "";
     const block = new Block([], 1, []).withId(pageId);
     this.idToBlocks.set(pageId, block);
@@ -76,43 +74,39 @@ export class BulkImporter {
 
     return fileCreated;
   }
-  private async putPageFile(
-    file: PageFileRecord,
-  ): Promise<PageFileRecord | undefined> {
+  private putPageFile(file: PageFileRecord): PageFileRecord | undefined {
     file.pageId = file.pageId || crypto.randomUUID();
 
     this.pageFiles.set(file.pageId, file);
     this.fileTitleToId.set(file.title, file.pageId);
 
-    return Promise.resolve(file);
+    return file;
   }
 
-  private async importBlockToDB(
+  private importBlockToDB(
     block: Block,
     pageId: string,
     parent: Block | undefined,
-  ): Promise<void> {
+  ): void {
     block.id = block.id || crypto.randomUUID();
     block.parent = parent;
     block.setPropertiesFromContent();
 
     this.idToBlocks.set(block.id, block);
     this.pageIdByBlockId.set(block.id, pageId);
-    for (const target of await this.extractOutLinks(block.content)) {
+    for (const target of this.extractOutLinks(block.content)) {
       this.linksCached.push([block.id, target]);
     }
 
-    const childrenPromised = block.children.map(async (child) => {
-      await this.importBlockToDB(child, pageId, block);
-      return;
-    });
-    await Promise.all(childrenPromised);
+    for (const child of block.children) {
+      this.importBlockToDB(child, pageId, block);
+    }
   }
 
-  private async extractOutLinks(tokens: Token[]): Promise<string[]> {
+  private extractOutLinks(tokens: Token[]): string[] {
     const targets: string[] = [];
     for (const title of getPageRefTitles(tokens)) {
-      const toBlockId = await this.getPageIdOrCreate(title);
+      const toBlockId = this.getPageIdOrCreate(title);
       targets.push(toBlockId);
     }
     return targets;
