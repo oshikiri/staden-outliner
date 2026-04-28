@@ -69,6 +69,20 @@ describe.serial("links", () => {
     expect(rows).toEqual([{ from_id: "from-a", to_id: "to-a" }]);
   });
 
+  test("initializeLinks creates indexes for backlink lookups", () => {
+    linksModule.initializeLinks(db);
+
+    const indexes = db
+      .query(
+        "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'links' ORDER BY name",
+      )
+      .all() as Array<{ name: string }>;
+    expect(indexes.map((index) => index.name)).toEqual([
+      "idx_links_from_id",
+      "idx_links_to_id",
+    ]);
+  });
+
   test("getSourceLinks returns from_id values for a target page", async () => {
     db.exec(
       "INSERT INTO pages (id, title, path) VALUES ('page-target', 'Target', NULL)",

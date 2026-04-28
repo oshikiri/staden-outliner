@@ -74,6 +74,8 @@ describe.serial("sqlite lifecycle", () => {
 
     expect(first).toBe(second);
     expect(databaseConstructorMock).toHaveBeenCalledTimes(1);
+    expect(execMock).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
+    expect(execMock).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
     await sqlite.close();
   });
 
@@ -108,6 +110,9 @@ describe.serial("sqlite lifecycle", () => {
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
+    await sqlite.open();
+    execMock.mockClear();
+    queryMock.mockClear();
 
     sqlite.initializeAllTables();
 
@@ -140,12 +145,17 @@ describe.serial("sqlite lifecycle", () => {
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
+    await sqlite.open();
+    execMock.mockClear();
+    queryMock.mockClear();
 
     expect(() => sqlite.initializeAllTables()).toThrow("boom");
     expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
     expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
     expect(initializePagesSpy).not.toHaveBeenCalled();
-    expect(execMock).not.toHaveBeenCalled();
+    expect(
+      execMock.mock.calls.some(([sql]) => String(sql).includes("DROP VIEW")),
+    ).toBe(false);
   });
 
   test("initializeAllTables does not rewrite the schema version when it is current", async () => {
@@ -154,6 +164,9 @@ describe.serial("sqlite lifecycle", () => {
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
+    await sqlite.open();
+    execMock.mockClear();
+    queryMock.mockClear();
 
     sqlite.initializeAllTables();
 
@@ -166,15 +179,21 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("initializeAllTables refuses unsupported schema versions", async () => {
-    schemaVersion = 2;
-
     const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
+    await sqlite.open();
+    execMock.mockClear();
+    queryMock.mockClear();
+    schemaVersion = 2;
 
     expect(() => sqlite.initializeAllTables()).toThrow(
       "Unsupported sqlite schema version: 2 > 1",
     );
-    expect(execMock).not.toHaveBeenCalled();
+    expect(
+      execMock.mock.calls.some(([sql]) =>
+        String(sql).includes("PRAGMA user_version = 1"),
+      ),
+    ).toBe(false);
   });
 });

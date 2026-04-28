@@ -92,4 +92,15 @@ describe("pageStore", () => {
       .all() as Array<{ id: string; title: string; path: string | null }>;
     expect(rows).toEqual([{ id: "page-a", title: "Page A", path: null }]);
   });
+
+  test("initializePages creates an index for title lookups", () => {
+    initializePages(db);
+
+    const indexes = db
+      .query(
+        "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'pages' ORDER BY name",
+      )
+      .all() as Array<{ name: string }>;
+    expect(indexes.map((index) => index.name)).toContain("idx_pages_title");
+  });
 });

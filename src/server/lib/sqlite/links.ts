@@ -9,6 +9,14 @@ export function initializeLinks(db = getDb()) {
       FOREIGN KEY (to_id) REFERENCES blocks(id)
     )
   `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_links_from_id
+    ON links (from_id)
+  `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_links_to_id
+    ON links (to_id)
+  `);
 }
 
 export async function getSourceLinks(

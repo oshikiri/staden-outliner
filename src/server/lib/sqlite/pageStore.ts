@@ -10,6 +10,10 @@ export function initializePages(db = getDb()) {
       title TEXT,
       path TEXT
     )`);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_pages_title
+    ON pages (title)
+  `);
 }
 
 export async function getPageByTitle(

@@ -62,4 +62,18 @@ describe("blocks", () => {
       },
     ]);
   });
+
+  test("initializeBlocks creates indexes for page and parent lookups", () => {
+    blocks.initializeBlocks(db);
+
+    const indexes = db
+      .query(
+        "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'blocks' ORDER BY name",
+      )
+      .all() as Array<{ name: string }>;
+    expect(indexes.map((index) => index.name)).toContain("idx_blocks_page_id");
+    expect(indexes.map((index) => index.name)).toContain(
+      "idx_blocks_parent_id",
+    );
+  });
 });

@@ -23,6 +23,14 @@ export function initializeBlocks(db = getDb()) {
       properties TEXT
     )`,
   );
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_blocks_page_id
+    ON blocks (page_id)
+  `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_blocks_parent_id
+    ON blocks (parent_id)
+  `);
 }
 
 export async function getPageBlockById(pageId: string): Promise<Block> {

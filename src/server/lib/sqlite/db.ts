@@ -13,7 +13,7 @@ export async function open() {
 
   const stadenRoot = getStadenRoot();
   const Database = await loadDatabaseConstructor();
-  db = new Database(`${stadenRoot}/vault.sqlite3`);
+  db = configureDatabase(new Database(`${stadenRoot}/vault.sqlite3`));
   return db;
 }
 
@@ -39,7 +39,7 @@ export function getDb(): BunDatabase {
   if (!db) {
     const stadenRoot = getStadenRoot();
     const Database = loadDatabaseConstructor();
-    db = new Database(`${stadenRoot}/vault.sqlite3`);
+    db = configureDatabase(new Database(`${stadenRoot}/vault.sqlite3`));
   }
 
   return db;
@@ -81,4 +81,10 @@ function loadDatabaseConstructor(): typeof BunDatabase {
     return databaseConstructorForTests;
   }
   return BunDatabase;
+}
+
+function configureDatabase(database: BunDatabase): BunDatabase {
+  database.exec("PRAGMA foreign_keys = ON;");
+  database.exec("PRAGMA journal_mode = WAL;");
+  return database;
 }
