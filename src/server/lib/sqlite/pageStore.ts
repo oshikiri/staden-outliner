@@ -3,9 +3,7 @@ import { chunk } from "@/shared/lodash";
 import { logInfo } from "@/shared/logger";
 import { getDb, logSqliteQuery } from "./db";
 
-export function initializePages() {
-  const db = getDb();
-  db.exec("DROP TABLE IF EXISTS pages");
+export function initializePages(db = getDb()) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS pages (
       id TEXT PRIMARY KEY,

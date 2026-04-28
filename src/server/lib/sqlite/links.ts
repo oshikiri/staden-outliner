@@ -1,7 +1,6 @@
 import { getDb, logSqliteQuery } from "./db";
 
 export function initializeLinks(db = getDb()) {
-  db.exec("DROP TABLE IF EXISTS links");
   db.exec(`
     CREATE TABLE IF NOT EXISTS links (
       from_id TEXT,

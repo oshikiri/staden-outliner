@@ -10,9 +10,7 @@ import {
 } from "./blockRecordMapper";
 import { logInfo } from "@/shared/logger";
 
-export function initializeBlocks() {
-  const db = getDb();
-  db.exec("DROP TABLE IF EXISTS blocks");
+export function initializeBlocks(db = getDb()) {
   db.exec(
     `CREATE TABLE IF NOT EXISTS blocks (
       id TEXT PRIMARY KEY,

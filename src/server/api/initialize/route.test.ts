@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
 
 const initializeAllTablesMock = jest.fn();
+const clearAllDataMock = jest.fn();
 const batchInsertBlocksMock = jest.fn();
 const batchInsertFilesMock = jest.fn();
 const batchInsertLinksMock = jest.fn();
@@ -12,6 +13,7 @@ mock.module("@/server/lib/sqlite", () => ({
   open: openMock,
   close: closeMock,
   initializeAllTables: initializeAllTablesMock,
+  clearAllData: clearAllDataMock,
   batchInsertBlocks: batchInsertBlocksMock,
   batchInsertFiles: batchInsertFilesMock,
   batchInsertLinks: batchInsertLinksMock,
@@ -46,6 +48,7 @@ describe("api/initialize/route", () => {
     expect(openMock).toHaveBeenCalled();
     expect(initializeAllTablesMock).toHaveBeenCalled();
     expect(runMock).toHaveBeenCalled();
+    expect(clearAllDataMock).toHaveBeenCalled();
     expect(batchInsertBlocksMock).toHaveBeenCalledWith([], 1000, {
       pageIdByBlockId: new Map(),
     });

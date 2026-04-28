@@ -7,11 +7,21 @@ import * as Blocks from "./blocks";
 import * as Pages from "./pageStore";
 
 let inTransaction = false;
+let schemaVersion = 0;
 
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
 }));
-const execMock = jest.fn();
+const queryGetMock = jest.fn(() => ({ user_version: schemaVersion }));
+const queryMock = jest.fn(() => ({
+  get: queryGetMock,
+}));
+const execMock = jest.fn((sql: string) => {
+  const match = sql.match(/PRAGMA user_version = (\d+);?/);
+  if (match) {
+    schemaVersion = Number(match[1]);
+  }
+});
 const closeMock = jest.fn();
 const transactionMock = jest.fn((callback) => (...args: unknown[]) => {
   inTransaction = true;
@@ -23,6 +33,7 @@ const transactionMock = jest.fn((callback) => (...args: unknown[]) => {
 });
 const databaseConstructorMock = jest.fn(() => ({
   prepare: prepareMock,
+  query: queryMock,
   exec: execMock,
   close: closeMock,
   transaction: transactionMock,
@@ -43,6 +54,7 @@ describe.serial("sqlite lifecycle", () => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
     inTransaction = false;
+    schemaVersion = 0;
     jest.spyOn(StadenRoot, "getStadenRoot").mockReturnValue("/tmp/staden");
   });
 
@@ -103,8 +115,12 @@ describe.serial("sqlite lifecycle", () => {
     expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
     expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
     expect(initializePagesSpy).toHaveBeenCalledTimes(1);
-    expect(execMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
     expect(execMock).toHaveBeenCalledWith(expect.stringContaining("DROP VIEW"));
+    expect(execMock).toHaveBeenCalledWith("PRAGMA user_version = 1;");
+    expect(
+      execMock.mock.calls.some(([sql]) => String(sql).includes("DROP TABLE")),
+    ).toBe(false);
   });
 
   test("initializeAllTables stops when a step fails", async () => {
@@ -129,6 +145,36 @@ describe.serial("sqlite lifecycle", () => {
     expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
     expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
     expect(initializePagesSpy).not.toHaveBeenCalled();
+    expect(execMock).not.toHaveBeenCalled();
+  });
+
+  test("initializeAllTables does not rewrite the schema version when it is current", async () => {
+    schemaVersion = 1;
+
+    const sqlite = await loadSqliteModule();
+    sqlite.__resetDbForTests();
+    await sqlite.close();
+
+    sqlite.initializeAllTables();
+
+    expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
+    expect(
+      execMock.mock.calls.some(([sql]) =>
+        String(sql).includes("PRAGMA user_version = 1"),
+      ),
+    ).toBe(false);
+  });
+
+  test("initializeAllTables refuses unsupported schema versions", async () => {
+    schemaVersion = 2;
+
+    const sqlite = await loadSqliteModule();
+    sqlite.__resetDbForTests();
+    await sqlite.close();
+
+    expect(() => sqlite.initializeAllTables()).toThrow(
+      "Unsupported sqlite schema version: 2 > 1",
+    );
     expect(execMock).not.toHaveBeenCalled();
   });
 });

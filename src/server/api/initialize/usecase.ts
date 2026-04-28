@@ -14,6 +14,7 @@ export async function initializeDatabase(): Promise<void> {
     const { blocks, pageIdByBlockId, files, links } = await importer.run();
 
     const batchSize = 1000;
+    sqlite.clearAllData();
     await sqlite.batchInsertBlocks(blocks, batchSize, { pageIdByBlockId });
     await sqlite.batchInsertFiles(files, batchSize);
     await sqlite.batchInsertLinks(links);

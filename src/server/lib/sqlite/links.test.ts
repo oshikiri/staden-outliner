@@ -58,13 +58,15 @@ describe.serial("links", () => {
     db.close();
   });
 
-  test("initializeLinks recreates the table", () => {
+  test("initializeLinks keeps existing rows", () => {
     db.exec("INSERT INTO links VALUES ('from-a', 'to-a')");
 
     linksModule.initializeLinks(db);
 
-    const rows = db.query("SELECT * FROM links").all();
-    expect(rows).toEqual([]);
+    const rows = db
+      .query("SELECT from_id, to_id FROM links ORDER BY from_id")
+      .all() as Array<{ from_id: string; to_id: string }>;
+    expect(rows).toEqual([{ from_id: "from-a", to_id: "to-a" }]);
   });
 
   test("getSourceLinks returns from_id values for a target page", async () => {
