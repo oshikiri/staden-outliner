@@ -21,7 +21,7 @@ coverage/
 /playwright/.cache/
 
 # Staden
-*.sqlite3
+*.sqlite3*
 
 # Staden metadata
 .issues/
