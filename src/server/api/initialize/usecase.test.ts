@@ -1,4 +1,5 @@
 import {
+  afterAll,
   afterEach,
   beforeEach,
   describe,
@@ -83,4 +84,8 @@ describe("api/initialize/usecase", () => {
     expect(links).toEqual([]);
     expect(runMock).toHaveBeenCalledTimes(1);
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

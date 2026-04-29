@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  mock,
+  test,
+} from "bun:test";
 
 const getAllConfigsMock = jest.fn();
 
@@ -28,4 +36,8 @@ describe("api/configs/route", () => {
       favorites: ["index", "daily"],
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

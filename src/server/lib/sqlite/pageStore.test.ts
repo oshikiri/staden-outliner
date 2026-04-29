@@ -1,4 +1,5 @@
 import {
+  afterAll,
   afterEach,
   beforeEach,
   describe,
@@ -103,4 +104,8 @@ describe("pageStore", () => {
       .all() as Array<{ name: string }>;
     expect(indexes.map((index) => index.name)).toContain("idx_pages_title");
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

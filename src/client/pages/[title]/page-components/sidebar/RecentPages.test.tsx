@@ -1,4 +1,4 @@
-import { describe, expect, mock, test } from "bun:test";
+import { afterAll, describe, expect, mock, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 let recentPages = ["current", "older-page"];
@@ -24,4 +24,8 @@ describe("RecentPages", () => {
       markup.indexOf("older-page"),
     );
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  mock,
+  test,
+} from "bun:test";
 
 const initializeAllTablesMock = jest.fn();
 const clearAllDataMock = jest.fn();
@@ -74,4 +82,8 @@ describe("api/initialize/route", () => {
     expect(openMock).toHaveBeenCalled();
     expect(closeMock).toHaveBeenCalled();
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

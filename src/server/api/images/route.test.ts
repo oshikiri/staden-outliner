@@ -2,7 +2,15 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  mock,
+  test,
+} from "bun:test";
 
 const getStadenRootMock = jest.fn(() => "/staden");
 
@@ -80,4 +88,8 @@ describe("api/images/route", () => {
       fs.rmSync(tempRoot, { recursive: true, force: true });
     }
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

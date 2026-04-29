@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  mock,
+  test,
+} from "bun:test";
 
 const exportOnePageToMarkdownMock = jest.fn();
 
@@ -42,4 +50,8 @@ describe("api/pages/[title]/update_markdown/route", () => {
       message: "Internal Server Error",
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

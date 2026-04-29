@@ -1,4 +1,4 @@
-import { describe, expect, mock, test } from "bun:test";
+import { afterAll, describe, expect, mock, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 let stateIndex = 0;
@@ -45,4 +45,8 @@ describe("JournalCalendar", () => {
     expect(markup).toContain('href="/pages/2026-04-01"');
     expect(markup).toContain('href="/pages/2026-04-02"');
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });

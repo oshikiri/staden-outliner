@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, jest, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  mock,
+  test,
+} from "bun:test";
 
 import { Block } from "@/shared/markdown/block";
 import { Text } from "@/shared/markdown/token";
@@ -65,4 +73,8 @@ describe("api/pages/[title]/backlinks/route", () => {
       message: "Internal Server Error",
     });
   });
+});
+
+afterAll(() => {
+  mock.restore();
 });
