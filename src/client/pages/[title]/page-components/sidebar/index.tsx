@@ -13,6 +13,7 @@ import { logError } from "@/shared/logger";
 import { isAbortError } from "@/client/request";
 import { useAbortableEffect } from "@/client/useAbortableEffect";
 
+// eslint-disable-next-line max-lines-per-function
 export function SideBar({
   pageTitle,
   pathname,
@@ -20,16 +21,75 @@ export function SideBar({
   pageTitle: string;
   pathname: string;
 }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   return (
-    <div
-      className="
-        w-full
-        p-6
-        bg-background
-        rounded-xl
-        border border-primary/50
-      "
-    >
+    <>
+      {!isSidebarOpen ? (
+        <button
+          type="button"
+          className="
+            fixed right-4 top-20
+            z-20 rounded-full border border-primary/30
+            bg-background hover:bg-primary/5
+            px-4 py-2
+            text-sm text-title shadow-xl shadow-black/10
+          "
+          aria-label="Show sidebar"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          Sidebar
+        </button>
+      ) : null}
+      {isSidebarOpen ? (
+        <aside className="fixed right-4 top-20 z-20 w-[min(24rem,calc(100vw-2rem))] max-h-[calc(100vh-6rem)] overflow-y-auto">
+          <div className="rounded-xl border border-primary/50 bg-background shadow-xl shadow-black/10">
+            <div
+              className="
+                w-full
+                p-6
+                bg-background
+              "
+            >
+              <SideBarHeader onClose={() => setIsSidebarOpen(false)} />
+              <SideBarSections pageTitle={pageTitle} pathname={pathname} />
+            </div>
+          </div>
+        </aside>
+      ) : null}
+    </>
+  );
+}
+
+function SideBarHeader({ onClose }: { onClose: () => void }): JSX.Element {
+  return (
+    <div className="mb-6 flex items-center justify-between gap-4">
+      <button
+        type="button"
+        className="
+          rounded-md border border-primary/30
+          px-3 py-1
+          text-sm text-title
+          hover:bg-primary/5
+        "
+        aria-label="Close sidebar"
+        onClick={onClose}
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+function SideBarSections({
+  pageTitle,
+  pathname,
+}: {
+  pageTitle: string;
+  pathname: string;
+}): JSX.Element {
+  return (
+    <>
       <SideBarElement title="🔍 Search">
         <SearchBox />
       </SideBarElement>
@@ -49,7 +109,7 @@ export function SideBar({
         <ReloadButton />
         <ReflectToMarkdown pageTitle={pageTitle} />
       </SideBarElement>
-    </div>
+    </>
   );
 }
 

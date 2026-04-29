@@ -75,28 +75,22 @@ export function PageScreen({
     <PageNavigationProvider navigateToPage={navigateToPage}>
       <>
         <title>{titleFromProperty}</title>
-        <div className="mx-auto w-full max-w-7xl px-4 py-4 lg:px-6 xl:grid xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
+        <div className="mx-auto w-full max-w-[120rem] px-4 py-4 lg:px-6">
           <main>
             <h1
               className="
-              text-3xl
-              sticky top-0
-              text-title
-              bg-background
-              border-b border-primary/20
-              pl-5 py-2
-              mb-4
-              z-10
-            "
+                sticky top-0 z-10 flex items-center justify-between gap-4
+                border-b border-primary/20
+                bg-background
+                py-2 pl-5 mb-4
+              "
             >
-              {titleFromProperty}
+              <span className="text-3xl text-title">{titleFromProperty}</span>
             </h1>
             <PageContent blocks={block?.children} />
             <BacklinksContainer pageTitle={title} />
           </main>
-          <aside className="hidden xl:block xl:sticky xl:top-20 xl:self-start">
-            <SideBar pageTitle={title} pathname={pathname} />
-          </aside>
+          <SideBar pageTitle={title} pathname={pathname} />
         </div>
       </>
     </PageNavigationProvider>
