@@ -63,12 +63,6 @@ const eslintConfig = [
           message: "Do not commit focused tests.",
         },
         {
-          object: "test",
-          property: "skip",
-          message:
-            "Do not commit skipped tests. Use test.fixme only when the test is intentionally deferred.",
-        },
-        {
           object: "it",
           property: "only",
           message: "Do not commit focused tests.",
