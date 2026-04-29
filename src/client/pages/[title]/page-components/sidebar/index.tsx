@@ -13,7 +13,6 @@ import { logError } from "@/shared/logger";
 import { isAbortError } from "@/client/request";
 import { useAbortableEffect } from "@/client/useAbortableEffect";
 
-// eslint-disable-next-line max-lines-per-function
 export function SideBar({
   pageTitle,
   pathname,
@@ -24,11 +23,8 @@ export function SideBar({
   return (
     <div
       className="
-        hidden lg:block
-        lg:fixed lg:top-20 lg:right-0
-        lg:m-2 lg:p-6
-        lg:w-96
-        lg:z-10
+        w-full
+        p-6
         bg-background
         rounded-xl
         border border-primary/50
