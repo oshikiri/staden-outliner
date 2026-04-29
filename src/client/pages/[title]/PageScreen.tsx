@@ -1,6 +1,5 @@
-import { JSX, useEffect } from "react";
+import { useEffect } from "react";
 
-import { Block as BlockEntity } from "@/shared/markdown/block";
 import Block from "./block";
 import { BacklinksContainer } from "./page-components/Backlink";
 import { SideBar } from "./page-components/sidebar";
@@ -87,26 +86,16 @@ export function PageScreen({
             >
               <span className="text-3xl text-title">{titleFromProperty}</span>
             </h1>
-            <PageContent blocks={block?.children} />
+            <div>
+              {block?.children?.map((childBlock) => {
+                return <Block block={childBlock} key={childBlock.id} />;
+              })}
+            </div>
             <BacklinksContainer pageTitle={title} />
           </main>
           <SideBar pageTitle={title} pathname={pathname} />
         </div>
       </>
     </PageNavigationProvider>
-  );
-}
-
-function PageContent({
-  blocks,
-}: {
-  blocks: BlockEntity[] | undefined;
-}): JSX.Element {
-  return (
-    <div>
-      {blocks?.map((childBlock: BlockEntity) => {
-        return <Block block={childBlock} key={childBlock.id} />;
-      })}
-    </div>
   );
 }
