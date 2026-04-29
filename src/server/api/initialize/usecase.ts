@@ -4,7 +4,7 @@ import { logInfo } from "@/shared/logger";
 export async function initializeDatabase(): Promise<void> {
   logInfo("Initializing database...");
 
-  await sqlite.open();
+  sqlite.open();
   try {
     sqlite.initializeAllTables();
 
@@ -19,7 +19,7 @@ export async function initializeDatabase(): Promise<void> {
     await sqlite.batchInsertFiles(files, batchSize);
     await sqlite.batchInsertLinks(links);
   } finally {
-    await sqlite.close();
+    sqlite.close();
   }
 
   logInfo("Database initialized");

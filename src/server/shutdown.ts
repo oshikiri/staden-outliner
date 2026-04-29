@@ -1,6 +1,6 @@
 type ShutdownTarget = {
   stop: () => void;
-  close: () => Promise<void>;
+  close: () => void | Promise<void>;
 };
 
 export function createShutdownHandler(target: ShutdownTarget) {

@@ -6,18 +6,18 @@ let db: BunDatabase | undefined;
 let readonlyDb: BunDatabase | undefined;
 let databaseConstructorForTests: typeof BunDatabase | undefined;
 
-export async function open() {
+export function open() {
   if (db) {
     return db;
   }
 
   const stadenRoot = getStadenRoot();
-  const Database = await loadDatabaseConstructor();
+  const Database = loadDatabaseConstructor();
   db = configureDatabase(new Database(`${stadenRoot}/vault.sqlite3`));
   return db;
 }
 
-export async function close() {
+export function close() {
   if (!db) {
     if (!readonlyDb) {
       return;

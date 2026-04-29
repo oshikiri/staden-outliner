@@ -23,7 +23,7 @@ describe("contentResolver", () => {
     queryChild.withParent(queryBlock);
     const getBlockByIdSpy = jest
       .spyOn(Sqlite, "getBlockById")
-      .mockResolvedValue(queryBlock);
+      .mockReturnValue(queryBlock);
     const getReadonlyDbSpy = jest
       .spyOn(Sqlite, "getReadonlyDb")
       .mockReturnValue({
@@ -61,7 +61,7 @@ describe("contentResolver", () => {
     ).withId("query-child");
     const queryBlock = new Block([], 1, [queryChild]).withId("query-block");
     queryChild.withParent(queryBlock);
-    jest.spyOn(Sqlite, "getBlockById").mockResolvedValue(queryBlock);
+    jest.spyOn(Sqlite, "getBlockById").mockReturnValue(queryBlock);
     const getReadonlyDbSpy = jest.spyOn(Sqlite, "getReadonlyDb");
     const logWarnSpy = jest.spyOn(Logger, "logWarn").mockImplementation(() => {
       return;
@@ -90,7 +90,7 @@ describe("contentResolver", () => {
     ).withId("query-child");
     const queryBlock = new Block([], 1, [queryChild]).withId("query-block");
     queryChild.withParent(queryBlock);
-    jest.spyOn(Sqlite, "getBlockById").mockResolvedValue(queryBlock);
+    jest.spyOn(Sqlite, "getBlockById").mockReturnValue(queryBlock);
     jest.spyOn(Sqlite, "getReadonlyDb").mockReturnValue({
       query: () => ({
         all: () => [{ answer: 1 }],

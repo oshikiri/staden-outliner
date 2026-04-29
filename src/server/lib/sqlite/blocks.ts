@@ -33,7 +33,7 @@ export function initializeBlocks(db = getDb()) {
   `);
 }
 
-export async function getPageBlockById(pageId: string): Promise<Block> {
+export function getPageBlockById(pageId: string): Block {
   const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks
@@ -47,9 +47,7 @@ export async function getPageBlockById(pageId: string): Promise<Block> {
   return rootBlock;
 }
 
-export async function getPageBlockByTitle(
-  title: string,
-): Promise<Block | undefined> {
+export function getPageBlockByTitle(title: string): Block | undefined {
   const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks
@@ -70,12 +68,12 @@ export async function getPageBlockByTitle(
 /**
  * Get block by id with all its children
  */
-export async function getBlockById(id: string): Promise<Block> {
-  const rootBlock = await getCurrentPage(id);
+export function getBlockById(id: string): Block {
+  const rootBlock = getCurrentPage(id);
   return rootBlock.getBlockById(id)!;
 }
 
-export async function getCurrentPage(childId: string): Promise<Block> {
+export function getCurrentPage(childId: string): Block {
   const sql = `
     SELECT blocks.*, pages.title AS page_title
     FROM blocks

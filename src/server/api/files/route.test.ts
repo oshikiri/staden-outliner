@@ -22,7 +22,7 @@ describe("api/files/route", () => {
   });
 
   test("GET forwards the prefix query and returns files as json", async () => {
-    getPagesByPrefixMock.mockResolvedValue([
+    getPagesByPrefixMock.mockReturnValue([
       { pageId: "1", title: "Page", path: "Page.md" },
     ]);
 
@@ -39,7 +39,7 @@ describe("api/files/route", () => {
   });
 
   test("GET defaults prefix to an empty string", async () => {
-    getPagesByPrefixMock.mockResolvedValue([]);
+    getPagesByPrefixMock.mockReturnValue([]);
 
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/files"),

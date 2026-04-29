@@ -44,8 +44,8 @@ describe("pageService", () => {
   });
 
   test("getPageByTitle returns a draft page without persisting when the page does not exist", async () => {
-    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -72,10 +72,10 @@ describe("pageService", () => {
   test("getPageByTitle preserves encoded titles at the service boundary", async () => {
     const getPageBlockByTitleSpy = jest
       .spyOn(PageBlocks, "getPageBlockByTitle")
-      .mockResolvedValue(undefined);
+      .mockReturnValue(undefined);
     const getPageByTitleSpy = jest
       .spyOn(PageStore, "getPageByTitle")
-      .mockResolvedValue(undefined);
+      .mockReturnValue(undefined);
     const resolvePageContentSpy = jest
       .spyOn(ContentResolver, "resolvePageContent")
       .mockImplementation(async (page) => page);
@@ -95,8 +95,8 @@ describe("pageService", () => {
     draftPage.withId("page-1");
     draftPage.setProperty("title", "draft-page");
 
-    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
     const createFileSpy = jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
@@ -141,8 +141,8 @@ describe("pageService", () => {
     draftPage.withId("page-1");
     draftPage.setProperty("title", "draft%20page");
 
-    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
     const createFileSpy = jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft%20page", pageId: "page-1" });
@@ -185,8 +185,8 @@ describe("pageService", () => {
     draftPage.withId("page-1");
     draftPage.setProperty("title", "draft-page");
 
-    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
     jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
@@ -216,8 +216,8 @@ describe("pageService", () => {
     draftPage.withId("page-1");
     draftPage.setProperty("title", "draft-page");
 
-    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockResolvedValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockResolvedValue(undefined);
+    jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
     jest.spyOn(FileStore, "createPageFileRecord").mockReturnValue({
       title: "draft-page",
       pageId: "page-1",

@@ -16,9 +16,7 @@ export function initializePages(db = getDb()) {
   `);
 }
 
-export async function getPageByTitle(
-  title: string,
-): Promise<PageFileRecord | undefined> {
+export function getPageByTitle(title: string): PageFileRecord | undefined {
   const sql = `SELECT * FROM pages WHERE title = ? LIMIT 1;`;
   logSqliteQuery(sql, [title]);
   const result = getDb().query<PageRow, string>(sql).all(title);
@@ -43,9 +41,7 @@ export function getPagesByTitles(titles: string[]): PageFileRecord[] {
   return result.map(toFile);
 }
 
-export async function getPagesByPrefix(
-  prefix: string,
-): Promise<PageFileRecord[]> {
+export function getPagesByPrefix(prefix: string): PageFileRecord[] {
   const sql = `SELECT * FROM pages where title like ?;`;
   logSqliteQuery(sql, [`${prefix}%`]);
   return getDb().query<PageRow, string>(sql).all(`${prefix}%`).map(toFile);

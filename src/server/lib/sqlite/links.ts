@@ -19,10 +19,10 @@ export function initializeLinks(db = getDb()) {
   `);
 }
 
-export async function getSourceLinks(
+export function getSourceLinks(
   targetPageTitle: string,
   db = getDb(),
-): Promise<string[]> {
+): string[] {
   const sql = `
     SELECT links.*
     FROM links

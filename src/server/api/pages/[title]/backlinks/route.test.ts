@@ -35,8 +35,8 @@ describe("api/pages/[title]/backlinks/route", () => {
     parent.parent = page;
     source.parent = parent;
 
-    getSourceLinksMock.mockResolvedValue(["source-1"]);
-    getCurrentPageMock.mockResolvedValue(page);
+    getSourceLinksMock.mockReturnValue(["source-1"]);
+    getCurrentPageMock.mockReturnValue(page);
 
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages/Page/backlinks"),
@@ -60,8 +60,8 @@ describe("api/pages/[title]/backlinks/route", () => {
     const page = new Block([new Text("Page")], 0, []).withId("page-1");
     page.properties = [["title", "Page"]];
 
-    getSourceLinksMock.mockResolvedValue(["source-1"]);
-    getCurrentPageMock.mockResolvedValue(page);
+    getSourceLinksMock.mockReturnValue(["source-1"]);
+    getCurrentPageMock.mockReturnValue(page);
 
     const response = await honoApiApp.fetch(
       new Request("http://localhost/api/pages/Page/backlinks"),

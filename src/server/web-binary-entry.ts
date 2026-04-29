@@ -7,7 +7,7 @@ import { createShutdownHandler } from "./shutdown";
 
 async function main() {
   setStadenRoot(readStadenRoot(process.argv.slice(2)));
-  await open();
+  open();
   const server = createWebServer({
     host: Bun.env.HOST,
     port: Bun.env.PORT ? Number(Bun.env.PORT) : undefined,
