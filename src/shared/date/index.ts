@@ -1,4 +1,5 @@
 const DATE_FORMAT = "YYYY-MM-DD";
+const JOURNAL_TITLE_PATTERN = /^\d{4}-\d{2}-\d{2}/;
 
 /**
  * A lightweight date utility backed by the built‑in Date.
@@ -58,6 +59,10 @@ export class StadenDate {
     }
     return new StadenDate(formatDate(d, DATE_FORMAT));
   }
+}
+
+export function isJournalPageTitle(title: string): boolean {
+  return JOURNAL_TITLE_PATTERN.test(title);
 }
 
 function parseISO(str: string): Date {

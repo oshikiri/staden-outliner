@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { StadenDate } from ".";
+import { isJournalPageTitle, StadenDate } from ".";
 
 describe("Date", () => {
   test("format", () => {
@@ -50,5 +50,10 @@ describe("Date", () => {
     const date = new StadenDate("2023-01-23");
     const newDate = date.add(-5, "day");
     expect(newDate.format()).toBe("2023-01-18");
+  });
+
+  test("isJournalPageTitle", () => {
+    expect(isJournalPageTitle("2026-04-23")).toBe(true);
+    expect(isJournalPageTitle("notes")).toBe(false);
   });
 });

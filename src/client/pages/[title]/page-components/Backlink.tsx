@@ -8,6 +8,7 @@ import Block from "../block";
 import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/client/request";
 import { useAbortableEffect } from "@/client/useAbortableEffect";
+import { sortBacklinks } from "@/shared/backlink";
 
 export function BacklinksContainer({
   pageTitle,
@@ -20,9 +21,8 @@ export function BacklinksContainer({
     <div className="mt-20 break-all">
       <div className="text-xl">{backlinks?.length || 0} Linked References</div>
       <div>
-        {backlinks
-          .sort(compareFnForBacklink)
-          .map((sourceBlock: BlockEntity, key: number) => {
+        {sortBacklinks(backlinks).map(
+          (sourceBlock: BlockEntity, key: number) => {
             return (
               <BacklinkPage
                 name={(sourceBlock.getProperty("title") as string) || ""}
@@ -30,7 +30,8 @@ export function BacklinksContainer({
                 key={`${sourceBlock.id}-${key}`}
               />
             );
-          })}
+          },
+        )}
       </div>
     </div>
   );
@@ -84,27 +85,4 @@ function BacklinkPage({
       <Block block={block} editable={false} />
     </div>
   );
-}
-
-function compareFnForBacklink(l: BlockEntity, r: BlockEntity): number {
-  function isJournal(title: string): boolean {
-    return title.match(/^\d{4}-\d{2}-\d{2}/) !== null;
-  }
-  const lIsJournal = isJournal(l.getProperty("title") as string);
-  const rIsJournal = isJournal(r.getProperty("title") as string);
-  if (lIsJournal && !rIsJournal) {
-    return -1;
-  }
-  if (!lIsJournal && rIsJournal) {
-    return 1;
-  }
-  const lTitle = (l.getProperty("title") as string) || "";
-  const rTitle = (r.getProperty("title") as string) || "";
-  if (lTitle < rTitle) {
-    return 1;
-  }
-  if (lTitle > rTitle) {
-    return -1;
-  }
-  return 0;
 }
