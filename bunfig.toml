@@ -4,6 +4,6 @@
 minimumReleaseAge = 604800
 
 [test]
-preload = ["./test/setup.ts"]
+preload = ["./src/test/setup.ts"]
 coverageSkipTestFiles = true
 coverageThreshold = { line = 0.8, function = 0.8, statement = 0.8 }
