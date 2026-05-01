@@ -2,7 +2,7 @@ import { watch, type FSWatcher } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 
-import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
+import { initializeStadenRoot } from "@/server/lib/env/stadenRoot";
 
 import { buildWeb } from "./build-web";
 import { createWebServer } from "./web";
@@ -19,7 +19,7 @@ type DevState = {
 };
 
 async function main() {
-  setStadenRoot(readStadenRoot(process.argv.slice(2)));
+  initializeStadenRoot(process.argv.slice(2));
 
   if (!(await buildWeb())) {
     process.exitCode = 1;

@@ -40,9 +40,10 @@ describe("api/initialize/usecase", () => {
     sqlite.__resetDbForTests();
     await sqlite.close();
     rmSync(rootDir, { recursive: true, force: true });
+    jest.restoreAllMocks();
   });
 
-  test.skip("initializeDatabase rebuilds the vault from the importer result", async () => {
+  test("initializeDatabase rebuilds the vault from the importer result", async () => {
     runMock.mockResolvedValue({
       blocks: [],
       pageIdByBlockId: new Map(),
@@ -50,7 +51,6 @@ describe("api/initialize/usecase", () => {
       links: [],
     });
 
-    await sqlite.open();
     sqlite.initializeAllTables();
     const db = sqlite.getDb();
     db.exec(

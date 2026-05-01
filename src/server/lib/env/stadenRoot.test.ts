@@ -4,7 +4,7 @@ import path from "path";
 
 import { expect, test } from "bun:test";
 
-import { readStadenRoot } from "./stadenRoot";
+import { initializeStadenRoot, readStadenRoot } from "./stadenRoot";
 
 test("readStadenRoot uses the first positional argument", () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "staden-root-"));
@@ -35,5 +35,14 @@ test("readStadenRoot rejects file paths", () => {
     );
   } finally {
     fs.rmSync(tempFile, { recursive: true, force: true });
+  }
+});
+
+test("initializeStadenRoot returns the resolved root", () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "staden-root-"));
+  try {
+    expect(initializeStadenRoot([tempDir])).toBe(tempDir);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });

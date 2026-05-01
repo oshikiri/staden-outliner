@@ -4,7 +4,6 @@ import { logInfo } from "@/shared/logger";
 export async function initializeDatabase(): Promise<void> {
   logInfo("Initializing database...");
 
-  sqlite.open();
   try {
     sqlite.initializeAllTables();
 

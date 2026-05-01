@@ -13,12 +13,10 @@ const clearAllDataMock = jest.fn();
 const batchInsertBlocksMock = jest.fn();
 const batchInsertFilesMock = jest.fn();
 const batchInsertLinksMock = jest.fn();
-const openMock = jest.fn();
 const closeMock = jest.fn();
 const runMock = jest.fn();
 
 mock.module("@/server/lib/sqlite", () => ({
-  open: openMock,
   close: closeMock,
   initializeAllTables: initializeAllTablesMock,
   clearAllData: clearAllDataMock,
@@ -53,7 +51,6 @@ describe("api/initialize/route", () => {
     );
 
     expect(response.status).toBe(204);
-    expect(openMock).toHaveBeenCalled();
     expect(initializeAllTablesMock).toHaveBeenCalled();
     expect(runMock).toHaveBeenCalled();
     expect(clearAllDataMock).toHaveBeenCalled();
@@ -79,7 +76,6 @@ describe("api/initialize/route", () => {
     await expect(response.json()).resolves.toEqual({
       message: "Internal Server Error",
     });
-    expect(openMock).toHaveBeenCalled();
     expect(closeMock).toHaveBeenCalled();
   });
 });

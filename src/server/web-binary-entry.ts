@@ -1,13 +1,12 @@
-import { readStadenRoot, setStadenRoot } from "@/server/lib/env/stadenRoot";
-import { close, open } from "@/server/lib/sqlite";
+import { initializeStadenRoot } from "@/server/lib/env/stadenRoot";
+import { close } from "@/server/lib/sqlite";
 import { logError } from "@/shared/logger";
 
 import { createWebServer } from "./web";
 import { createShutdownHandler } from "./shutdown";
 
 async function main() {
-  setStadenRoot(readStadenRoot(process.argv.slice(2)));
-  open();
+  initializeStadenRoot(process.argv.slice(2));
   const server = createWebServer({
     host: Bun.env.HOST,
     port: Bun.env.PORT ? Number(Bun.env.PORT) : undefined,

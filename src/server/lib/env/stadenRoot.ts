@@ -36,8 +36,11 @@ export function readStadenRoot(argv: string[] = process.argv.slice(2)): string {
   return validateRoot(argv[0]);
 }
 
-export function setStadenRoot(root: string): void {
-  cachedRoot = root;
+export function initializeStadenRoot(
+  argv: string[] = process.argv.slice(2),
+): string {
+  cachedRoot = readStadenRoot(argv);
+  return cachedRoot;
 }
 
 export function getStadenRoot(): string {
