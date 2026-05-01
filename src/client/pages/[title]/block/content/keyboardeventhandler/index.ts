@@ -7,6 +7,7 @@ import {
 import { pageRpc } from "@/client/rpc/page";
 import { logDebug, logError, logWarn } from "@/shared/logger";
 import { extractTextContent } from "../dom";
+import { getErrorMessage } from "@/client/error";
 import * as caret from "./caret";
 import * as dom from "./dom";
 import * as range from "./range";
@@ -22,6 +23,9 @@ export class ContentKeyboardEventHandler {
     private setPage: (page: BlockEntity | null) => void,
     private setSuggestionQuery: (query: string) => void = () => {},
     private setContentMarkdown: (markdown: string) => void = () => {},
+    private setSaveErrorMessage:
+      | ((message: string | null) => void)
+      | undefined = undefined,
   ) {}
 
   /**
@@ -77,11 +81,20 @@ export class ContentKeyboardEventHandler {
       textBefore,
       textAfter,
     );
-    pageRpc.update(pageUpdated).then((pageUpdated) => {
-      this.setPage(pageUpdated);
-      this.setEditingBlockId?.(blockAfter?.id || null);
-      this.setOffset?.(null);
-    });
+    void pageRpc
+      .update(pageUpdated)
+      .then((nextPage) => {
+        this.setSaveErrorMessage?.(null);
+        this.setPage(nextPage);
+        this.setEditingBlockId?.(blockAfter?.id || null);
+        this.setOffset?.(null);
+      })
+      .catch((error) => {
+        logError("Failed to save page after Enter", error);
+        this.setSaveErrorMessage?.(
+          getErrorMessage(error, "Failed to save page after Enter"),
+        );
+      });
   }
 
   tab(event: KeyboardEvent) {
@@ -89,11 +102,20 @@ export class ContentKeyboardEventHandler {
     const currentTextContent = extractTextContent(this.contentRef.current);
     applyContentMarkdown(this.block, currentTextContent);
     updatePageByIndent(this.page, this.block.id, event.shiftKey);
-    pageRpc.update(this.page).then((pageUpdated) => {
-      this.setPage(pageUpdated);
-      this.setEditingBlockId?.(this.block.id || null);
-      this.setOffset?.(null);
-    });
+    void pageRpc
+      .update(this.page)
+      .then((nextPage) => {
+        this.setSaveErrorMessage?.(null);
+        this.setPage(nextPage);
+        this.setEditingBlockId?.(this.block.id || null);
+        this.setOffset?.(null);
+      })
+      .catch((error) => {
+        logError("Failed to save page after Tab", error);
+        this.setSaveErrorMessage?.(
+          getErrorMessage(error, "Failed to save page after Tab"),
+        );
+      });
   }
 
   arrowDown(event: KeyboardEvent) {

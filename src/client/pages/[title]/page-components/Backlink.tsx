@@ -9,61 +9,108 @@ import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/client/request";
 import { useAbortableEffect } from "@/client/useAbortableEffect";
 import { sortBacklinks } from "@/shared/backlink";
+import { getErrorMessage } from "@/client/error";
+import { RpcErrorMessage } from "./RpcErrorMessage";
+
+type BacklinksState = {
+  status: "loading" | "ready" | "error";
+  backlinks: BlockEntity[];
+  errorMessage: string | null;
+};
 
 export function BacklinksContainer({
   pageTitle,
 }: {
   pageTitle: string | undefined;
 }): JSX.Element {
-  const backlinks = useBacklinks(pageTitle);
+  const backlinksState = useBacklinks(pageTitle);
+  const backlinksCount =
+    backlinksState.status === "ready" ? backlinksState.backlinks.length : 0;
+  const heading =
+    backlinksState.status === "loading"
+      ? "Loading Linked References..."
+      : backlinksState.status === "error"
+        ? "Linked References"
+        : `${backlinksCount} Linked References`;
 
   return (
     <div className="mt-20 break-all">
-      <div className="text-xl">{backlinks?.length || 0} Linked References</div>
+      <div className="text-xl">{heading}</div>
+      {backlinksState.status === "error" ? (
+        <RpcErrorMessage
+          title="Failed to load backlinks"
+          message={backlinksState.errorMessage || "Unknown error"}
+        />
+      ) : null}
       <div>
-        {sortBacklinks(backlinks).map(
-          (sourceBlock: BlockEntity, key: number) => {
-            return (
-              <BacklinkPage
-                name={(sourceBlock.getProperty("title") as string) || ""}
-                block={sourceBlock}
-                key={`${sourceBlock.id}-${key}`}
-              />
-            );
-          },
-        )}
+        {backlinksState.status === "ready"
+          ? sortBacklinks(backlinksState.backlinks).map(
+              (sourceBlock: BlockEntity, key: number) => {
+                return (
+                  <BacklinkPage
+                    name={(sourceBlock.getProperty("title") as string) || ""}
+                    block={sourceBlock}
+                    key={`${sourceBlock.id}-${key}`}
+                  />
+                );
+              },
+            )
+          : null}
       </div>
     </div>
   );
 }
 
-function useBacklinks(pageTitle: string | undefined): BlockEntity[] {
-  const [backlinks, setBacklinks] = useState<BlockEntity[]>([]);
+function useBacklinks(pageTitle: string | undefined): BacklinksState {
+  const [backlinksState, setBacklinksState] = useState<BacklinksState>({
+    status: "loading",
+    backlinks: [],
+    errorMessage: null,
+  });
 
   useAbortableEffect(
     (signal) => {
       if (!pageTitle) {
-        setBacklinks([]);
+        setBacklinksState({
+          status: "ready",
+          backlinks: [],
+          errorMessage: null,
+        });
         return;
       }
+
+      setBacklinksState({
+        status: "loading",
+        backlinks: [],
+        errorMessage: null,
+      });
 
       pageRpc
         .backlinks(pageTitle, { signal })
         .then((nextBacklinks) => {
           logDebug("getPageBacklinks", { count: nextBacklinks.length });
-          setBacklinks(nextBacklinks);
+          setBacklinksState({
+            status: "ready",
+            backlinks: nextBacklinks,
+            errorMessage: null,
+          });
         })
         .catch((error) => {
           if (isAbortError(error)) {
             return;
           }
           logError("Failed to load backlinks", error);
+          setBacklinksState({
+            status: "error",
+            backlinks: [],
+            errorMessage: getErrorMessage(error, "Failed to load backlinks"),
+          });
         });
     },
     [pageTitle],
   );
 
-  return backlinks;
+  return backlinksState;
 }
 
 function BacklinkPage({

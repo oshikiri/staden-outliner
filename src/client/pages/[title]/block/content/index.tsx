@@ -16,6 +16,7 @@ import {
 import { pageRpc } from "@/client/rpc/page";
 import { Token } from "../../token";
 import { useStore } from "../../state";
+import { RpcErrorMessage } from "../../page-components/RpcErrorMessage";
 
 import { Suggestion } from "./suggestion";
 import { ContentKeyboardEventHandler } from "./keyboardeventhandler";
@@ -26,8 +27,8 @@ import {
   setCursor,
 } from "./dom";
 import { logDebug, logError } from "@/shared/logger";
+import { getErrorMessage } from "@/client/error";
 
-// eslint-disable-next-line max-lines-per-function
 export function Content({
   block,
   editable,
@@ -50,6 +51,7 @@ export function Content({
   const [contentMarkdown, setContentMarkdown] = useState<string>(
     getContentMarkdown(block),
   );
+  const [saveErrorMessage, setSaveErrorMessage] = useState<string | null>(null);
 
   const isEditing = editingBlockId === block.id;
   useEffect(() => {
@@ -73,6 +75,7 @@ export function Content({
       return;
     }
 
+    setSaveErrorMessage(null);
     setEditingBlockId?.(block.id || null);
     const startOffset = getNearestCursorOffset(event.clientX, event.clientY);
     setOffset(startOffset);
@@ -115,7 +118,16 @@ export function Content({
       }
 
       applyContentMarkdown(blockOnPage, contentMarkdown);
-      pageRpc.update(page).then((page) => setPage(page));
+      void pageRpc
+        .update(page)
+        .then((nextPage) => {
+          setSaveErrorMessage(null);
+          setPage(nextPage);
+        })
+        .catch((error) => {
+          logError("Failed to save content", error);
+          setSaveErrorMessage(getErrorMessage(error, "Failed to save content"));
+        });
       setEditingBlockId?.(null);
     });
   };
@@ -129,6 +141,7 @@ export function Content({
     setPage,
     setSuggestionQuery,
     setContentMarkdown,
+    setSaveErrorMessage,
   ).getOnKeydown();
 
   return (
@@ -150,6 +163,12 @@ export function Content({
           <RenderedContent block={block} />
         )}
       </div>
+      {saveErrorMessage ? (
+        <RpcErrorMessage
+          title="Failed to save content"
+          message={saveErrorMessage}
+        />
+      ) : null}
       <Suggestion
         suggestionQuery={suggestionQuery}
         setSuggestionQuery={setSuggestionQuery}
