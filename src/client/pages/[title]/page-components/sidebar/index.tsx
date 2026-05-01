@@ -3,17 +3,17 @@ import { JSX, useState } from "react";
 import { PageRef as PageRefEntity } from "@/shared/markdown/token";
 import { StadenDate } from "@/shared/date";
 import { systemRpc } from "@/client/rpc/system";
+import { logError } from "@/shared/logger";
+import { isAbortError } from "@/client/request";
+import { useAbortableEffect } from "@/client/useAbortableEffect";
 import { PageRef } from "../../token";
 import { JournalCalendar } from "./Calendar";
 import { RecentPages } from "./RecentPages";
 import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
-import { logError } from "@/shared/logger";
-import { isAbortError } from "@/client/request";
-import { useAbortableEffect } from "@/client/useAbortableEffect";
+import { usePageTitles } from "@/client/usePageTitles";
 
-// eslint-disable-next-line max-lines-per-function
 export function SideBar({
   pageTitle,
   pathname,
@@ -129,7 +129,7 @@ function SideBarElement({
 }
 
 function SearchBox(): JSX.Element {
-  const files = useSidebarFiles();
+  const files = usePageTitles() || [];
   const { navigateToPage } = usePageNavigation();
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -173,27 +173,6 @@ function Favorites() {
 function RecentJournal() {
   const todayStr = new StadenDate().format();
   return <PageRef pageref={new PageRefEntity(todayStr)} />;
-}
-
-function useSidebarFiles(): string[] | undefined {
-  const [files, setFiles] = useState<string[]>();
-
-  useAbortableEffect((signal) => {
-    systemRpc
-      .files(undefined, { signal })
-      .then((nextFiles) => {
-        const titles = nextFiles.map((file: { title: string }) => file.title);
-        setFiles(new Array(...new Set(titles)).sort());
-      })
-      .catch((error) => {
-        if (isAbortError(error)) {
-          return;
-        }
-        logError("Failed to load sidebar files", error);
-      });
-  }, []);
-
-  return files;
 }
 
 function useSidebarFavorites(): string[] | undefined {

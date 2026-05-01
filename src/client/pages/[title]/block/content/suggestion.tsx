@@ -1,10 +1,7 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect } from "react";
 
-import { systemRpc } from "@/client/rpc/system";
-import { logError } from "@/shared/logger";
-import { isAbortError } from "@/client/request";
+import { usePageTitles } from "@/client/usePageTitles";
 
-// eslint-disable-next-line max-lines-per-function
 export function Suggestion({
   suggestionQuery,
   setSuggestionQuery,
@@ -54,45 +51,8 @@ export function Suggestion({
   );
 }
 
-function useCachedFiles(): string[] {
-  const [files, setFiles] = useState<string[]>(() => {
-    if (typeof localStorage === "undefined") {
-      return [];
-    }
-    const cachedFiles = localStorage.getItem("files");
-    return cachedFiles ? JSON.parse(cachedFiles) : [];
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    systemRpc
-      .files(undefined, { signal: controller.signal })
-      .then((f) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-        const nextFiles = f.map((file: { title: string }) => file.title);
-        setFiles(nextFiles);
-        localStorage.setItem("files", JSON.stringify(nextFiles));
-      })
-      .catch((error) => {
-        if (controller.signal.aborted || isAbortError(error)) {
-          return;
-        }
-        logError("Failed to cache files", error);
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  return files;
-}
-
 function Candidates({ query }: { query: string }): JSX.Element {
-  const values = useCachedFiles();
+  const values = usePageTitles() || [];
   return (
     <datalist id="suggestions">
       {values

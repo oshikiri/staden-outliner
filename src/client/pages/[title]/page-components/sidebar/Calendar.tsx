@@ -1,46 +1,19 @@
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 
 import { StadenDate } from "@/shared/date";
-import type { PageFileRecord } from "@/shared/file";
-import { systemRpc } from "@/client/rpc/system";
 import { usePageNavigation } from "../../navigation";
-import { isAbortError } from "@/client/request";
-import { logError } from "@/shared/logger";
+import { usePageTitles } from "@/client/usePageTitles";
 
-// eslint-disable-next-line max-lines-per-function
 export function JournalCalendar({ pathname }: { pathname: string }) {
   const dateFromPathname = getDateFromPathname(pathname);
   const monthFromPathname = dateFromPathname
     ? new StadenDate(dateFromPathname).format("YYYY-MM")
     : undefined;
 
-  const [days, setDays] = useState<string[]>();
   const [month, setMonth] = useState<string>(
     monthFromPathname || new StadenDate().format("YYYY-MM"),
   );
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    systemRpc
-      .files(month, { signal: controller.signal })
-      .then((files) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-        setDays(files.map((file: PageFileRecord) => file.title));
-      })
-      .catch((error) => {
-        if (controller.signal.aborted || isAbortError(error)) {
-          return;
-        }
-        logError("Failed to load journal calendar", error);
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, [month]);
+  const days = usePageTitles(month);
 
   const dayExists = new Map<string, boolean>();
   days?.forEach((day) => dayExists.set(day, true));
@@ -165,7 +138,6 @@ function MoveButton({
   );
 }
 
-// eslint-disable-next-line max-lines-per-function
 function DayCell({
   exists,
   dayStr,
