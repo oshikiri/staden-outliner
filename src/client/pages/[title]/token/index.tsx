@@ -16,6 +16,8 @@ import { PropertyPair } from "./PropertyPair";
 import { Quote } from "./Quote";
 import { Marker } from "./Marker";
 
+type TokenRenderer = (token: entity.Token) => JSX.Element | null;
+
 export {
   BlockRef,
   CodeBlock,
@@ -32,37 +34,56 @@ export {
 };
 
 export function Token({ token }: { token: entity.Token }): JSX.Element | null {
-  if (token instanceof entity.Text) {
-    return <span>{token.textContent}</span>;
-  } else if (token instanceof entity.Heading) {
-    return <Heading token={token} />;
-  } else if (token instanceof entity.ListStart) {
-    return <></>;
-  } else if (token instanceof entity.Image) {
-    return <ImageComponent token={token} />;
-  } else if (token instanceof entity.PageRef) {
-    return <PageRef pageref={token} />;
-  } else if (token instanceof entity.Link) {
-    return <Link token={token} />;
-  } else if (token instanceof entity.Quote) {
-    return <Quote token={token} />;
-  } else if (token instanceof entity.InlineCode) {
-    return <InlineCode token={token} />;
-  } else if (token instanceof entity.CodeBlock) {
-    return <CodeBlock code={token.textContent} language={token.lang} />;
-  } else if (token instanceof entity.PropertyPair) {
-    return <PropertyPair token={token} />;
-  } else if (token instanceof entity.BlockRef) {
-    return <BlockRef token={token} />;
-  } else if (token instanceof entity.Command) {
-    return <Command token={token} />;
-  } else if (token instanceof entity.CommandQuery) {
-    return <CommandQuery token={token} />;
-  } else if (token instanceof entity.Marker) {
-    return <Marker status={token.status} />;
-  } else if (token instanceof entity.Newline) {
-    return <br />;
-  }
+  const renderer = tokenRenderers[token.type];
+  return renderer ? renderer(token) : renderUnknownToken(token);
+}
+
+const tokenRenderers = {
+  [entity.TokenType.Base]: renderUnknownToken,
+  [entity.TokenType.NewLine]: () => <br />,
+  [entity.TokenType.Image]: (token) => (
+    <ImageComponent token={token as entity.Image} />
+  ),
+  [entity.TokenType.ListStart]: () => <></>,
+  [entity.TokenType.Text]: (token) => (
+    <span>{(token as entity.Text).textContent}</span>
+  ),
+  [entity.TokenType.PageRef]: (token) => (
+    <PageRef pageref={token as entity.PageRef} />
+  ),
+  [entity.TokenType.Link]: (token) => <Link token={token as entity.Link} />,
+  [entity.TokenType.PropertyPair]: (token) => (
+    <PropertyPair token={token as entity.PropertyPair} />
+  ),
+  [entity.TokenType.Heading]: (token) => (
+    <Heading token={token as entity.Heading} />
+  ),
+  [entity.TokenType.Quote]: (token) => <Quote token={token as entity.Quote} />,
+  [entity.TokenType.InlineCode]: (token) => (
+    <InlineCode token={token as entity.InlineCode} />
+  ),
+  [entity.TokenType.CodeBlock]: (token) => (
+    <CodeBlock
+      code={(token as entity.CodeBlock).textContent}
+      language={(token as entity.CodeBlock).lang}
+    />
+  ),
+  [entity.TokenType.PropertyPairSeparator]: () => null,
+  [entity.TokenType.BlockRef]: (token) => (
+    <BlockRef token={token as entity.BlockRef} />
+  ),
+  [entity.TokenType.Command]: (token) => (
+    <Command token={token as entity.Command} />
+  ),
+  [entity.TokenType.CommandQuery]: (token) => (
+    <CommandQuery token={token as entity.CommandQuery} />
+  ),
+  [entity.TokenType.Marker]: (token) => (
+    <Marker status={(token as entity.Marker).status} />
+  ),
+} satisfies Record<entity.TokenType, TokenRenderer>;
+
+function renderUnknownToken(token: entity.Token): JSX.Element | null {
   logWarn("Unknown token type:", token?.constructor?.name ?? typeof token);
   return null;
 }
