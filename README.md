@@ -16,10 +16,9 @@ It keeps the feature set small and focused.
 Staden is built on a familiar web stack.
 Staden runs in your browser via a local Bun/Hono server, not as an Electron or Tauri app.
 
-- Frontend: React, React Router
-- Backend: Hono
+- Frontend: React
+- Backend: Bun, Hono
 - Storage: SQLite
-- Runtime: Bun
 - Language: TypeScript
 
 ## Getting Started
