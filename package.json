@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@observablehq/plot": "0.6.17",
-    "highlight.js": "11.11.1",
     "hono": "4.12.14",
     "react": "19.2.5",
     "react-dom": "19.2.5",
