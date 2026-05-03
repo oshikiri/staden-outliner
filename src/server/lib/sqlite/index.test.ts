@@ -6,6 +6,7 @@ import * as Links from "./links";
 import * as Blocks from "./blocks";
 import * as Pages from "./pageStore";
 import * as sqlite from "./index";
+import * as SqliteDb from "./db";
 
 let inTransaction = false;
 let schemaVersion = 0;
@@ -48,8 +49,8 @@ describe.serial("sqlite lifecycle", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
-    sqlite.__resetDbForTests();
-    sqlite.__setDatabaseConstructorForTests(
+    SqliteDb.__resetDbForTests();
+    SqliteDb.__setDatabaseConstructorForTests(
       databaseConstructorMock as unknown as typeof BunDatabase,
     );
     inTransaction = false;
@@ -59,24 +60,24 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   afterEach(async () => {
-    sqlite.__resetDbForTests();
-    sqlite.__setDatabaseConstructorForTests(undefined);
-    await sqlite.close();
+    SqliteDb.__resetDbForTests();
+    SqliteDb.__setDatabaseConstructorForTests(undefined);
+    await SqliteDb.close();
     jest.restoreAllMocks();
   });
 
   test("getDb reuses a single connection", async () => {
-    sqlite.__resetDbForTests();
-    await sqlite.close();
-    const first = sqlite.getDb();
-    const second = sqlite.getDb();
+    SqliteDb.__resetDbForTests();
+    await SqliteDb.close();
+    const first = SqliteDb.getDb();
+    const second = SqliteDb.getDb();
 
     expect(first).toBeDefined();
     expect(second).toBeDefined();
     expect(databaseConstructorCallCount).toBe(1);
     expect(execMock).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
     expect(execMock).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
-    await sqlite.close();
+    await SqliteDb.close();
   });
 
   test("initializeAllTables runs inside a transaction", async () => {
@@ -96,18 +97,16 @@ describe.serial("sqlite lifecycle", () => {
         expect(inTransaction).toBe(true);
       });
 
-    sqlite.__resetDbForTests();
-    await sqlite.close();
-    sqlite.getDb();
+    const database = databaseConstructorMock() as never;
     execMock.mockClear();
     queryMock.mockClear();
 
-    sqlite.initializeAllTables();
+    sqlite.initializeAllTables(database);
 
     expect(transactionMock).toHaveBeenCalledTimes(1);
-    expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
-    expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
-    expect(initializePagesSpy).toHaveBeenCalledTimes(1);
+    expect(initializeLinksSpy).toHaveBeenCalledWith(database);
+    expect(initializeBlocksSpy).toHaveBeenCalledWith(database);
+    expect(initializePagesSpy).toHaveBeenCalledWith(database);
     expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
     expect(execMock).toHaveBeenCalledWith(expect.stringContaining("DROP VIEW"));
     expect(execMock).toHaveBeenCalledWith("PRAGMA user_version = 1;");
@@ -130,13 +129,11 @@ describe.serial("sqlite lifecycle", () => {
       });
     const initializePagesSpy = jest.spyOn(Pages, "initializePages");
 
-    sqlite.__resetDbForTests();
-    await sqlite.close();
-    sqlite.getDb();
+    const database = databaseConstructorMock() as never;
     execMock.mockClear();
     queryMock.mockClear();
 
-    expect(() => sqlite.initializeAllTables()).toThrow("boom");
+    expect(() => sqlite.initializeAllTables(database)).toThrow("boom");
     expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
     expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
     expect(initializePagesSpy).not.toHaveBeenCalled();
@@ -148,13 +145,11 @@ describe.serial("sqlite lifecycle", () => {
   test("initializeAllTables does not rewrite the schema version when it is current", async () => {
     schemaVersion = 1;
 
-    sqlite.__resetDbForTests();
-    await sqlite.close();
-    sqlite.getDb();
+    const database = databaseConstructorMock() as never;
     execMock.mockClear();
     queryMock.mockClear();
 
-    sqlite.initializeAllTables();
+    sqlite.initializeAllTables(database);
 
     expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
     expect(
@@ -165,14 +160,12 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("initializeAllTables refuses unsupported schema versions", async () => {
-    sqlite.__resetDbForTests();
-    await sqlite.close();
-    sqlite.getDb();
+    const database = databaseConstructorMock() as never;
     execMock.mockClear();
     queryMock.mockClear();
     schemaVersion = 2;
 
-    expect(() => sqlite.initializeAllTables()).toThrow(
+    expect(() => sqlite.initializeAllTables(database)).toThrow(
       "Unsupported sqlite schema version: 2 > 1",
     );
     expect(

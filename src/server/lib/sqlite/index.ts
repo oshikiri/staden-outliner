@@ -10,8 +10,7 @@ export * from "./links";
 
 const SCHEMA_VERSION = 1;
 
-export function initializeAllTables() {
-  const database = getDb();
+export function initializeAllTables(database = getDb()) {
   const initializeAllTablesTx = database.transaction(() => {
     const currentVersion = getSchemaVersion(database);
     if (currentVersion > SCHEMA_VERSION) {
@@ -20,9 +19,9 @@ export function initializeAllTables() {
       );
     }
 
-    initializeLinks();
-    initializeBlocks();
-    initializePages();
+    initializeLinks(database);
+    initializeBlocks(database);
+    initializePages(database);
     database.exec(`
       DROP VIEW IF EXISTS blocks_p;
       CREATE VIEW blocks_p AS
@@ -39,8 +38,7 @@ export function initializeAllTables() {
   initializeAllTablesTx();
 }
 
-export function clearAllData() {
-  const database = getDb();
+export function clearAllData(database = getDb()) {
   const clearAllDataTx = database.transaction(() => {
     database.exec(`
       DELETE FROM links;
