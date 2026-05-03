@@ -14,7 +14,6 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.json --noEmit",
     "verify": "bun run format:check && bun run lint && bun run typecheck && bun run build:web && bun run test:unit",
-    "serve:web": "bun src/server/web-entry.ts",
     "lint": "eslint src eslint.config.ts",
     "test-coverage": "bun test src --coverage --max-concurrency=1",
     "test:e2e": "playwright test --config=playwright.config.ts",
