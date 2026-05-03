@@ -76,7 +76,7 @@ export function PageScreen({
     <PageNavigationProvider navigateToPage={navigateToPage}>
       <>
         <title>{titleFromProperty}</title>
-        <div className="mx-auto w-full max-w-[120rem] px-4 py-4 lg:px-6">
+        <div className="w-full max-w-[100rem] px-4 py-4 lg:px-6">
           <main>
             <h1
               className="
