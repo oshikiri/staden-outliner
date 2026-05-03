@@ -6,15 +6,7 @@ const tseslint = require("@typescript-eslint/eslint-plugin");
 
 const eslintConfig = [
   {
-    ignores: [
-      "coverage/**",
-      "dist/**",
-      "**/.vscode/**",
-      ".vscode/**",
-      "public/vega.js",
-      "public/vega-lite.js",
-      "public/vega-embed.js",
-    ],
+    ignores: ["coverage/**", "dist/**", "**/.vscode/**", ".vscode/**"],
   },
   {
     files: ["**/*.{js,jsx,ts,tsx,mjs,cjs}"],

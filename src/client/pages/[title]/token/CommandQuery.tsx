@@ -1,4 +1,6 @@
-import { JSX, useRef, useEffect } from "react";
+import { JSX, useEffect, useMemo, useRef } from "react";
+import * as Plot from "@observablehq/plot";
+import { logWarn } from "@/shared/logger";
 import { QueryTable } from "./QueryTable";
 import { CommandQuery as CommandQueryEntity } from "@/shared/markdown/token";
 
@@ -7,6 +9,11 @@ export function CommandQuery({
 }: {
   token: CommandQueryEntity;
 }): JSX.Element {
+  const data = useMemo(
+    () => token.resolvedBlocks ?? [],
+    [token.resolvedBlocks],
+  );
+
   return (
     <div className="relative">
       <div className="flex items-center gap-2 text-sm text-primary/50 whitespace-nowrap">
@@ -14,49 +21,75 @@ export function CommandQuery({
           CommandQuery
         </span>
         <span>
-          {token.resolvedBlocks?.length || 0} results, execution time:{" "}
+          {data.length} results, execution time:{" "}
           {token.queryExecutionMilliseconds || "?"} ms
         </span>
       </div>
-      {token.vlJsonStr && (
-        <VegaLiteEmbed
-          vlJsonStr={token.vlJsonStr}
-          data={token.resolvedDataForVlJson || []}
-        />
-      )}
-      <QueryTable data={token.resolvedBlocks || []} />
+      <CommandQueryChart chartSource={token.chartSource} data={data} />
+      <QueryTable data={data} />
     </div>
   );
 }
 
-function VegaLiteEmbed({
-  vlJsonStr,
+function CommandQueryChart({
+  chartSource,
   data,
 }: {
-  vlJsonStr: string;
-  data: unknown[];
+  chartSource?: string;
+  data: Record<string, unknown>[];
 }): JSX.Element {
   const element = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!element.current) return;
-    const vlJson = {
-      ...JSON.parse(vlJsonStr),
-      data: {
-        values: data,
-      },
+    const container = element.current;
+    if (!container) return;
+
+    container.replaceChildren();
+
+    let plot: Element | null = null;
+    try {
+      plot = chartSource
+        ? executeCommandQueryChartSource(chartSource, data)
+        : null;
+
+      if (plot) {
+        container.append(plot);
+      }
+    } catch (error) {
+      logWarn("Failed to render CommandQuery chart", error);
+    }
+
+    return () => {
+      plot?.remove();
+      container.replaceChildren();
     };
-    element.current.appendChild(
-      document
-        .createRange()
-        .createContextualFragment(
-          `<script>vegaEmbed("#vis", ${JSON.stringify(vlJson)}, {actions: false})</script>`,
-        ),
-    );
-  }, [element, vlJsonStr, data]);
+  }, [chartSource, data]);
 
   return (
-    <div ref={element} onClick={(e) => e.stopPropagation()}>
-      <div id="vis"></div>
-    </div>
+    <div
+      ref={element}
+      className="overflow-x-auto"
+      onClick={(e) => e.stopPropagation()}
+    />
   );
+}
+
+export function runCommandQueryChartSource(
+  source: string,
+  data: Record<string, unknown>[],
+): unknown {
+  return new Function("Plot", "data", "results", source)(Plot, data, data);
+}
+
+export function executeCommandQueryChartSource(
+  source: string,
+  data: Record<string, unknown>[],
+): Element {
+  const result = runCommandQueryChartSource(source, data);
+
+  if (!(result instanceof Element)) {
+    throw new Error("CommandQuery chart source must return a DOM element");
+  }
+
+  return result;
 }

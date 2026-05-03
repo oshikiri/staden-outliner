@@ -154,4 +154,14 @@ describe("blockDto", () => {
       }),
     ).toBe(true);
   });
+
+  test("isBlockDto accepts command query tokens with observable plot mode", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{ type: 15, observablePlot: true }],
+        children: [],
+      }),
+    ).toBe(true);
+  });
 });

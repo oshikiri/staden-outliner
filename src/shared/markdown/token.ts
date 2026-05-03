@@ -234,9 +234,9 @@ export class CommandQuery extends Token {
   type: TokenType = TokenType.CommandQuery;
   constructor(
     public resolvedBlocks?: CommandQueryRow[],
-    public vlJsonStr?: string,
-    public resolvedDataForVlJson?: unknown[],
+    public chartSource?: string,
     public queryExecutionMilliseconds?: number,
+    public observablePlot?: boolean,
   ) {
     super();
     if (resolvedBlocks) {
@@ -244,6 +244,9 @@ export class CommandQuery extends Token {
     }
   }
   toMarkdown(): string {
+    if (this.observablePlot) {
+      return "{{staden-query observableplot}}";
+    }
     return "{{staden-query}}";
   }
 }
@@ -400,13 +403,11 @@ function createBlockRefToken(obj: Record<string, unknown>): BlockRef {
 function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
   return new CommandQuery(
     readOptionalRecordArray(obj, "resolvedBlocks"),
-    typeof obj.vlJsonStr === "string" ? obj.vlJsonStr : undefined,
-    Array.isArray(obj.resolvedDataForVlJson)
-      ? obj.resolvedDataForVlJson
-      : undefined,
+    typeof obj.chartSource === "string" ? obj.chartSource : undefined,
     typeof obj.queryExecutionMilliseconds === "number"
       ? obj.queryExecutionMilliseconds
       : undefined,
+    typeof obj.observablePlot === "boolean" ? obj.observablePlot : undefined,
   );
 }
 

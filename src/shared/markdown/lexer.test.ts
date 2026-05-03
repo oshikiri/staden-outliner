@@ -339,6 +339,14 @@ describe("lexer", () => {
       expect(token).toEqual([new CommandQuery()]);
     });
 
+    test("query table with observable plot flag", () => {
+      const lexer = new Lexer("{{staden-query observableplot}}");
+      const token = lexer.exec();
+      expect(token).toEqual([
+        new CommandQuery(undefined, undefined, undefined, true),
+      ]);
+    });
+
     test("old query table", () => {
       const lexer = new Lexer(
         '{{query (AND (property :status "doing") (property :type "book"))}}',

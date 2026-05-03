@@ -299,7 +299,18 @@ export class Lexer {
     const [commandType, ...commandArgs] = text.split(" ");
 
     if (commandType === "staden-query") {
-      return [i, new CommandQuery()];
+      const observablePlot = commandArgs.some(
+        (arg) => arg.toLowerCase() === "observableplot",
+      );
+      return [
+        i,
+        new CommandQuery(
+          undefined,
+          undefined,
+          undefined,
+          observablePlot || undefined,
+        ),
+      ];
     }
 
     return [i, new Command(commandType, commandArgs.join(" "))];

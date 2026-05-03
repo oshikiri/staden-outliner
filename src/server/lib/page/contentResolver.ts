@@ -8,7 +8,7 @@ import {
 import { getReadonlyDb, logSqliteQuery } from "../sqlite/db";
 import * as SqliteBlocks from "../sqlite/blocks";
 import type { SQLQueryBindings } from "bun:sqlite";
-import { logDebug, logWarn } from "@/shared/logger";
+import { logWarn } from "@/shared/logger";
 import type { CommandQueryRow } from "@/shared/markdown/token";
 
 export async function resolvePageContent(page: Block): Promise<Block> {
@@ -74,12 +74,18 @@ async function resolveCommandQuery(
     return command;
   }
 
-  const code: unknown = block.children[0]?.content[0];
-  if (!(code instanceof CodeBlock)) {
+  const codeBlocks = readCommandQueryCodeBlocks(block);
+  const queryCode = codeBlocks[0];
+  if (!(queryCode instanceof CodeBlock)) {
     return command;
   }
 
-  const query = code.textContent;
+  if (command.observablePlot && isChartSourceCodeBlock(queryCode)) {
+    command.chartSource = queryCode.textContent;
+    return command;
+  }
+
+  const query = queryCode.textContent;
   if (!isReadonlyQuery(query)) {
     throw new Error("CommandQuery only allows read-only SELECT queries");
   }
@@ -93,17 +99,39 @@ async function resolveCommandQuery(
     command.resolvedBlocks = rows;
   }
 
-  const vlJsonCodeBlock = block.children[1]?.content?.[0];
-  if (vlJsonCodeBlock instanceof CodeBlock && vlJsonCodeBlock.lang === "json") {
-    command.vlJsonStr = vlJsonCodeBlock.textContent;
-    command.resolvedDataForVlJson = rows;
-    logDebug("Resolved CommandQuery JSON", {
-      blockId,
-      rowCount: rows.length,
-    });
+  const chartCode = codeBlocks[1];
+  if (chartCode && isChartSourceCodeBlock(chartCode)) {
+    command.chartSource = chartCode.textContent;
   }
 
   return command;
+}
+
+function readCommandQueryCodeBlocks(block: Block): CodeBlock[] {
+  const codeBlocks: CodeBlock[] = [];
+  const commandQueryIndex = block.content.findIndex(
+    (token) => token instanceof CommandQuery,
+  );
+  if (commandQueryIndex >= 0) {
+    for (const token of block.content.slice(commandQueryIndex + 1)) {
+      if (token instanceof CodeBlock) {
+        codeBlocks.push(token);
+      }
+    }
+  }
+
+  for (const child of block.children) {
+    for (const token of child.content) {
+      if (token instanceof CodeBlock) {
+        codeBlocks.push(token);
+      }
+    }
+  }
+  return codeBlocks;
+}
+
+function isChartSourceCodeBlock(token: CodeBlock): boolean {
+  return /^(js|javascript)$/i.test(token.lang);
 }
 
 function isReadonlyQuery(query: string): boolean {

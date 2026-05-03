@@ -185,6 +185,18 @@ describe("createToken", () => {
     expect(token).toHaveProperty("resolvedBlocks", undefined);
   });
 
+  test("commandquery with observablePlot", () => {
+    const obj = {
+      type: 15,
+      observablePlot: true,
+    };
+    const token = createToken(obj);
+    expect(token).toStrictEqual(
+      new CommandQuery(undefined, undefined, undefined, true),
+    );
+    expect(token).toHaveProperty("observablePlot", true);
+  });
+
   test("commandquery with resolvedBlocks", () => {
     const obj = {
       type: 15,
@@ -197,6 +209,24 @@ describe("createToken", () => {
     expect(token).toHaveProperty("resolvedBlocks", [
       { depth: 1, children: [], content: [] },
     ]);
+  });
+
+  test("commandquery with chartSource", () => {
+    const obj = {
+      type: 15,
+      chartSource: "return Plot.plot({ marks: [Plot.dot([1, 2, 3])] });",
+    };
+    const token = createToken(obj);
+    expect(token).toStrictEqual(
+      new CommandQuery(
+        undefined,
+        "return Plot.plot({ marks: [Plot.dot([1, 2, 3])] });",
+      ),
+    );
+    expect(token).toHaveProperty(
+      "chartSource",
+      "return Plot.plot({ marks: [Plot.dot([1, 2, 3])] });",
+    );
   });
 
   test("marker", () => {

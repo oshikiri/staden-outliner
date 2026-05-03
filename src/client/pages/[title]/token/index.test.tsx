@@ -108,11 +108,10 @@ describe("token renderer", () => {
     expect(
       renderToken(
         Object.assign(new CommandQueryEntity(), {
-          vlJsonStr: '{"mark":"bar"}',
-          resolvedDataForVlJson: [{ label: "a", value: 1 }],
+          resolvedBlocks: [{ label: "a", value: 1 }],
         }),
       ),
-    ).toContain('id="vis"');
+    ).toContain("CommandQuery");
     expect(
       renderToken(
         Object.assign(new CommandQueryEntity(), {

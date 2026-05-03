@@ -7,5 +7,15 @@ describe("CommandQuery", () => {
       const commandQuery = new CommandQuery();
       expect(commandQuery.toMarkdown()).toBe("{{staden-query}}");
     });
+
+    test("returns the observable plot tag when enabled", () => {
+      const commandQuery = new CommandQuery(
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      expect(commandQuery.toMarkdown()).toBe("{{staden-query observableplot}}");
+    });
   });
 });

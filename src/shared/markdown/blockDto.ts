@@ -96,10 +96,11 @@ function isBlockRefTokenDto(value: Record<string, unknown>): boolean {
 function isCommandQueryTokenDto(value: Record<string, unknown>): boolean {
   return (
     isOptionalRecordArray(value.resolvedBlocks) &&
-    isOptionalString(value.vlJsonStr) &&
-    isOptionalTokenArray(value.resolvedDataForVlJson) &&
+    isOptionalString(value.chartSource) &&
     (value.queryExecutionMilliseconds === undefined ||
-      typeof value.queryExecutionMilliseconds === "number")
+      typeof value.queryExecutionMilliseconds === "number") &&
+    (value.observablePlot === undefined ||
+      typeof value.observablePlot === "boolean")
   );
 }
 
