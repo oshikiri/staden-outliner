@@ -10,6 +10,7 @@ interface PageState {
   setEditingBlockId: (id: string | null) => void;
   offset: number | null;
   setOffset: (offset: number | null) => void;
+  resetPageEditorState: () => void;
 }
 
 export const useStore = create<PageState>((set) => ({
@@ -27,4 +28,10 @@ export const useStore = create<PageState>((set) => ({
   },
   offset: null,
   setOffset: (offset: number | null) => set({ offset }),
+  resetPageEditorState: () => {
+    set({
+      editingBlockId: null,
+      offset: null,
+    });
+  },
 }));

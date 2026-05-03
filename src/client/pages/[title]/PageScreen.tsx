@@ -20,6 +20,7 @@ export function PageScreen({
 }) {
   const block = useStore((state) => state.page);
   const setPage = useStore((state) => state.setPage);
+  const resetPageEditorState = useStore((state) => state.resetPageEditorState);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -28,6 +29,8 @@ export function PageScreen({
   }, [title]);
 
   useEffect(() => {
+    resetPageEditorState();
+
     const controller = new AbortController();
 
     pageRpc
@@ -49,7 +52,7 @@ export function PageScreen({
     return () => {
       controller.abort();
     };
-  }, [title]);
+  }, [title, resetPageEditorState]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
