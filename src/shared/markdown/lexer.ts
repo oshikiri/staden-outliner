@@ -24,7 +24,6 @@ export class Lexer {
     this.depth = 1;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public exec(): Token[] {
     const tokens: Token[] = [];
     let i = 0;

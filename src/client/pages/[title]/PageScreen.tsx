@@ -9,7 +9,6 @@ import { pageRpc } from "@/client/rpc/page";
 import { logDebug, logError } from "@/shared/logger";
 import { isAbortError } from "@/client/request";
 
-// eslint-disable-next-line max-lines-per-function
 export function PageScreen({
   title,
   pathname,
