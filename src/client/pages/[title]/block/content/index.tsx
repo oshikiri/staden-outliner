@@ -44,6 +44,7 @@ export function Content({
   const setEditingBlockId = useStore((state) => state.setEditingBlockId);
   const offset = useStore((state) => state.offset);
   const setOffset = useStore((state) => state.setOffset);
+  const getEditingBlockIdSnapshot = () => useStore.getState().editingBlockId;
 
   const [suggestionQuery, setSuggestionQuery] = useState<string | undefined>(
     undefined,
@@ -83,7 +84,7 @@ export function Content({
   };
 
   const onBlurContent: FocusEventHandler = (event) => {
-    if (editingBlockId !== block.id) {
+    if (getEditingBlockIdSnapshot() !== block.id) {
       return;
     }
 
@@ -103,7 +104,7 @@ export function Content({
         return;
       }
 
-      if (useStore.getState().editingBlockId !== block.id) {
+      if (getEditingBlockIdSnapshot() !== block.id) {
         return;
       }
 
