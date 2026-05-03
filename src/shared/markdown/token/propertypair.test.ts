@@ -1,4 +1,4 @@
-import { PropertyPair, Text } from "../token";
+import { PageRef, PropertyPair, Text } from "../token";
 import { describe, expect, test } from "bun:test";
 
 describe("PropertyPair", () => {
@@ -16,6 +16,13 @@ describe("PropertyPair", () => {
         new Text("done"),
       ]);
       expect(propertyPair.toPair()).toEqual(["status", "done"]);
+    });
+
+    test("returns plain text for markdown-looking keys", () => {
+      const propertyPair = new PropertyPair(new PageRef("project status"), [
+        new Text("done"),
+      ]);
+      expect(propertyPair.toPair()).toEqual(["project status", "done"]);
     });
   });
 });
