@@ -46,7 +46,7 @@ bun run dev -- ./docs
 
 The dev server rebuilds the web assets when files under `src/` or `public/` change.
 
-After starting the server, you can view the documents at <http://localhost:3000/>.
+After starting the server, open the app in your browser.
 
 ![Screenshot at /pages/index](./docs/index-screenshot.png)
 
@@ -62,4 +62,4 @@ Start the compiled binary with the vault root as the first argument:
 ./dist/staden ./docs
 ```
 
-Then open <http://localhost:3000/> in your browser.
+Then open the app in your browser.
