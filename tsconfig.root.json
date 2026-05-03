@@ -4,6 +4,12 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "types": ["bun-types", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/global.d.ts"],
+  "include": [
+    "eslint.config.ts",
+    "playwright.config.ts",
+    "test/**/*.ts",
+    "e2e/**/*.ts",
+    "src/global.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

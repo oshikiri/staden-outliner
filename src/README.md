@@ -24,5 +24,5 @@
 
 - `src/client/` の新規入口は `tsconfig.client.json` の対象に入れる。
 - `src/server/` と `src/server/api/` の新規入口は `tsconfig.server.json` の対象に入れる。
-- `eslint.config.ts`、`playwright.config.ts`、`test/**/*.ts`、`e2e/**/*.ts` のような root-level ファイルは `tsconfig.json` の対象に入れる。
+- `eslint.config.ts`、`playwright.config.ts`、`test/**/*.ts`、`e2e/**/*.ts` のような root-level ファイルは `tsconfig.root.json` の対象に入れる。
 - 迷ったら `bun run typecheck` を先に通して、追加したファイルがどの `tsconfig` に入っていないかを確認する。

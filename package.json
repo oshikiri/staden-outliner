@@ -8,10 +8,10 @@
   },
   "scripts": {
     "dev": "bun run src/server/dev.ts",
-    "build": "bun src/server/build-web.ts && bun build --compile --compile-autoload-tsconfig --compile-autoload-package-json src/server/web-binary-entry.ts --outfile dist/staden",
+    "build": "bun run src/server/build-web.ts && bun build --compile --compile-autoload-tsconfig --compile-autoload-package-json src/server/web-binary-entry.ts --outfile dist/staden",
     "format": "prettier --write . --list-different",
     "format:check": "prettier --check .",
-    "typecheck": "tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.root.json --noEmit",
     "verify": "bun run format:check && bun run lint && bun run typecheck && bun run build && bun run test:unit",
     "lint": "eslint src eslint.config.ts",
     "test-coverage": "bun test src --coverage --max-concurrency=1",
