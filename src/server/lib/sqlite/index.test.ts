@@ -5,6 +5,7 @@ import * as StadenRoot from "../env/stadenRoot";
 import * as Links from "./links";
 import * as Blocks from "./blocks";
 import * as Pages from "./pageStore";
+import * as sqlite from "./index";
 
 let inTransaction = false;
 let schemaVersion = 0;
@@ -43,20 +44,14 @@ function databaseConstructorMock() {
   };
 }
 
-let importCounter = 0;
-
-async function loadSqliteModule() {
-  const module = await import(`./index.ts?test=${importCounter++}`);
-  module.__setDatabaseConstructorForTests(
-    databaseConstructorMock as unknown as typeof BunDatabase,
-  );
-  return module;
-}
-
 describe.serial("sqlite lifecycle", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
+    sqlite.__resetDbForTests();
+    sqlite.__setDatabaseConstructorForTests(
+      databaseConstructorMock as unknown as typeof BunDatabase,
+    );
     inTransaction = false;
     schemaVersion = 0;
     databaseConstructorCallCount = 0;
@@ -64,7 +59,6 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   afterEach(async () => {
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     sqlite.__setDatabaseConstructorForTests(undefined);
     await sqlite.close();
@@ -72,7 +66,6 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("getDb reuses a single connection", async () => {
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
     const first = sqlite.getDb();
@@ -103,7 +96,6 @@ describe.serial("sqlite lifecycle", () => {
         expect(inTransaction).toBe(true);
       });
 
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
     sqlite.getDb();
@@ -138,7 +130,6 @@ describe.serial("sqlite lifecycle", () => {
       });
     const initializePagesSpy = jest.spyOn(Pages, "initializePages");
 
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
     sqlite.getDb();
@@ -157,7 +148,6 @@ describe.serial("sqlite lifecycle", () => {
   test("initializeAllTables does not rewrite the schema version when it is current", async () => {
     schemaVersion = 1;
 
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
     sqlite.getDb();
@@ -175,7 +165,6 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("initializeAllTables refuses unsupported schema versions", async () => {
-    const sqlite = await loadSqliteModule();
     sqlite.__resetDbForTests();
     await sqlite.close();
     sqlite.getDb();
