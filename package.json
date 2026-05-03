@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "bun run src/server/dev.ts",
+    "reset-db": "bun run src/server/reset-db.ts",
     "build": "bun run src/server/build-web.ts && bun build --compile --compile-autoload-tsconfig --compile-autoload-package-json src/server/web-binary-entry.ts --outfile dist/staden",
     "format": "prettier --write . --list-different",
     "format:check": "prettier --check .",

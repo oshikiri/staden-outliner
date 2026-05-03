@@ -9,7 +9,6 @@ import { useAbortableEffect } from "@/client/useAbortableEffect";
 import { PageRef } from "../../token";
 import { JournalCalendar } from "./Calendar";
 import { RecentPages } from "./RecentPages";
-import { ReloadButton } from "./ReloadButton";
 import { ReflectToMarkdown } from "./ReflectToMarkdown";
 import { usePageNavigation } from "../../navigation";
 import { usePageTitles } from "@/client/usePageTitles";
@@ -106,7 +105,6 @@ function SideBarSections({
         <RecentPages pageTitle={pageTitle} />
       </SideBarElement>
       <SideBarElement title="🔄 Update">
-        <ReloadButton />
         <ReflectToMarkdown pageTitle={pageTitle} />
       </SideBarElement>
     </>

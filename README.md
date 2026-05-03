@@ -28,6 +28,14 @@ Requirements:
 - Bun
 - SQLite
 
+### Reset the vault
+
+Run this before starting the dev server when you want a fresh vault:
+
+```bash
+bun run reset-db -- ./docs
+```
+
 ### Run the development server and view documents
 
 Start the Bun dev server with the vault root as the first argument:
@@ -37,12 +45,6 @@ bun run dev -- ./docs
 ```
 
 The dev server rebuilds the web assets when files under `src/` or `public/` change.
-
-[WIP] Then initialize the vault:
-
-```bash
-curl -X POST http://127.0.0.1:3000/api/initialize
-```
 
 After starting the server, you can view the documents at <http://localhost:3000/>.
 

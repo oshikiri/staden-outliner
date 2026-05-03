@@ -132,12 +132,6 @@ export const honoApiApp = new Hono()
 
     return internalServerError(c);
   })
-  .post("/initialize", async (c) => {
-    const { initializeDatabase } =
-      await import("@/server/api/initialize/usecase");
-    await initializeDatabase();
-    return noContentResponse(c);
-  })
   .route("/", configsRoutes)
   .route("/", filesRoutes)
   .route("/", imagesRoutes)

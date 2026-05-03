@@ -5,7 +5,7 @@ import { isPageFileRecord } from "@/shared/file";
 import type { InferRequestType } from "hono/client";
 
 import { client } from "./client";
-import { isArrayOf, expectStatus, readJsonResponse } from "./response";
+import { isArrayOf, readJsonResponse } from "./response";
 import { type AbortableRequestOptions, toRequestInit } from "@/client/request";
 
 type FilesRequest = InferRequestType<typeof client.api.files.$get>;
@@ -35,11 +35,5 @@ export const systemRpc = {
       (value: unknown): value is PageFileRecord[] =>
         isArrayOf(value, isPageFileRecord),
     );
-  },
-  async initialize(options?: AbortableRequestOptions): Promise<void> {
-    const response = await client.api.initialize.$post(undefined, {
-      init: toRequestInit(options),
-    });
-    await expectStatus(response, 204);
   },
 };
