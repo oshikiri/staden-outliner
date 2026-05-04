@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseUrl = "http://127.0.0.1:3001";
+const baseUrl = "http://127.0.0.1:54321";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -28,7 +28,7 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/global-setup"),
 
   webServer: {
-    command: "PORT=3001 ./dist/staden ./e2e/",
+    command: "PORT=54321 ./dist/staden ./e2e/",
     url: baseUrl,
     reuseExistingServer: false,
   },

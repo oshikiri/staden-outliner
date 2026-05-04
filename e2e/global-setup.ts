@@ -1,15 +1,11 @@
-import { FullConfig, request } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 
-async function globalSetup(config: FullConfig) {
-  const baseURL = config.projects[0]?.use.baseURL ?? "http://localhost:3000";
-  const apiRequest = await request.newContext({ baseURL });
-  const response = await apiRequest.post("/api/initialize");
-
-  if (response.status() !== 204) {
-    throw new Error(`/api/initialize returned status ${response.status()}`);
-  }
-
-  await apiRequest.dispose();
+async function globalSetup() {
+  const root = "./e2e/";
+  execFileSync("bun", ["run", "reset-db", "--", root], {
+    cwd: process.cwd(),
+    stdio: "inherit",
+  });
 }
 
 export default globalSetup;
