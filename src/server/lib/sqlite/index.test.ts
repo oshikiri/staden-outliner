@@ -10,7 +10,6 @@ import * as SqliteDb from "./db";
 
 let inTransaction = false;
 let schemaVersion = 0;
-let databaseConstructorCallCount = 0;
 
 const prepareMock = jest.fn(() => ({
   all: jest.fn(),
@@ -35,7 +34,6 @@ const transactionMock = jest.fn((callback) => (...args: unknown[]) => {
   }
 });
 function databaseConstructorMock() {
-  databaseConstructorCallCount += 1;
   return {
     prepare: prepareMock,
     query: queryMock,
@@ -55,7 +53,6 @@ describe.serial("sqlite lifecycle", () => {
     );
     inTransaction = false;
     schemaVersion = 0;
-    databaseConstructorCallCount = 0;
     jest.spyOn(StadenRoot, "getStadenRoot").mockReturnValue("/tmp/staden");
   });
 
@@ -74,7 +71,8 @@ describe.serial("sqlite lifecycle", () => {
 
     expect(first).toBeDefined();
     expect(second).toBeDefined();
-    expect(databaseConstructorCallCount).toBe(1);
+    expect(first).toBe(second);
+    expect(execMock).toHaveBeenCalledTimes(2);
     expect(execMock).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
     expect(execMock).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
     await SqliteDb.close();
