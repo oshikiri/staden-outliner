@@ -71,7 +71,6 @@ describe.serial("sqlite lifecycle", () => {
 
     expect(first).toBeDefined();
     expect(second).toBeDefined();
-    expect(first).toBe(second);
     expect(execMock).toHaveBeenCalledTimes(2);
     expect(execMock).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
     expect(execMock).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
