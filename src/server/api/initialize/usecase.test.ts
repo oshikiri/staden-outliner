@@ -51,8 +51,8 @@ describe("api/initialize/usecase", () => {
       links: [],
     });
 
-    sqlite.initializeAllTables();
     const db = sqlite.getDb();
+    sqlite.initializeAllTables(db);
     db.exec(
       "INSERT INTO pages (id, title, path) VALUES ('page-old', 'Old Page', NULL)",
     );
