@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "bun:test";
 import { Database as BunDatabase } from "bun:sqlite";
+import { mkdirSync } from "node:fs";
 
 import * as StadenRoot from "../env/stadenRoot";
 import * as Links from "./links";
@@ -55,14 +56,19 @@ describe.serial("sqlite lifecycle", () => {
   test("getDb reuses a single connection", async () => {
     SqliteDb.__resetDbForTests();
     await SqliteDb.close();
+    mkdirSync("/tmp/staden", { recursive: true });
+    SqliteDb.__setDatabaseConstructorForTests(undefined);
+    const execSpy = jest
+      .spyOn(BunDatabase.prototype, "exec")
+      .mockImplementation(() => undefined as never);
     const first = SqliteDb.getDb();
     const second = SqliteDb.getDb();
 
     expect(first).toBeDefined();
     expect(second).toBeDefined();
-    expect(execMock).toHaveBeenCalledTimes(2);
-    expect(execMock).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
-    expect(execMock).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
+    expect(execSpy).toHaveBeenCalledTimes(2);
+    expect(execSpy).toHaveBeenCalledWith("PRAGMA foreign_keys = ON;");
+    expect(execSpy).toHaveBeenCalledWith("PRAGMA journal_mode = WAL;");
     await SqliteDb.close();
   });
 
