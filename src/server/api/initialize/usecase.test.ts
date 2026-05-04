@@ -52,7 +52,27 @@ describe("api/initialize/usecase", () => {
     });
 
     const seedDb = new BunDatabase(`${rootDir}/vault.sqlite3`);
-    sqlite.initializeAllTables(seedDb);
+    seedDb.exec(`
+      CREATE TABLE IF NOT EXISTS pages (
+        id TEXT PRIMARY KEY,
+        title TEXT,
+        path TEXT
+      );
+      CREATE TABLE IF NOT EXISTS blocks (
+        id TEXT PRIMARY KEY,
+        page_id TEXT,
+        parent_id TEXT,
+        depth INTEGER,
+        order_index INTEGER DEFAULT 0,
+        content TEXT,
+        content_markdown TEXT,
+        properties TEXT
+      );
+      CREATE TABLE IF NOT EXISTS links (
+        from_id TEXT,
+        to_id TEXT
+      );
+    `);
     seedDb.exec(
       "INSERT INTO pages (id, title, path) VALUES ('page-old', 'Old Page', NULL)",
     );
