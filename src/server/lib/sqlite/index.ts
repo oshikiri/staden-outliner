@@ -11,7 +11,7 @@ export * from "./links";
 const SCHEMA_VERSION = 1;
 
 export function initializeAllTables(database = getDb()) {
-  const initializeAllTablesTx = database.transaction(() => {
+  runInSqlTransaction(database, () => {
     const currentVersion = getSchemaVersion(database);
     if (currentVersion > SCHEMA_VERSION) {
       throw new Error(
@@ -35,18 +35,16 @@ export function initializeAllTables(database = getDb()) {
       setSchemaVersion(database, SCHEMA_VERSION);
     }
   });
-  initializeAllTablesTx();
 }
 
 export function clearAllData(database = getDb()) {
-  const clearAllDataTx = database.transaction(() => {
+  runInSqlTransaction(database, () => {
     database.exec(`
       DELETE FROM links;
       DELETE FROM blocks;
       DELETE FROM pages;
     `);
   });
-  clearAllDataTx();
 }
 
 function getSchemaVersion(database: ReturnType<typeof getDb>): number {
@@ -61,4 +59,22 @@ function setSchemaVersion(
   version: number,
 ): void {
   database.exec(`PRAGMA user_version = ${version};`);
+}
+
+function runInSqlTransaction(
+  database: ReturnType<typeof getDb>,
+  callback: () => void,
+): void {
+  database.exec("BEGIN;");
+  try {
+    callback();
+    database.exec("COMMIT;");
+  } catch (error) {
+    try {
+      database.exec("ROLLBACK;");
+    } catch {
+      // Ignore rollback failures and rethrow the original error.
+    }
+    throw error;
+  }
 }

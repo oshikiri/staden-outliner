@@ -51,17 +51,20 @@ describe("api/initialize/usecase", () => {
       links: [],
     });
 
-    const db = sqlite.getDb();
-    sqlite.initializeAllTables(db);
-    db.exec(
+    const seedDb = new BunDatabase(`${rootDir}/vault.sqlite3`);
+    sqlite.initializeAllTables(seedDb);
+    seedDb.exec(
       "INSERT INTO pages (id, title, path) VALUES ('page-old', 'Old Page', NULL)",
     );
-    db.exec(
+    seedDb.exec(
       "INSERT INTO blocks (id, page_id, parent_id, depth, order_index, content, content_markdown, properties) VALUES ('block-old', 'page-old', NULL, 0, 0, '[]', '', '[]')",
     );
-    db.exec(
+    seedDb.exec(
       "INSERT INTO links (from_id, to_id) VALUES ('block-old', 'block-old')",
     );
+    seedDb.close();
+
+    sqlite.__resetDbForTests();
 
     await initializeDatabase();
 

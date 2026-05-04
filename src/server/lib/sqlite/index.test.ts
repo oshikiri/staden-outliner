@@ -8,7 +8,6 @@ import * as Pages from "./pageStore";
 import * as sqlite from "./index";
 import * as SqliteDb from "./db";
 
-let inTransaction = false;
 let schemaVersion = 0;
 
 const prepareMock = jest.fn(() => ({
@@ -25,21 +24,12 @@ const execMock = jest.fn((sql: string) => {
   }
 });
 const closeMock = jest.fn();
-const transactionMock = jest.fn((callback) => (...args: unknown[]) => {
-  inTransaction = true;
-  try {
-    callback(...args);
-  } finally {
-    inTransaction = false;
-  }
-});
 function databaseConstructorMock() {
   return {
     prepare: prepareMock,
     query: queryMock,
     exec: execMock,
     close: closeMock,
-    transaction: transactionMock,
   };
 }
 
@@ -51,7 +41,6 @@ describe.serial("sqlite lifecycle", () => {
     SqliteDb.__setDatabaseConstructorForTests(
       databaseConstructorMock as unknown as typeof BunDatabase,
     );
-    inTransaction = false;
     schemaVersion = 0;
     jest.spyOn(StadenRoot, "getStadenRoot").mockReturnValue("/tmp/staden");
   });
@@ -78,21 +67,9 @@ describe.serial("sqlite lifecycle", () => {
   });
 
   test("initializeAllTables runs inside a transaction", async () => {
-    const initializeLinksSpy = jest
-      .spyOn(Links, "initializeLinks")
-      .mockImplementation(() => {
-        expect(inTransaction).toBe(true);
-      });
-    const initializeBlocksSpy = jest
-      .spyOn(Blocks, "initializeBlocks")
-      .mockImplementation(() => {
-        expect(inTransaction).toBe(true);
-      });
-    const initializePagesSpy = jest
-      .spyOn(Pages, "initializePages")
-      .mockImplementation(() => {
-        expect(inTransaction).toBe(true);
-      });
+    const initializeLinksSpy = jest.spyOn(Links, "initializeLinks");
+    const initializeBlocksSpy = jest.spyOn(Blocks, "initializeBlocks");
+    const initializePagesSpy = jest.spyOn(Pages, "initializePages");
 
     const database = databaseConstructorMock() as never;
     execMock.mockClear();
@@ -100,28 +77,32 @@ describe.serial("sqlite lifecycle", () => {
 
     sqlite.initializeAllTables(database);
 
-    expect(transactionMock).toHaveBeenCalledTimes(1);
     expect(initializeLinksSpy).toHaveBeenCalledWith(database);
     expect(initializeBlocksSpy).toHaveBeenCalledWith(database);
     expect(initializePagesSpy).toHaveBeenCalledWith(database);
+    expect(execMock.mock.calls[0]?.[0]).toBe("BEGIN;");
+    expect(
+      execMock.mock.calls.some(([sql]) =>
+        String(sql).includes("PRAGMA user_version = 1;"),
+      ),
+    ).toBe(true);
+    expect(
+      execMock.mock.calls.some(([sql]) =>
+        String(sql).includes("DROP VIEW IF EXISTS blocks_p;"),
+      ),
+    ).toBe(true);
+    expect(execMock.mock.calls.at(-1)?.[0]).toBe("COMMIT;");
     expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
-    expect(execMock).toHaveBeenCalledWith(expect.stringContaining("DROP VIEW"));
-    expect(execMock).toHaveBeenCalledWith("PRAGMA user_version = 1;");
     expect(
       execMock.mock.calls.some(([sql]) => String(sql).includes("DROP TABLE")),
     ).toBe(false);
   });
 
   test("initializeAllTables stops when a step fails", async () => {
-    const initializeLinksSpy = jest
-      .spyOn(Links, "initializeLinks")
-      .mockImplementation(() => {
-        expect(inTransaction).toBe(true);
-      });
+    const initializeLinksSpy = jest.spyOn(Links, "initializeLinks");
     const initializeBlocksSpy = jest
       .spyOn(Blocks, "initializeBlocks")
       .mockImplementation(() => {
-        expect(inTransaction).toBe(true);
         throw new Error("boom");
       });
     const initializePagesSpy = jest.spyOn(Pages, "initializePages");
@@ -134,9 +115,8 @@ describe.serial("sqlite lifecycle", () => {
     expect(initializeLinksSpy).toHaveBeenCalledTimes(1);
     expect(initializeBlocksSpy).toHaveBeenCalledTimes(1);
     expect(initializePagesSpy).not.toHaveBeenCalled();
-    expect(
-      execMock.mock.calls.some(([sql]) => String(sql).includes("DROP VIEW")),
-    ).toBe(false);
+    expect(execMock.mock.calls[0]?.[0]).toBe("BEGIN;");
+    expect(execMock.mock.calls.at(-1)?.[0]).toBe("ROLLBACK;");
   });
 
   test("initializeAllTables does not rewrite the schema version when it is current", async () => {
@@ -170,5 +150,23 @@ describe.serial("sqlite lifecycle", () => {
         String(sql).includes("PRAGMA user_version = 1"),
       ),
     ).toBe(false);
+  });
+
+  test("initializeAllTables works without a transaction helper", async () => {
+    const database = {
+      query: queryMock,
+      exec: execMock,
+    };
+
+    execMock.mockClear();
+    queryMock.mockClear();
+
+    sqlite.initializeAllTables(database as never);
+
+    expect(queryMock).toHaveBeenCalledWith("PRAGMA user_version;");
+    expect(execMock.mock.calls.map(([sql]) => String(sql))).toContain("BEGIN;");
+    expect(execMock.mock.calls.map(([sql]) => String(sql))).toContain(
+      "COMMIT;",
+    );
   });
 });
