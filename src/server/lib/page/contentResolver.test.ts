@@ -122,6 +122,51 @@ describe("contentResolver", () => {
     );
   });
 
+  test("resolvePageContent loads the regex_capture extension for matching queries", async () => {
+    const page = new Block(
+      [
+        new CommandQuery(),
+        new CodeBlock(
+          `
+            with versions as (
+                select
+                    regex_capture('v1.2.3:hello', 'v(\\\\d)\\\\.(\\\\d)\\\\.(\\\\d):(.+)') as cap
+            )
+            select
+                cap ->> '$[0]' as major,
+                cap ->> '$[1]' as minor,
+                cap ->> '$[2]' as patch,
+                cap ->> '$[3]' as description
+            from versions
+          `,
+          "sql",
+        ),
+      ],
+      0,
+      [],
+    );
+    page.withId("page-regex-capture");
+    jest.spyOn(Sqlite, "getBlockById").mockReturnValue(page);
+    const ensureRegexCaptureExtensionLoadedSpy = jest
+      .spyOn(Sqlite, "ensureRegexCaptureExtensionLoaded")
+      .mockImplementation(() => undefined);
+    jest.spyOn(Sqlite, "getReadonlyDb").mockReturnValue({
+      query: () => ({
+        all: () => [
+          { major: "1", minor: "2", patch: "3", description: "hello" },
+        ],
+      }),
+    } as never);
+
+    await resolvePageContent(page);
+
+    expect(ensureRegexCaptureExtensionLoadedSpy).toHaveBeenCalledTimes(1);
+    expect(page.content[0]).toBeInstanceOf(CommandQuery);
+    expect(page.content[0]).toHaveProperty("resolvedBlocks", [
+      { major: "1", minor: "2", patch: "3", description: "hello" },
+    ]);
+  });
+
   test("resolvePageContent ignores non-javascript chart source blocks", async () => {
     const page = new Block(
       [

@@ -11,7 +11,8 @@ const assetsDir = join(distDir, "assets");
 const cssEntry = join(process.cwd(), "src/client/default-theme.css");
 
 export async function buildWeb(): Promise<boolean> {
-  await rm(distDir, { recursive: true, force: true });
+  await rm(assetsDir, { recursive: true, force: true });
+  await rm(join(distDir, "public"), { recursive: true, force: true });
   await mkdir(assetsDir, { recursive: true });
 
   const result = await buildBrowserBundle();

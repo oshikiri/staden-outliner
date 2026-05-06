@@ -5,7 +5,11 @@ import {
   Command,
   CommandQuery,
 } from "@/shared/markdown/token";
-import { getReadonlyDb, logSqliteQuery } from "../sqlite/db";
+import {
+  ensureRegexCaptureExtensionLoaded,
+  getReadonlyDb,
+  logSqliteQuery,
+} from "../sqlite/db";
 import * as SqliteBlocks from "../sqlite/blocks";
 import type { SQLQueryBindings } from "bun:sqlite";
 import { logWarn } from "@/shared/logger";
@@ -89,6 +93,9 @@ async function resolveCommandQuery(
   if (!isReadonlyQuery(query)) {
     throw new Error("CommandQuery only allows read-only SELECT queries");
   }
+  if (isRegexCaptureQuery(query)) {
+    ensureRegexCaptureExtensionLoaded();
+  }
   const queryExecutionStart = Date.now();
   logSqliteQuery(query, []);
   const rows = getReadonlyDb()
@@ -136,4 +143,8 @@ function isChartSourceCodeBlock(token: CodeBlock): boolean {
 
 function isReadonlyQuery(query: string): boolean {
   return /^(with|select|explain)\b/i.test(query.trim());
+}
+
+function isRegexCaptureQuery(query: string): boolean {
+  return /\bregex_capture\s*\(/i.test(query);
 }

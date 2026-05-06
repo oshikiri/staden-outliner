@@ -1,10 +1,12 @@
 import { Database as BunDatabase } from "bun:sqlite";
 import { getStadenRoot } from "../env/stadenRoot";
 import { logDebug } from "@/shared/logger";
+import { getRegexCaptureExtensionBasePath } from "./extensionPath";
 
 let db: BunDatabase | undefined;
 let readonlyDb: BunDatabase | undefined;
 let databaseConstructorForTests: typeof BunDatabase | undefined;
+let regexCaptureExtensionLoadedOnReadonlyDb = false;
 
 export function close() {
   if (!db) {
@@ -22,6 +24,8 @@ export function close() {
     readonlyDb.close();
     readonlyDb = undefined;
   }
+
+  regexCaptureExtensionLoadedOnReadonlyDb = false;
 }
 
 export function getDb(): BunDatabase {
@@ -55,6 +59,22 @@ export function __setDatabaseConstructorForTests(
 export function __resetDbForTests(): void {
   db = undefined;
   readonlyDb = undefined;
+  regexCaptureExtensionLoadedOnReadonlyDb = false;
+}
+
+export function ensureRegexCaptureExtensionLoaded(
+  database = getReadonlyDb(),
+): void {
+  if (database === readonlyDb) {
+    if (regexCaptureExtensionLoadedOnReadonlyDb) {
+      return;
+    }
+    loadRegexCaptureExtension(database);
+    regexCaptureExtensionLoadedOnReadonlyDb = true;
+    return;
+  }
+
+  loadRegexCaptureExtension(database);
 }
 
 export function logSqliteQuery(sql: string, params: readonly unknown[]): void {
@@ -76,4 +96,11 @@ function configureDatabase(database: BunDatabase): BunDatabase {
   database.exec("PRAGMA foreign_keys = ON;");
   database.exec("PRAGMA journal_mode = WAL;");
   return database;
+}
+
+function loadRegexCaptureExtension(database: BunDatabase): void {
+  database.loadExtension(
+    getRegexCaptureExtensionBasePath(),
+    "sqlite3_regex_capture_init",
+  );
 }
