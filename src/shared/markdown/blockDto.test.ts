@@ -1,13 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
 import { Block } from "./block";
-import {
-  BlockDto,
-  fromBlockDto,
-  isBlockDto,
-  toBlockDto,
-  toPageDto,
-} from "./blockDto";
+import type { BlockDto } from "./blockDtoTypes";
+import { fromBlockDto, toBlockDto, toPageDto } from "./blockDtoMapper";
+import { isBlockDto } from "./blockDtoValidator";
 import { Marker, Text } from "./token";
 
 describe("blockDto", () => {

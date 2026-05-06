@@ -2,7 +2,7 @@ import { createToken, Token, TokenType, PropertyPair, Marker } from "./token";
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 import { logDebug, logWarn } from "../logger";
-import type { BlockPropertyDto } from "./blockDto";
+import type { BlockPropertyDto } from "./blockDtoTypes";
 
 export class Block {
   public id?: string;
