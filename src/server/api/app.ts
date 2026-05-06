@@ -6,7 +6,7 @@ import { validator } from "hono/validator";
 import { getAllConfigs } from "@/server/lib/file/config";
 import { exportOnePageToMarkdown } from "@/server/lib/exporter/incremental_exporter";
 import { getImagePayload } from "@/server/api/images/usecase";
-import { isBlockDto } from "@/shared/markdown/blockDto";
+import { isBlockDto } from "@/shared/markdown/blockDtoValidator";
 import {
   createPageRouteError,
   isPageRouteError,

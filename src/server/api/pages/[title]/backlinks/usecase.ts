@@ -1,5 +1,5 @@
 import { Block } from "@/shared/markdown/block";
-import { toBlockDto } from "@/shared/markdown/blockDto";
+import { toBlockDto } from "@/shared/markdown/blockDtoMapper";
 import { getCurrentPage, getSourceLinks } from "@/server/lib/sqlite";
 import { type BacklinksRouteResponseBody } from "../contracts";
 

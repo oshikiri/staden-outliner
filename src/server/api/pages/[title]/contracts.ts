@@ -1,4 +1,4 @@
-import { BlockDto } from "@/shared/markdown/blockDto";
+import type { BlockDto } from "@/shared/markdown/blockDtoTypes";
 
 type PageRouteError = {
   updateResults: {

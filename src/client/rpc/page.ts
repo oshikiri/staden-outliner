@@ -1,10 +1,7 @@
 import type { Block as BlockEntity } from "@/shared/markdown/block";
-import {
-  type BlockDto,
-  fromBlockDto,
-  isBlockDto,
-  toPageDto,
-} from "@/shared/markdown/blockDto";
+import type { BlockDto } from "@/shared/markdown/blockDtoTypes";
+import { fromBlockDto, toPageDto } from "@/shared/markdown/blockDtoMapper";
+import { isBlockDto } from "@/shared/markdown/blockDtoValidator";
 import { type InferResponseType } from "hono/client";
 
 import { client } from "./client";
