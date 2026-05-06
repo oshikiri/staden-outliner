@@ -25,8 +25,6 @@ export async function buildWeb(): Promise<boolean> {
   const mainCss = await buildCssContents();
   await writeFile(buildCss(), mainCss);
   await copyOptionalPublicAssets();
-
-  await writeFile(join(distDir, "index.html"), buildIndexHtml());
   return true;
 }
 
@@ -57,24 +55,6 @@ function logBuildFailure(logs: ReadonlyArray<unknown>): void {
   for (const log of logs) {
     logError(log);
   }
-}
-
-function buildIndexHtml(): string {
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Staden Outliner</title>
-    <link rel="icon" href="/public/favicon.ico" />
-    <link rel="stylesheet" href="/assets/main.css" />
-  </head>
-  <body class="max-w-full mx-20 text-primary bg-background">
-    <div id="root"></div>
-    <script type="module" src="/assets/main.js"></script>
-  </body>
-</html>
-`;
 }
 
 function buildCss(): string {

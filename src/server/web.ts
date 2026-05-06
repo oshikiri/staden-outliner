@@ -8,6 +8,8 @@ import { DEFAULT_PORT } from "@/server/lib/env/defaultPort";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DIST_DIR = join(process.cwd(), "dist");
+const INDEX_HTML_PATH = join(import.meta.dir, "index.html");
+let indexHtml: string | undefined;
 
 type ServerOptions = {
   host?: string;
@@ -54,7 +56,11 @@ async function serveStaticOrIndex(pathname: string): Promise<Response> {
     }
   }
 
-  return new Response(Bun.file(join(DIST_DIR, "index.html")));
+  return new Response(await getIndexHtml(), {
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+    },
+  });
 }
 
 function getSafeDistPath(pathname: string): string | undefined {
@@ -78,4 +84,13 @@ async function exists(path: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+async function getIndexHtml(): Promise<string> {
+  if (indexHtml !== undefined) {
+    return indexHtml;
+  }
+
+  indexHtml = await Bun.file(INDEX_HTML_PATH).text();
+  return indexHtml;
 }
