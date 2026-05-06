@@ -4,7 +4,7 @@ import { Block } from "@/shared/markdown/block";
 import { Text } from "@/shared/markdown/token";
 import {
   convertToMarkdownRecursive,
-  getContentMarkdown,
+  getExportMarkdown,
 } from "./incremental_exporter";
 
 describe("convertToMarkdownRecursive", () => {
@@ -26,17 +26,17 @@ describe("convertToMarkdownRecursive", () => {
   });
 });
 
-describe("getContentMarkdown", () => {
+describe("getExportMarkdown", () => {
   describe("when it has no children", () => {
     test("returns an empty string", () => {
       const block = new Block([new Text("test")], 1, []);
-      expect(getContentMarkdown(block)).toBe("- test");
+      expect(getExportMarkdown(block)).toBe("- test");
     });
   });
   describe("when it has multiline codeblock", () => {
     test("returns the codeblock with newlines", () => {
       const block = new Block([new Text("test\nline2\nline3")], 1, []);
-      expect(getContentMarkdown(block)).toBe("- test\n  line2\n  line3");
+      expect(getExportMarkdown(block)).toBe("- test\n  line2\n  line3");
     });
   });
 });
