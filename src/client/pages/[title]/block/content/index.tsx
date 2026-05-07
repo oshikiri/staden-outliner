@@ -29,6 +29,44 @@ import {
 import { logDebug, logError } from "@/shared/logger";
 import { getErrorMessage } from "@/client/error";
 
+interface EnterEditModeFromClickOptions {
+  editable: boolean;
+  blockId: string | undefined;
+  clientX: number;
+  clientY: number;
+  setSaveErrorMessage: (message: string | null) => void;
+  setEditingBlockId: (blockId: string | null) => void;
+  setOffset: (offset: number | null) => void;
+  stopPropagation: () => void;
+  getCursorOffset?: (x: number, y: number) => number;
+}
+
+export function enterEditModeFromClick({
+  editable,
+  blockId,
+  clientX,
+  clientY,
+  setSaveErrorMessage,
+  setEditingBlockId,
+  setOffset,
+  stopPropagation,
+  getCursorOffset = getNearestCursorOffset,
+}: EnterEditModeFromClickOptions): void {
+  if (!editable) {
+    return;
+  }
+  if (!blockId) {
+    logError("Cannot enter edit mode because block id is missing");
+    return;
+  }
+
+  setSaveErrorMessage(null);
+  setEditingBlockId(blockId);
+  const startOffset = getCursorOffset(clientX, clientY);
+  setOffset(startOffset);
+  stopPropagation();
+}
+
 export function Content({
   block,
   editable,
@@ -72,19 +110,16 @@ export function Content({
   }, [isEditing, offset]);
 
   const onClickContent: MouseEventHandler = async (event) => {
-    if (!editable) {
-      return;
-    }
-    if (!block.id) {
-      logError("Cannot enter edit mode because block id is missing");
-      return;
-    }
-
-    setSaveErrorMessage(null);
-    setEditingBlockId?.(block.id);
-    const startOffset = getNearestCursorOffset(event.clientX, event.clientY);
-    setOffset(startOffset);
-    event.stopPropagation();
+    enterEditModeFromClick({
+      editable,
+      blockId: block.id,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      setSaveErrorMessage,
+      setEditingBlockId,
+      setOffset,
+      stopPropagation: () => event.stopPropagation(),
+    });
   };
 
   const onBlurContent: FocusEventHandler = (event) => {
