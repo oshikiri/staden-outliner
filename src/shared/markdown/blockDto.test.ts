@@ -88,6 +88,26 @@ describe("blockDto", () => {
     expect(block.children[0].getProperty("note")).toBe("child");
   });
 
+  test("fromBlockDto assigns ids when payloads omit them", () => {
+    const dto: BlockDto = {
+      depth: 0,
+      content: [],
+      children: [
+        {
+          depth: 1,
+          content: [{ type: 4, textContent: "child" }],
+          children: [],
+        },
+      ],
+    };
+
+    const block = fromBlockDto(dto);
+
+    expect(typeof block.id).toBe("string");
+    expect(typeof block.children[0].id).toBe("string");
+    expect(block.children[0].parent).toBe(block);
+  });
+
   test("isBlockDto accepts valid nested block payloads", () => {
     const dto: BlockDto = {
       id: "page-1",

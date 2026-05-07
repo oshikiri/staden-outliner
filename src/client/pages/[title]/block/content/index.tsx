@@ -75,9 +75,13 @@ export function Content({
     if (!editable) {
       return;
     }
+    if (!block.id) {
+      logError("Cannot enter edit mode because block id is missing");
+      return;
+    }
 
     setSaveErrorMessage(null);
-    setEditingBlockId?.(block.id || null);
+    setEditingBlockId?.(block.id);
     const startOffset = getNearestCursorOffset(event.clientX, event.clientY);
     setOffset(startOffset);
     event.stopPropagation();

@@ -38,7 +38,7 @@ export function fromBlockDto(dto: BlockDto): Block {
     dto.depth,
     dto.children.map((child) => fromBlockDto(child)),
   );
-  block.id = dto.id;
+  block.id = dto.id ?? crypto.randomUUID();
   block.properties = cloneProperties(dto.properties);
   block.setPropertiesFromContent();
   block.children.forEach((child) => {
