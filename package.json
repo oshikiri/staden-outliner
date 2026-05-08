@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@observablehq/plot": "0.6.17",
-    "hono": "4.12.14",
+    "hono": "4.12.16",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "react-router-dom": "7.14.2",
