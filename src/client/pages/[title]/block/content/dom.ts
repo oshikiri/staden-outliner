@@ -1,5 +1,3 @@
-import { logError } from "@/shared/logger";
-
 export function extractTextContent(content: HTMLDivElement | null): string {
   if (!content) {
     return "";
@@ -22,54 +20,25 @@ export function extractTextContent(content: HTMLDivElement | null): string {
 }
 
 export function getNearestCursorOffset(x: number, y: number): number {
-  // NOTE: `document.caretPositionFromPoint` is not supported in Safari; provide a fallback (e.g., `caretRangeFromPoint`).
+  // NOTE: `document.caretPositionFromPoint` is not supported in Safari and
+  // Chromium may expose only `caretRangeFromPoint`.
   // https://developer.mozilla.org/ja/docs/Web/API/Document/caretPositionFromPoint
-  const caretPosition = document.caretPositionFromPoint(x, y);
-  return caretPosition?.offset || 0;
-}
+  const documentWithCaretFallback = document as Document & {
+    caretPositionFromPoint?: (
+      x: number,
+      y: number,
+    ) => { offset: number } | null;
+    caretRangeFromPoint?: (x: number, y: number) => Range | null;
+  };
 
-export function setCursor(currentNode: ChildNode, offset: number | null): void {
-  if (offset === null) {
-    offset = 0;
+  const caretPosition = documentWithCaretFallback.caretPositionFromPoint?.(
+    x,
+    y,
+  );
+  if (caretPosition) {
+    return caretPosition.offset;
   }
 
-  const node = getTextNodeInside(currentNode);
-  if (!node) {
-    logError("No text node found");
-    return;
-  }
-
-  const nodeTextLength = node.textContent?.length || 0;
-  if (offset > nodeTextLength) {
-    offset = nodeTextLength;
-  }
-
-  const range = document.createRange();
-  range.setStart(node, offset);
-  range.setEnd(node, offset);
-
-  const selection = window.getSelection();
-  selection?.removeAllRanges();
-  selection?.addRange(range);
-}
-
-function getTextNodeInside(node: ChildNode): Text | null {
-  if (node.nodeType === Node.TEXT_NODE) {
-    return node as Text;
-  }
-  const firstChild = node.firstChild;
-  if (firstChild) {
-    return getTextNodeInside(firstChild);
-  }
-  const textNode = document.createTextNode("");
-  node.appendChild(textNode);
-  return textNode;
-}
-
-export function getOffset(node: HTMLElement, startOffset: number): number {
-  const nextInnerText = node.innerText || "";
-  if (startOffset >= nextInnerText.length) {
-    return nextInnerText.length;
-  }
-  return startOffset;
+  const caretRange = documentWithCaretFallback.caretRangeFromPoint?.(x, y);
+  return caretRange?.startOffset || 0;
 }

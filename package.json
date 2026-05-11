@@ -22,7 +22,11 @@
     "test": "bun run test:unit && bun run test:e2e"
   },
   "dependencies": {
+    "@codemirror/commands": "6.10.3",
+    "@codemirror/state": "6.6.0",
+    "@codemirror/view": "6.41.1",
     "@observablehq/plot": "0.6.17",
+    "codemirror": "6.0.2",
     "hono": "4.12.14",
     "react": "19.2.5",
     "react-dom": "19.2.5",

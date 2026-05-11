@@ -97,16 +97,24 @@ async function watchDirectory(
     throw error;
   }
 
-  const watcher = watch(directory, () => {
-    void refreshWatchers(state)
-      .then(() => {
-        scheduleRebuild(state);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  });
-  state.watchers.set(directory, watcher);
+  try {
+    const watcher = watch(directory, () => {
+      void refreshWatchers(state)
+        .then(() => {
+          scheduleRebuild(state);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+    state.watchers.set(directory, watcher);
+  } catch (error) {
+    const cause = error as { code?: string };
+    if (cause.code !== "EINVAL") {
+      throw error;
+    }
+    console.warn(`Skipping file watcher for ${directory}: ${cause.code}`);
+  }
 
   const entries = await readdir(directory, { withFileTypes: true });
   await Promise.all(

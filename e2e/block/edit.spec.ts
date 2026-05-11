@@ -1,5 +1,8 @@
 import { test, expect, Locator, Page } from "@playwright/test";
 
+// The tests mutate a shared markdown fixture through the app.
+test.describe.configure({ mode: "serial" });
+
 test("when typing characters, it should add them to the block content", async ({
   page,
 }) => {
@@ -121,6 +124,49 @@ test("when pressing Tab/Shift+Tab, it should change the block indentation level"
 
   // Verify the block level has decreased
   expect(await getXDiff(parent, target)).toBe(0);
+});
+
+test("when pressing Enter in single-line mode, it should split the block", async ({
+  page,
+}) => {
+  await page.goto("./pages/edit");
+
+  const target = page.getByText("split source");
+  await enterEditMode(page, target);
+
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("split child");
+  await page.click("h1");
+
+  await expect(page.getByText("split source")).toBeVisible();
+  await expect(page.getByText("split child")).toBeVisible();
+});
+
+test("when pressing Tab in multi-line mode, it should indent text instead of the block", async ({
+  page,
+}) => {
+  await page.goto("./pages/edit");
+
+  const target = page.getByText("multi line target");
+  const initialX = (await target.boundingBox())?.x || 0;
+  await enterEditMode(page, target);
+
+  await page.keyboard.press("Control+Enter");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("second line");
+  await page.keyboard.press("Control+A");
+  await page.keyboard.press("Tab");
+
+  await expect(page.locator(".cm-line").nth(0)).toHaveText(
+    "  multi line target",
+  );
+  await expect(page.locator(".cm-line").nth(1)).toHaveText("  second line");
+
+  await page.click("h1");
+
+  const updated = page.getByText(/multi line target\s*second line/);
+  await expect(updated).toBeVisible();
+  expect(((await updated.boundingBox())?.x || 0) - initialX).toBeLessThan(10);
 });
 
 async function getXDiff(parent: Locator, target: Locator): Promise<number> {

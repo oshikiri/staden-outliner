@@ -9,6 +9,7 @@ import { logError } from "@/shared/logger";
 const distDir = join(process.cwd(), "dist");
 const assetsDir = join(distDir, "assets");
 const cssEntry = join(process.cwd(), "src/client/default-theme.css");
+const indexHtmlEntry = join(process.cwd(), "src/server/index.html");
 
 export async function buildWeb(): Promise<boolean> {
   await rm(assetsDir, { recursive: true, force: true });
@@ -24,6 +25,7 @@ export async function buildWeb(): Promise<boolean> {
 
   const mainCss = await buildCssContents();
   await writeFile(buildCss(), mainCss);
+  await cp(indexHtmlEntry, join(distDir, "index.html"));
   await copyOptionalPublicAssets();
   return true;
 }

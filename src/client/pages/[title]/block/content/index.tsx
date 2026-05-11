@@ -1,11 +1,9 @@
 import {
   JSX,
-  useRef,
+  useCallback,
   useEffect,
   useState,
   MouseEventHandler,
-  FocusEventHandler,
-  KeyboardEventHandler,
 } from "react";
 
 import {
@@ -19,15 +17,27 @@ import { useStore } from "../../state";
 import { RpcErrorMessage } from "../../page-components/RpcErrorMessage";
 
 import { Suggestion } from "./suggestion";
-import { ContentKeyboardEventHandler } from "./keyboardeventhandler";
-import {
-  getOffset,
-  getNearestCursorOffset,
-  extractTextContent,
-  setCursor,
-} from "./dom";
+import { getNearestCursorOffset } from "./dom";
 import { logDebug, logError } from "@/shared/logger";
 import { getErrorMessage } from "@/client/error";
+import { MarkdownEditView } from "./MarkdownEditView";
+
+type SaveContentMarkdownOptions = {
+  page: BlockEntity;
+  blockId: string | undefined;
+  nextContentMarkdown: string;
+  updatePage?: typeof pageRpc.update;
+  setPage: (page: BlockEntity | null) => void;
+  setSaveErrorMessage: (message: string | null) => void;
+};
+
+type UpdatePageOptions = {
+  setPage: (page: BlockEntity | null) => void;
+  setSaveErrorMessage: (message: string | null) => void;
+  updatePage?: typeof pageRpc.update;
+};
+
+type PersistPageOptions = Required<UpdatePageOptions>;
 
 interface EnterEditModeFromClickOptions {
   editable: boolean;
@@ -67,6 +77,101 @@ export function enterEditModeFromClick({
   stopPropagation();
 }
 
+export async function saveBlockContentMarkdown({
+  page,
+  blockId,
+  nextContentMarkdown,
+  updatePage = pageRpc.update,
+  setPage,
+  setSaveErrorMessage,
+}: SaveContentMarkdownOptions): Promise<void> {
+  const blockOnPage = page.getBlockById(blockId || "");
+  if (!blockOnPage) {
+    logError(`Block not found: id=${blockId || ""}`);
+    return;
+  }
+
+  applyContentMarkdown(blockOnPage, nextContentMarkdown);
+  await persistPage(page, { updatePage, setPage, setSaveErrorMessage });
+}
+
+export async function indentBlockAfterMarkdownUpdate(
+  page: BlockEntity,
+  blockId: string | undefined,
+  currentMarkdown: string,
+  shift: boolean,
+  {
+    setPage,
+    setSaveErrorMessage,
+    updatePage = pageRpc.update,
+  }: UpdatePageOptions,
+): Promise<void> {
+  const blockOnPage = page.getBlockById(blockId || "");
+  if (!blockOnPage) {
+    logError(`Block not found: id=${blockId || ""}`);
+    return;
+  }
+
+  applyContentMarkdown(blockOnPage, currentMarkdown);
+  if (shift) {
+    blockOnPage.decreaseLevel();
+  } else {
+    blockOnPage.increaseLevel();
+  }
+  await persistPage(page, { updatePage, setPage, setSaveErrorMessage });
+}
+
+export async function splitBlockByMarkdown(
+  page: BlockEntity,
+  blockId: string | undefined,
+  textBefore: string,
+  textAfter: string,
+  {
+    setPage,
+    setSaveErrorMessage,
+    updatePage = pageRpc.update,
+  }: UpdatePageOptions,
+): Promise<BlockEntity | undefined> {
+  const blockBefore = page.getBlockById(blockId || "");
+  if (!blockBefore) {
+    logError(`Block not found: id=${blockId || ""}`);
+    return undefined;
+  }
+
+  applyContentMarkdown(blockBefore, textBefore);
+
+  const blockAfter = new BlockEntity([], blockBefore.depth, []).withId(
+    self.crypto.randomUUID(),
+  );
+  applyContentMarkdown(blockAfter, textAfter);
+
+  const [parent, idx] = blockBefore.getParentAndIdx();
+  if (!parent) {
+    logError("Block has no parent");
+    return undefined;
+  }
+
+  if (blockBefore.hasChildren()) {
+    blockAfter.parent = blockBefore;
+    blockBefore.children.splice(0, 0, blockAfter);
+  } else {
+    blockAfter.parent = parent;
+    parent.children.splice(idx + 1, 0, blockAfter);
+  }
+
+  await persistPage(page, { updatePage, setPage, setSaveErrorMessage });
+  return blockAfter;
+}
+
+async function persistPage(
+  page: BlockEntity,
+  { updatePage, setPage, setSaveErrorMessage }: PersistPageOptions,
+): Promise<void> {
+  const nextPage = await updatePage(page);
+  setSaveErrorMessage(null);
+  setPage(nextPage);
+}
+
 export function Content({
   block,
   editable,
@@ -74,15 +179,12 @@ export function Content({
   block: BlockEntity;
   editable: boolean;
 }): JSX.Element {
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const page = useStore((state) => state.page) || new BlockEntity([], 0, []);
   const setPage = useStore((state) => state.setPage);
   const editingBlockId = useStore((state) => state.editingBlockId);
   const setEditingBlockId = useStore((state) => state.setEditingBlockId);
   const offset = useStore((state) => state.offset);
   const setOffset = useStore((state) => state.setOffset);
-  const getEditingBlockIdSnapshot = () => useStore.getState().editingBlockId;
 
   const [suggestionQuery, setSuggestionQuery] = useState<string | undefined>(
     undefined,
@@ -97,19 +199,11 @@ export function Content({
     if (isEditing) {
       // render mode -> edit mode
       setContentMarkdown(getContentMarkdown(block));
-      contentRef.current?.focus();
-
-      if (contentRef.current) {
-        const cursorOffset = getOffset(contentRef.current, offset || 0);
-        const currentNode = contentRef?.current;
-        if (currentNode) {
-          setCursor(currentNode, cursorOffset);
-        }
-      }
     }
-  }, [isEditing, offset]);
+  }, [block, isEditing]);
 
   const onClickContent: MouseEventHandler = async (event) => {
+    setContentMarkdown(getContentMarkdown(block));
     enterEditModeFromClick({
       editable,
       blockId: block.id,
@@ -122,87 +216,118 @@ export function Content({
     });
   };
 
-  const onBlurContent: FocusEventHandler = (event) => {
-    if (getEditingBlockIdSnapshot() !== block.id) {
-      return;
-    }
+  const saveContentMarkdown = useCallback(
+    (nextContentMarkdown: string) => {
+      window.requestAnimationFrame(() => {
+        if (useStore.getState().editingBlockId !== block.id) {
+          return;
+        }
 
-    event.stopPropagation();
+        logDebug("saveContentMarkdown", {
+          length: nextContentMarkdown.length,
+        });
 
-    window.requestAnimationFrame(() => {
-      const currentElement = contentRef.current;
-      if (!currentElement) {
-        return;
-      }
-
-      if (document.activeElement === currentElement) {
-        return;
-      }
-
-      if (isEditableElementForBlock(document.activeElement, block.id || "")) {
-        return;
-      }
-
-      if (getEditingBlockIdSnapshot() !== block.id) {
-        return;
-      }
-
-      const contentMarkdown = extractTextContent(currentElement);
-      logDebug("onBlurContent", { length: contentMarkdown.length });
-
-      const blockId = block.id || "";
-      const blockOnPage = page.getBlockById(blockId);
-      if (!blockOnPage) {
-        logError(`Block not found: id=${blockId}`);
-        return;
-      }
-
-      applyContentMarkdown(blockOnPage, contentMarkdown);
-      void pageRpc
-        .update(page)
-        .then((nextPage) => {
-          setSaveErrorMessage(null);
-          setPage(nextPage);
-        })
-        .catch((error) => {
+        setContentMarkdown(nextContentMarkdown);
+        void saveBlockContentMarkdown({
+          page,
+          blockId: block.id,
+          nextContentMarkdown,
+          setPage,
+          setSaveErrorMessage,
+        }).catch((error) => {
           logError("Failed to save content", error);
           setSaveErrorMessage(getErrorMessage(error, "Failed to save content"));
         });
-      setEditingBlockId?.(null);
-    });
-  };
+        setEditingBlockId?.(null);
+      });
+    },
+    [block.id, page, setEditingBlockId, setPage, setSaveErrorMessage],
+  );
 
-  const onKeyDown: KeyboardEventHandler = new ContentKeyboardEventHandler(
-    page,
-    block,
-    contentRef,
-    setEditingBlockId,
-    setOffset,
-    setPage,
-    setSuggestionQuery,
-    setContentMarkdown,
-    setSaveErrorMessage,
-  ).getOnKeydown();
+  const indentBlock = useCallback(
+    (currentMarkdown: string, shift: boolean) => {
+      window.requestAnimationFrame(() => {
+        setContentMarkdown(currentMarkdown);
+        void indentBlockAfterMarkdownUpdate(
+          page,
+          block.id,
+          currentMarkdown,
+          shift,
+          { setPage, setSaveErrorMessage },
+        )
+          .then(() => {
+            setEditingBlockId?.(block.id || null);
+            setOffset?.(null);
+          })
+          .catch((error) => {
+            logError("Failed to save page after Tab", error);
+            setSaveErrorMessage(
+              getErrorMessage(error, "Failed to save page after Tab"),
+            );
+          });
+      });
+    },
+    [
+      block.id,
+      page,
+      setEditingBlockId,
+      setOffset,
+      setPage,
+      setSaveErrorMessage,
+    ],
+  );
+
+  const splitBlock = useCallback(
+    (textBefore: string, textAfter: string) => {
+      window.requestAnimationFrame(() => {
+        setEditingBlockId?.(null);
+        setOffset?.(null);
+        void splitBlockByMarkdown(page, block.id, textBefore, textAfter, {
+          setPage,
+          setSaveErrorMessage,
+        })
+          .then((blockAfter) => {
+            setEditingBlockId?.(blockAfter?.id || null);
+          })
+          .catch((error) => {
+            logError("Failed to save page after Enter", error);
+            setSaveErrorMessage(
+              getErrorMessage(error, "Failed to save page after Enter"),
+            );
+          });
+      });
+    },
+    [
+      block.id,
+      page,
+      setEditingBlockId,
+      setOffset,
+      setPage,
+      setSaveErrorMessage,
+    ],
+  );
 
   return (
     <div>
-      <div
-        key={`content-${block.id}-${isEditing ? "editing" : "rendered"}`}
-        ref={contentRef}
-        className="w-full min-h-[1em] inline-block whitespace-pre-wrap break-all px-1"
-        data-block-id={block.id}
-        contentEditable={isEditing || undefined}
-        suppressContentEditableWarning={isEditing || undefined}
-        onClick={onClickContent}
-        onBlur={onBlurContent}
-        onKeyDown={onKeyDown}
-      >
-        {isEditing ? (
-          <>{contentMarkdown || ""}</>
-        ) : (
+      {isEditing ? (
+        <MarkdownEditView
+          blockId={block.id}
+          initialMarkdown={contentMarkdown}
+          initialOffset={offset}
+          onBlur={saveContentMarkdown}
+          onBlockIndent={indentBlock}
+          onBlockSplit={splitBlock}
+        />
+      ) : (
+        <div
+          key={`content-${block.id}-rendered`}
+          className="w-full min-h-[1em] inline-block whitespace-pre-wrap break-all px-1"
+          data-block-id={block.id}
+          onClick={onClickContent}
+        >
           <RenderedContent block={block} />
-        )}
-      </div>
+        </div>
+      )}
       {saveErrorMessage ? (
         <RpcErrorMessage
           title="Failed to save content"
@@ -212,7 +337,7 @@ export function Content({
       <Suggestion
         suggestionQuery={suggestionQuery}
         setSuggestionQuery={setSuggestionQuery}
-        contentMarkdown={contentRef.current?.textContent || ""}
+        contentMarkdown={contentMarkdown}
         setup={() => {
           setEditingBlockId(null);
           logDebug("Suggestion setup", { offset });
@@ -235,19 +360,5 @@ function RenderedContent({ block }: { block: BlockEntity }): JSX.Element {
         <Token key={`content-${block.id}/${i}`} token={t} />
       ))}
     </>
-  );
-}
-
-function isEditableElementForBlock(
-  element: Element | null,
-  blockId: string,
-): boolean {
-  if (!(element instanceof HTMLDivElement)) {
-    return false;
-  }
-
-  return (
-    element.getAttribute("contenteditable") === "true" &&
-    element.dataset.blockId === blockId
   );
 }

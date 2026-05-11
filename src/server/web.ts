@@ -8,7 +8,7 @@ import { DEFAULT_PORT } from "@/server/lib/env/defaultPort";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DIST_DIR = join(process.cwd(), "dist");
-const INDEX_HTML_PATH = join(import.meta.dir, "index.html");
+const INDEX_HTML_PATH = join(DIST_DIR, "index.html");
 let indexHtml: string | undefined;
 
 type ServerOptions = {
