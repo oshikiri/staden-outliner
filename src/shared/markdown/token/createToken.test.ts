@@ -197,6 +197,18 @@ describe("createToken", () => {
     expect(token).toHaveProperty("observablePlot", true);
   });
 
+  test("commandquery with disableTable", () => {
+    const obj = {
+      type: 15,
+      disableTable: true,
+    };
+    const token = createToken(obj);
+    expect(token).toStrictEqual(
+      new CommandQuery(undefined, undefined, undefined, undefined, true),
+    );
+    expect(token).toHaveProperty("disableTable", true);
+  });
+
   test("commandquery with resolvedBlocks", () => {
     const obj = {
       type: 15,

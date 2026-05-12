@@ -127,6 +127,14 @@ describe("token renderer", () => {
         }),
       ),
     ).toContain("1 results, execution time: 7 ms");
+    expect(
+      renderToken(
+        Object.assign(new CommandQueryEntity(), {
+          resolvedBlocks: [{ hidden_table_value: "not rendered" }],
+          disableTable: true,
+        }),
+      ),
+    ).not.toContain("not rendered");
     expect(renderToken(new MarkerEntity("TODO"))).toContain("TODO");
   });
 

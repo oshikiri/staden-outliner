@@ -180,4 +180,14 @@ describe("blockDto", () => {
       }),
     ).toBe(true);
   });
+
+  test("isBlockDto accepts command query tokens with disabled table mode", () => {
+    expect(
+      isBlockDto({
+        depth: 0,
+        content: [{ type: 15, disableTable: true }],
+        children: [],
+      }),
+    ).toBe(true);
+  });
 });

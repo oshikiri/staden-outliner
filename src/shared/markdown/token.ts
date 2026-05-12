@@ -237,6 +237,7 @@ export class CommandQuery extends Token {
     public chartSource?: string,
     public queryExecutionMilliseconds?: number,
     public observablePlot?: boolean,
+    public disableTable?: boolean,
   ) {
     super();
     if (resolvedBlocks) {
@@ -244,10 +245,11 @@ export class CommandQuery extends Token {
     }
   }
   toMarkdown(): string {
-    if (this.observablePlot) {
-      return "{{staden-query observableplot}}";
-    }
-    return "{{staden-query}}";
+    const args = [
+      this.observablePlot ? "observableplot" : undefined,
+      this.disableTable ? "disabletable" : undefined,
+    ].filter(Boolean);
+    return `{{staden-query${args.length > 0 ? ` ${args.join(" ")}` : ""}}}`;
   }
 }
 
@@ -408,6 +410,7 @@ function createCommandQueryToken(obj: Record<string, unknown>): CommandQuery {
       ? obj.queryExecutionMilliseconds
       : undefined,
     typeof obj.observablePlot === "boolean" ? obj.observablePlot : undefined,
+    typeof obj.disableTable === "boolean" ? obj.disableTable : undefined,
   );
 }
 

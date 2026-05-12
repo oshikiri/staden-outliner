@@ -347,6 +347,22 @@ describe("lexer", () => {
       ]);
     });
 
+    test("query table with disabled table flag", () => {
+      const lexer = new Lexer("{{staden-query disabletable}}");
+      const token = lexer.exec();
+      expect(token).toEqual([
+        new CommandQuery(undefined, undefined, undefined, undefined, true),
+      ]);
+    });
+
+    test("query table with observable plot and disabled table flags", () => {
+      const lexer = new Lexer("{{staden-query observableplot disabletable}}");
+      const token = lexer.exec();
+      expect(token).toEqual([
+        new CommandQuery(undefined, undefined, undefined, true, true),
+      ]);
+    });
+
     test("old query table", () => {
       const lexer = new Lexer(
         '{{query (AND (property :status "doing") (property :type "book"))}}',

@@ -301,6 +301,9 @@ export class Lexer {
       const observablePlot = commandArgs.some(
         (arg) => arg.toLowerCase() === "observableplot",
       );
+      const disableTable = commandArgs.some(
+        (arg) => arg.toLowerCase() === "disabletable",
+      );
       return [
         i,
         new CommandQuery(
@@ -308,6 +311,7 @@ export class Lexer {
           undefined,
           undefined,
           observablePlot || undefined,
+          disableTable || undefined,
         ),
       ];
     }

@@ -26,7 +26,7 @@ export function CommandQuery({
         </span>
       </div>
       <CommandQueryChart chartSource={token.chartSource} data={data} />
-      <QueryTable data={data} />
+      {token.disableTable ? null : <QueryTable data={data} />}
     </div>
   );
 }

@@ -84,7 +84,9 @@ function isCommandQueryTokenDto(value: Record<string, unknown>): boolean {
     (value.queryExecutionMilliseconds === undefined ||
       typeof value.queryExecutionMilliseconds === "number") &&
     (value.observablePlot === undefined ||
-      typeof value.observablePlot === "boolean")
+      typeof value.observablePlot === "boolean") &&
+    (value.disableTable === undefined ||
+      typeof value.disableTable === "boolean")
   );
 }
 
