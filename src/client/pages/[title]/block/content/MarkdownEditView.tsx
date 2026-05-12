@@ -1,5 +1,5 @@
 import { JSX, useEffect, useRef } from "react";
-import { EditorState } from "@codemirror/state";
+import { EditorState, Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { indentLess, indentMore } from "@codemirror/commands";
 import { basicSetup } from "codemirror";
@@ -36,68 +36,70 @@ export function MarkdownEditView({
         doc: initialMarkdown,
         selection: { anchor: startOffset },
         extensions: [
+          Prec.highest(
+            keymap.of([
+              {
+                key: "Ctrl-Enter",
+                run: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  explicitMultiLine = toggleExplicitMultiLine(
+                    currentMarkdown,
+                    explicitMultiLine,
+                  );
+                  return true;
+                },
+              },
+              {
+                key: "Enter",
+                run: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
+                    return false;
+                  }
+                  const offset = view.state.selection.main.from;
+                  onBlockSplit?.(
+                    currentMarkdown.slice(0, offset),
+                    currentMarkdown.slice(offset),
+                  );
+                  return true;
+                },
+              },
+              {
+                key: "Tab",
+                run: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
+                    return indentMore(view);
+                  }
+                  onBlockIndent?.(currentMarkdown, false);
+                  return true;
+                },
+                shift: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
+                    return indentLess(view);
+                  }
+                  onBlockIndent?.(currentMarkdown, true);
+                  return true;
+                },
+              },
+              {
+                key: "Alt-Tab",
+                run: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  onBlockIndent?.(currentMarkdown, false);
+                  return true;
+                },
+                shift: (view) => {
+                  const currentMarkdown = view.state.doc.toString();
+                  onBlockIndent?.(currentMarkdown, true);
+                  return true;
+                },
+              },
+            ]),
+          ),
           basicSetup,
           editModeTheme,
-          keymap.of([
-            {
-              key: "Ctrl-Enter",
-              run: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                explicitMultiLine = toggleExplicitMultiLine(
-                  currentMarkdown,
-                  explicitMultiLine,
-                );
-                return true;
-              },
-            },
-            {
-              key: "Enter",
-              run: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
-                  return false;
-                }
-                const offset = view.state.selection.main.from;
-                onBlockSplit?.(
-                  currentMarkdown.slice(0, offset),
-                  currentMarkdown.slice(offset),
-                );
-                return true;
-              },
-            },
-            {
-              key: "Tab",
-              run: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
-                  return indentMore(view);
-                }
-                onBlockIndent?.(currentMarkdown, false);
-                return true;
-              },
-              shift: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
-                  return indentLess(view);
-                }
-                onBlockIndent?.(currentMarkdown, true);
-                return true;
-              },
-            },
-            {
-              key: "Alt-Tab",
-              run: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                onBlockIndent?.(currentMarkdown, false);
-                return true;
-              },
-              shift: (view) => {
-                const currentMarkdown = view.state.doc.toString();
-                onBlockIndent?.(currentMarkdown, true);
-                return true;
-              },
-            },
-          ]),
           EditorView.domEventHandlers({
             blur: (_event, view) => {
               if (isDestroying) {
