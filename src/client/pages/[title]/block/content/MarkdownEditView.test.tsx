@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import {
   isMultiLineMode,
   MarkdownEditView,
+  splitMarkdownAtOffset,
   toggleExplicitMultiLine,
 } from "./MarkdownEditView";
 
@@ -34,5 +35,9 @@ describe("CodeMirror edit mode rules", () => {
     expect(toggleExplicitMultiLine("one", false)).toBe(true);
     expect(toggleExplicitMultiLine("one", true)).toBe(false);
     expect(toggleExplicitMultiLine("one\ntwo", true)).toBe(true);
+  });
+
+  test("splits markdown at the cursor offset for block creation", () => {
+    expect(splitMarkdownAtOffset("one\ntwo", 4)).toEqual(["one\n", "two"]);
   });
 });

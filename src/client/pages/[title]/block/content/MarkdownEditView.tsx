@@ -56,11 +56,14 @@ export function MarkdownEditView({
                   if (isMultiLineMode(currentMarkdown, explicitMultiLine)) {
                     return false;
                   }
-                  const offset = view.state.selection.main.from;
-                  onBlockSplit?.(
-                    currentMarkdown.slice(0, offset),
-                    currentMarkdown.slice(offset),
-                  );
+                  splitBlockFromView(view, onBlockSplit);
+                  return true;
+                },
+              },
+              {
+                key: "Alt-Enter",
+                run: (view) => {
+                  splitBlockFromView(view, onBlockSplit);
                   return true;
                 },
               },
@@ -151,6 +154,26 @@ export function toggleExplicitMultiLine(
     return true;
   }
   return currentMarkdown.includes("\n");
+}
+
+export function splitMarkdownAtOffset(
+  currentMarkdown: string,
+  offset: number,
+): [string, string] {
+  return [currentMarkdown.slice(0, offset), currentMarkdown.slice(offset)];
+}
+
+function splitBlockFromView(
+  view: EditorView,
+  onBlockSplit: ((textBefore: string, textAfter: string) => void) | undefined,
+): void {
+  const currentMarkdown = view.state.doc.toString();
+  const offset = view.state.selection.main.from;
+  const [textBefore, textAfter] = splitMarkdownAtOffset(
+    currentMarkdown,
+    offset,
+  );
+  onBlockSplit?.(textBefore, textAfter);
 }
 
 function clampOffset(
