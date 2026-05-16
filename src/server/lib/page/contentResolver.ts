@@ -1,10 +1,18 @@
+import path from "node:path";
+
 import { Block } from "@/shared/markdown";
 import {
   BlockRef,
   CodeBlock,
   Command,
   CommandQuery,
+  Heading,
+  Image,
+  PropertyPair,
+  Quote,
+  Token,
 } from "@/shared/markdown/token";
+import { getStadenRoot } from "@/server/lib/env/stadenRoot";
 import {
   ensureRegexCaptureExtensionLoaded,
   getReadonlyDb,
@@ -15,10 +23,99 @@ import type { SQLQueryBindings } from "bun:sqlite";
 import { logWarn } from "@/shared/logger";
 import type { CommandQueryRow } from "@/shared/markdown/token";
 
-export async function resolvePageContent(page: Block): Promise<Block> {
+type ResolvePageContentOptions = {
+  pageFilePath?: string;
+  stadenRoot?: string;
+};
+
+export async function resolvePageContent(
+  page: Block,
+  options: ResolvePageContentOptions = {},
+): Promise<Block> {
+  resolveImagePaths(page, options);
   await resolveBlockRefs(page);
   await resolveCommandTokens(page);
   return page;
+}
+
+function resolveImagePaths(
+  page: Block,
+  options: ResolvePageContentOptions,
+): void {
+  if (!options.pageFilePath) {
+    return;
+  }
+
+  const stadenRoot = path.resolve(options.stadenRoot ?? getStadenRoot());
+  const pageDirectory = path.dirname(path.resolve(options.pageFilePath));
+
+  for (const block of page.flatten()) {
+    resolveImagePathsInTokens(block.content, pageDirectory, stadenRoot);
+  }
+}
+
+function resolveImagePathsInTokens(
+  tokens: Token[],
+  pageDirectory: string,
+  stadenRoot: string,
+): void {
+  for (const token of tokens) {
+    if (token instanceof Image) {
+      const resolvedPath = resolveImagePath(
+        token.src,
+        pageDirectory,
+        stadenRoot,
+      );
+      if (resolvedPath) {
+        token.src = resolvedPath;
+      }
+      continue;
+    }
+
+    if (token instanceof Heading) {
+      resolveImagePathsInTokens(token.content, pageDirectory, stadenRoot);
+      continue;
+    }
+
+    if (token instanceof Quote) {
+      resolveImagePathsInTokens(token.tokens, pageDirectory, stadenRoot);
+      continue;
+    }
+
+    if (token instanceof PropertyPair) {
+      resolveImagePathsInTokens([token.key], pageDirectory, stadenRoot);
+      resolveImagePathsInTokens(token.value, pageDirectory, stadenRoot);
+    }
+  }
+}
+
+function resolveImagePath(
+  src: string,
+  pageDirectory: string,
+  stadenRoot: string,
+): string | undefined {
+  if (!isLocalRelativePath(src)) {
+    return undefined;
+  }
+
+  const imagePath = path.resolve(pageDirectory, src);
+  const relative = path.relative(stadenRoot, imagePath);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    logWarn("Ignoring image path outside STADEN_ROOT", { src, imagePath });
+    return undefined;
+  }
+
+  return relative.split(path.sep).join(path.posix.sep);
+}
+
+function isLocalRelativePath(src: string): boolean {
+  if (path.isAbsolute(src) || src.startsWith("#")) {
+    return false;
+  }
+  if (/^[a-z][a-z0-9+.-]*:/i.test(src)) {
+    return false;
+  }
+  return true;
 }
 
 async function resolveBlockRefs(page: Block): Promise<void> {

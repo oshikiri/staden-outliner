@@ -10,11 +10,16 @@ import * as PageStore from "../sqlite/pageStore";
 import * as ContentResolver from "./contentResolver";
 
 export async function getPageByTitle(title: string): Promise<Block> {
+  const pageFile = PageStore.getPageByTitle(title);
   const page = await findPageByTitle(title);
   if (!page) {
-    return ContentResolver.resolvePageContent(createDraftPage(title));
+    return ContentResolver.resolvePageContent(createDraftPage(title), {
+      pageFilePath: pageFile?.path,
+    });
   }
-  return ContentResolver.resolvePageContent(page);
+  return ContentResolver.resolvePageContent(page, {
+    pageFilePath: pageFile?.path,
+  });
 }
 
 export async function updatePageByTitle(
@@ -54,7 +59,10 @@ export async function updatePageByTitle(
     logError("Failed to export page to markdown after save", title, error);
     throw error;
   }
-  return ContentResolver.resolvePageContent(pageUpdated);
+  const exportedPageFile = PageStore.getPageByTitle(title);
+  return ContentResolver.resolvePageContent(pageUpdated, {
+    pageFilePath: exportedPageFile?.path,
+  });
 }
 
 async function findPageByTitle(title: string): Promise<Block | null> {

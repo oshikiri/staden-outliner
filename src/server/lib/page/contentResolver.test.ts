@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, jest, test } from "bun:test";
 import { Block } from "@/shared/markdown";
-import { CodeBlock, CommandQuery } from "@/shared/markdown/token";
+import {
+  CodeBlock,
+  CommandQuery,
+  Heading,
+  Image,
+} from "@/shared/markdown/token";
 import * as Logger from "@/shared/logger";
 import * as Sqlite from "@/server/lib/sqlite";
 
@@ -9,6 +14,59 @@ import { resolvePageContent } from "./contentResolver";
 describe("contentResolver", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+  });
+
+  test("resolvePageContent resolves image paths relative to the page file", async () => {
+    const page = new Block(
+      [
+        new Image("./images/sample.png", "sample"),
+        new Heading(1, [new Image("../assets/heading.png", "heading")]),
+        new Image("https://example.com/remote.png", "remote"),
+        new Image("data:image/png;base64,xxx", "inline"),
+      ],
+      0,
+      [],
+    );
+
+    await resolvePageContent(page, {
+      pageFilePath: "/vault/notes/nested/Page.md",
+      stadenRoot: "/vault",
+    });
+
+    expect(page.content[0]).toHaveProperty(
+      "src",
+      "notes/nested/images/sample.png",
+    );
+    expect((page.content[1] as Heading).content[0]).toHaveProperty(
+      "src",
+      "notes/assets/heading.png",
+    );
+    expect(page.content[2]).toHaveProperty(
+      "src",
+      "https://example.com/remote.png",
+    );
+    expect(page.content[3]).toHaveProperty("src", "data:image/png;base64,xxx");
+  });
+
+  test("resolvePageContent logs a warning and ignores image paths outside STADEN_ROOT", async () => {
+    const page = new Block([new Image("../../outside.png", "outside")], 0, []);
+    const logWarnSpy = jest.spyOn(Logger, "logWarn").mockImplementation(() => {
+      return;
+    });
+
+    await resolvePageContent(page, {
+      pageFilePath: "/vault/notes/Page.md",
+      stadenRoot: "/vault",
+    });
+
+    expect(page.content[0]).toHaveProperty("src", "../../outside.png");
+    expect(logWarnSpy).toHaveBeenCalledWith(
+      "Ignoring image path outside STADEN_ROOT",
+      expect.objectContaining({
+        src: "../../outside.png",
+        imagePath: "/outside.png",
+      }),
+    );
   });
 
   test("resolvePageContent logs a warning when CommandQuery resolution fails", async () => {

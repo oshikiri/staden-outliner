@@ -65,7 +65,9 @@ describe("pageService", () => {
     expect(page.children[0].id).not.toBe(page.id);
     expect(page.children[0].parent).toBe(page);
     expect(page.children[0].parent?.id).toBe(page.id);
-    expect(resolvePageContentSpy).toHaveBeenCalledWith(page);
+    expect(resolvePageContentSpy).toHaveBeenCalledWith(page, {
+      pageFilePath: undefined,
+    });
     expect(createNewFileSpy).not.toHaveBeenCalled();
   });
 
@@ -84,8 +86,33 @@ describe("pageService", () => {
 
     expect(getPageBlockByTitleSpy).toHaveBeenCalledWith("draft%20page");
     expect(getPageByTitleSpy).toHaveBeenCalledWith("draft%20page");
-    expect(resolvePageContentSpy).toHaveBeenCalledWith(page);
+    expect(resolvePageContentSpy).toHaveBeenCalledWith(page, {
+      pageFilePath: undefined,
+    });
     expect(page.getProperty("title")).toBe("draft%20page");
+  });
+
+  test("getPageByTitle passes the page file path to the content resolver", async () => {
+    const persistedPage = new Block([], 0, []);
+    persistedPage.withId("page-1");
+    jest
+      .spyOn(PageBlocks, "getPageBlockByTitle")
+      .mockReturnValue(persistedPage);
+    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue({
+      title: "Page",
+      pageId: "page-1",
+      path: "/vault/notes/Page.md",
+    });
+    const resolvePageContentSpy = jest
+      .spyOn(ContentResolver, "resolvePageContent")
+      .mockImplementation(async (page) => page);
+
+    const page = await getPageByTitle("Page");
+
+    expect(page).toBe(persistedPage);
+    expect(resolvePageContentSpy).toHaveBeenCalledWith(persistedPage, {
+      pageFilePath: "/vault/notes/Page.md",
+    });
   });
 
   test("updatePageByTitle creates a page record on the first save", async () => {
@@ -96,7 +123,15 @@ describe("pageService", () => {
     draftPage.setProperty("title", "draft-page");
 
     jest.spyOn(PageBlocks, "getPageBlockByTitle").mockReturnValue(undefined);
-    jest.spyOn(PageStore, "getPageByTitle").mockReturnValue(undefined);
+    jest
+      .spyOn(PageStore, "getPageByTitle")
+      .mockReturnValueOnce(undefined)
+      .mockReturnValueOnce(undefined)
+      .mockReturnValueOnce({
+        title: "draft-page",
+        pageId: "page-1",
+        path: "/vault/draft-page.md",
+      });
     const createFileSpy = jest
       .spyOn(FileStore, "createPageFileRecord")
       .mockReturnValue({ title: "draft-page", pageId: "page-1" });
@@ -128,7 +163,9 @@ describe("pageService", () => {
     expect(putFileSpy).toHaveBeenCalled();
     expect(importSpy).toHaveBeenCalledWith(savedPage);
     expect(exportSpy).toHaveBeenCalledWith("draft-page");
-    expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage);
+    expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage, {
+      pageFilePath: "/vault/draft-page.md",
+    });
     expect(savedPage.id).toBe("page-1");
     expect(savedPage.children[0].parent).toBe(savedPage);
     expect(savedPage.getProperty("title")).toBe("draft-page");
@@ -174,7 +211,9 @@ describe("pageService", () => {
     expect(putFileSpy).toHaveBeenCalled();
     expect(importSpy).toHaveBeenCalledWith(savedPage);
     expect(exportSpy).toHaveBeenCalledWith("draft%20page");
-    expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage);
+    expect(resolvePageContentSpy).toHaveBeenCalledWith(savedPage, {
+      pageFilePath: undefined,
+    });
     expect(savedPage.getProperty("title")).toBe("draft%20page");
   });
 
