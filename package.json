@@ -27,7 +27,7 @@
     "@codemirror/view": "6.41.1",
     "@observablehq/plot": "0.6.17",
     "codemirror": "6.0.2",
-    "hono": "4.12.18",
+    "hono": "4.12.21",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "react-router-dom": "7.14.2",
