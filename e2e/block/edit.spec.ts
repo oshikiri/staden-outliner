@@ -126,7 +126,7 @@ test("when pressing Tab/Shift+Tab, it should change the block indentation level"
   expect(await getXDiff(parent, target)).toBe(0);
 });
 
-test.skip("when pressing Enter in single-line mode, it should split the block", async ({
+test("when pressing Enter in single-line mode, it should split the block", async ({
   page,
 }) => {
   await page.goto("./pages/edit");
@@ -135,6 +135,7 @@ test.skip("when pressing Enter in single-line mode, it should split the block", 
   await enterEditMode(page, target);
 
   await page.keyboard.press("Enter");
+  await expect(page.locator(".cm-content")).toBeVisible();
   await page.keyboard.type("split child");
   await page.click("h1");
 
