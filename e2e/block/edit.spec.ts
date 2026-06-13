@@ -1,7 +1,7 @@
 import { test, expect, Locator, Page } from "@playwright/test";
 
 // The tests mutate a shared markdown fixture through the app.
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: "serial", retries: 0 });
 
 test("when typing characters, it should add them to the block content", async ({
   page,
@@ -74,8 +74,10 @@ test("when pressing backspace, it should delete characters from the block conten
 async function enterEditMode(page: Page, element: Locator) {
   const box = await element.boundingBox();
   if (box) {
-    await page.mouse.click(box.x + box.width, box.y + box.height / 2);
-    await page.waitForTimeout(100);
+    await page.mouse.click(box.x + box.width - 1, box.y + box.height / 2);
+    const editor = page.locator(".cm-content");
+    await expect(editor).toBeVisible();
+    await editor.press("Control+End");
   }
 }
 
@@ -135,8 +137,9 @@ test("when pressing Enter in single-line mode, it should split the block", async
   await enterEditMode(page, target);
 
   await page.keyboard.press("Enter");
-  await expect(page.locator(".cm-content")).toBeVisible();
-  await page.keyboard.type("split child");
+  const splitEditor = page.locator(".cm-content");
+  await expect(splitEditor).toHaveText("");
+  await splitEditor.pressSequentially("split child");
   await page.click("h1");
 
   await expect(page.getByText("split source")).toBeVisible();
